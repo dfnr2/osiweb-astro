@@ -1,0 +1,209 @@
+Clear variables, set starting lunar surface to 0
+1 CLEAR:SN=0
+
+Pokes to disable list and Ctrl-C
+2 POKE 13026,32:POKE13743,44:POKE2073,96:D1$="Fuel low"
+
+Jump to routines that prepare for new game
+3 GOSUB4:GOSUB14:GOTO20
+
+Clear screen and define the 7 graphic characters that make up the LEM when it is centered (no pitch-C), pitched right(R), and pitched left(L)
+4 PRINT!(28)
+5 C(1)=161:C(2)=226:C(3)=201:C(4)=200:C(5)=45:C(6)=45:C(7)=191
+6 R(1)=232:R(2)=222:R(3)=221:R(4)=220:R(5)=194:R(6)=191:R(7)=206
+7 L(1)=232:L(2)=221:L(3)=222:L(4)=223:L(5)=203:L(6)=203:L(7)=203
+8 A(1)=53379:A(2)=53315:A(4)=53444:A(3)=53442:A(5)=53506:A(6)=53508
+9 A(7)=53443
+
+Set game start variables. PV=lunar lander pitch is centered at start of game play. 
+
+HR=1 LEM starts with lateral velocity of 1 meter/sec. 
+
+THrust is set at zero at game start. Gravity factor is 1 meter/sec. B=7 represents the # of LEM moves triggered and managed by the program when the LEM moves between lunar surfaces.  
+
+Lunar Lander VErtical speed=0 meters/sec at start of game. VErtical speed increments by 1 meter/sec (gravity effect) every 3 program cycles (X=>3). X=program cycle counter is set to zero at game start.  Each time X reaches 3, 1 meter/sec velocity is added to LEM descent speed and X is reset to 0. X is also adjusted up or down in real-time based on THrust impulses. So, if no thrust impulses are commanded, every few seconds, "downward" VErtical velocity/speed increases due to gravity effects.
+
+ZB=0 is the flag indicating LEM fuel quantity is not critically low. ZB=1 is flag indicating when fuel reaches a critical state. Z1 is not used.  FUel is starting fuel units. Z4=0 indicates LEM has fuel; when Z4=1, LEM is out of fuel and will enter crash sequence.
+
+10 PV=0:X=0:HR=1:VE=0:TF=0:TH=0:G=1
+11 B=7:HR=1:VE=0:Z=0:X=0:ZB=0
+12 Z1=0:FU=1000:Z4=0
+13 RETURN 
+
+Call up the current lunar surface screen based on value of SN
+14 IF SN>0 THEN DISK!"CALL D000=22,1":RETURN
+15 IF SN=0 THEN DISK!"CALL D000=20,1":RETURN
+
+Paint the LEM for start of the game
+20 FOR E=1 TO 6:POKE A(E),C(E):NEXT:POKE 55178,32
+21 PRINT"Press space bar to begin powered descent or Z to stop game"
+22 POKE57088,2
+23 KEY=PEEK(57088)
+24 IFKEY=16GOTO27
+25 IFKEY=32GOTO1160
+26 GOTO 23 
+
+Game is starting, start game text is cleared from top of screen
+27 FOR CL=1TO60:POKE (53567+CL),32:NEXT:GOTO34
+
+0-33 are routines for painting LEM movements cell by cell
+30 FOR E=1TO7:POKE A(E),32:POKE B(E),C(E):A(E)=B(E):NEXT
+31 FOR E=1TO7:POKE B(E),C(E):A(E)=B(E):NEXT:RETURN
+32 FOR E=1TO7:POKE A(E),32:NEXT
+33 FOR E=1TO7:A(E)=A(E)+G:POKEA(E),C(E):NEXT:RETURN
+
+Scan the keyboard to see if 8 or 9 is pressed, commanding the LEM to pitch to the left (8) or right (9)
+34 POKE 57088,64:PT=PEEK(57088):IFPT<64GOTO36
+
+Depending on keyboard peek value, go to routine for painting LEM pitch
+35 W=INT(PT/16+PV-2):ON W GOTO 370,390,36,36,36,380,370
+
+Scan the keyboard for TK (thrust key, 1-4) input. IF Z4=1, LEM is out of fuel and TK input is ignored.  TH is THrust imparted (1-4) and depends on TK value
+36 TK=0:POKE57088,128:TK=PEEK(57088):IFZ4=1GOTO38
+37 IFTK=>16GOTO39
+38 TH=0:GOTO610
+39 TH=INT(128/TKEY):GOTO540
+
+Lines 40-200 are the routines that paint/update FUel, Manuevers(Z), vertical velocity, lateral velocity and directional vectors
+40 FORJ=2TOLEN(D$):POKE D+J,ASC(MID$(D$,J,1)):NEXT:POKED+J,32:RETURN
+50 REM D$=STR$(Z1):D=55018:GOSUB 40:REM D MAY BE WRONG WAS 54231
+170 FU=FU-M:M=0
+171 IFFU>100ORZB=1GOTO180
+172 FOR J=1TO8:POKE55021+J,ASC(MID$(D1$,J,1)):NEXTJ:ZB=1
+180 IFFU<=0THENFU=0:VE=VE+1:Z4=1:FORA=1TO8:POKE55143+A,32:NEXT
+185 D$=STR$(FU):D=55016:GOSUB40
+190 D$=STR$(Z):D=54952:GOSUB40
+191 Z7=18:IFHR<0THENZ7=22:GOTO193
+192 IFHR=0THENZ7=25
+193 D$=STR$(ABS(HR)):D=55208:GOSUB40
+194 Z6=20:IFVE<0THENZ6=16:GOTO196
+195 IFVE=0THENZ6=25
+196 D$=STR$(ABS(VE)):D=55144:GOSUB40
+197 POKE55148,Z6:POKE55212,Z7
+200 RETURN
+
+Routine for painting LEM movements with centered pitch (PV=0)
+370 PV=0:C(1)=161:C(2)=226:C(3)=201:C(4)=200:C(5)=45:C(6)=45:C(7)=32 
+371 IF TH>0 THEN C(7)=191
+374 IF TH>2 THEN C(7)=31
+376 B(1)=A(1)+0:B(2)=A(1)-64:B(3)=A(1)+63:B(4)=A(1)+65:B(5)=A(1)+127
+377 B(6)=A(1)+129:B(7)=A(1)+64:Z=Z+1
+378 GOSUB30:GOTO520
+
+Routine for painting LEM movements with left pitch (PV=-1)
+380 PV=-1:C(1)=L(1):C(2)=L(2):C(3)=L(3):C(4)=L(4):C(5)=L(5)
+381 C(6)=L(6):C(7)=32
+382 IF TH>0 THEN C(7)=203
+383 IF TH>1 THEN C(7)=209
+384 B(1)=A(1)+0:B(2)=A(1)-64:B(3)=A(1)-63:B(4)=A(1)+1:B(5)=A(1)-1
+385 B(6)=A(1)+64:B(7)=A(1)+63:Z=Z+1
+386 GOSUB30:GOTO520
+
+Routine for painting LEM movements with right pitch (PV=1)
+390 PV=1:C(1)=R(1):C(2)=R(2):C(3)=R(3):C(4)=R(4):C(5)=R(5)
+391 C(6)=R(6):C(7)=32:IF TH>0THEN(C)=206
+392 IF TH>1 THEN C(7)=208
+393 B(1)=A(1)+0:B(2)=A(1)-64:B(3)=A(1)-65:B(4)=A(1)-1:B(5)=A(1)+64
+394 B(6)=A(1)+1:B(7)=A(1)+65:Z=Z+1
+395 GOSUB30
+
+Calculating impact of TH/TK on vertical velocity, lateral velocity, # of maneuvers, fuel consumption, engine thrust graphic C(7).  IF Z4=1, LEM is out of fuel and thrust control inputs yield no response.
+520 IFZ4=1GOTO610
+521 M=1:GOSUB170
+530 GOTO36
+540 Z=Z+1
+560 VT=-TH:U=32:ON PV+1 GOTO 571, 583
+561 IF TH=0 GOTO565
+562 C(7)=203
+563 IF TH>1 THEN C(7)=209
+564 HR=HR+1:IFHR=3THENHR=2
+565 Z2=1:GOTO600
+571 IF TH>0 THEN C(7)=191
+572 IFTH>1THEN C(7)=31
+573 GOTO600
+583 IF TH=0GOTO600
+584 C(7)=206
+585 IF TH>1 THEN C(7)=208 
+586 HR=HR-1:IFHR=-3THENHR=-2
+
+Program has cycled through Pitch and THrust key inputs.  Increment X by 1 plus/minus current vertical thrust input (VT). When X=>3, impart another 1 meter/sec (gravity) to descent velocity.
+600 M=2*ABS(TH):GOSUB170
+610 X=X+1+VT:VT=0:TH=0
+611 IF ABS(X)<3 AND ABS(X)=>0 GOTO 619
+612 IF X=>3 GOTO614
+613 IF X<=-3 GOTO615
+614 VE=VE+1:GOSUB194:X=0:GOTO619
+615 VE=VE-1:GOSUB194:X=0
+
+If LEM is in danger of flying up/off of the top of screen memory, force the LEM to remain on the screen
+618 IF A(2)+VE*64<53311ANDVE<=0THENVE=0:X=1:VT=0
+
+Calculate the number of LEM movement/paint cycles (F) to be painted and direction of movement based vertical (VE) and lateral (HR) speed.  Use G as the direction-of-movement factor for painting changes in LEM's position.
+619 F=ABS(VE)+ABS(HR):IF F=0 GOTO810 
+620 IFVE=0 AND HR<>0 GOTO626
+621 IFHR=0GOTO623
+622 G=64*(VE/ABS(VE))+1*(HR/ABS(HR)):GOTO625
+623 G=64*(VE/ABS(VE))+HR
+625 F=F-1:GOTO627
+626 Z3=0:G=1:IF HR<0 THEN G=-G
+627 FOR A=1TOF
+629 IF PV=0ANDVE=>0ANDHR=0GOTO635
+
+Check to see if LEM is about to impact surface features other than flat terrain. If LEM body or right landing pad is about to impact non-level ground, jump to crash routine
+631 IF PEEK(A(1)+G*2)<>32ORPEEK(A(6)+65)<>32GOTO850
+
+IF it looks as if LEM body is not about to impact terrain, jump to LEM painting routine
+634 GOTO637
+
+From 629 If/Then. IF LEM has centered pitch and moderate vertical speed (see line 629) with no horizontal speed and landing pads are about to come in contact with level ground go to routine that determines if touchdown is soft or yields a crash (line 890)
+635 IFPEEK(A(6)+G)=135ANDPEEK(A(5)+G)=135GOTO890
+
+If LEM not touching down or crashing, paint LEM movements
+637 GOSUB32
+638 GOTO740
+730 GOSUB32
+
+Look to see if LEM is about to leave the screen horizontally.  IF in the correct location, takeover LEM movements and move it laterally 7 positions (B=7) to the next lunar surface
+740 C=ABS(A(1)-53248)/64:D=ABS(A(1)-53311)/64
+741 IF INT(C)<>C AND INT(D)<>DGOTO800
+742 IF B>0 THEN B=B-1:G=HR/ABS(HR):GOSUB32
+743 IF B=0 GOTO780
+744 GOTO742
+780 SN=SN+1:IF SN=2 THEN SN=0 
+790 PRINT!(28):GOSUB14:B=7:G=HR/ABS(HR):GOTO810
+800 NEXT A
+End LEM movement loop For A=1 to F moves
+
+810 IF C(7)<>32 THEN C(7)=32:POKEA(7),C(7)
+
+IF Z4=1, fuel is depleted; keep moving LEM toward uncontrolled crash
+820 IF Z4 GOTO610
+830 IF Z2=0 AND VE<0 THEN VE=1
+841 Z2=0:GOSUB170:GOTO34
+
+Start LEM crash routine 
+850 FOR E=1 TO 7:POKE A(E),32:NEXT:GOTO1100
+860 PRINT&(0,0):PRINT!(31,2):PRINT"Lunar Excursion Module Destroyed!"
+861 PRINT"Crater diameter";(ABS(VE)+ABS(HR))*75;"ft."
+880 PRINT"Try Again....":GOTO960
+
+Calculate skill level for LEM landing. Z8 of 50 indicates soft landing. Z8=25 indicated acceptable landing speed.  VE>2 is crash speed.  ZA indicates if landing happened on the surface or on a mountain.  ZA is higher for mountain landings.
+890 Z8=50:IF VE=2 THEN Z8=25 
+900 IF VE>2 OR ABS(HR)>1 GOTO850 
+910 ZA=2:IF PEEK(A(6)+2)=53 THEN ZA=5 
+920 IF A(6)>53504 THEN ZA=1 
+
+930 PRINT&(0,0):PRINT!(31,4):PRINT"The Eagle has landed!!
+
+Calculate skill level for landing based on landing speed (Z8), landing location (ZA) and remaining fuel.
+931 PRINT"LEM Commander Skill Level:";INT(Z8*ZA+(1000-FU)/10)
+960 FOR E=1TO4000:NEXT:GOTO3
+
+Paints the LEM disintegrating. B(X) sets screen movement vector for each component of the LEM
+1100 B(1)=-65:B(2)=-63:B(3)=-62:B(4)=-1:B(5)=-64:B(6)=1
+1110 FOR EX=1TO7 
+1120 FOR FX=1TO6:A(FX)=A(FX)+B(FX):POKE A(FX),C(FX):NEXTFX 
+1130 REM FOR TX=1TO35:NEXTTX 
+1140 FOR RX=1TO6:POKE A(RX),32:NEXTRX 
+1150 NEXTEX:GOTO860
+1160 PRINT!(28):PRINT"Program Stopped"
