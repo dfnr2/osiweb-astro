@@ -1,0 +1,10 @@
+CEGMON   TXT	Cegmon manual (partial)
+CEGMREV  TXT    Cegmon review - Practical Electronics 
+CEGMON   ASM    Source code (UK101, OSI C1/Superboard II)
+CEGMONC2 ASM    Source code (OSI C2)
+CEGMONC1 ROM    Rom image for OSI C1/Superboard II
+CEGMONC2 ROM    Rom image for OSI C2
+CEGMONUK ROM    Rom image for UK101
+cegmonc2a.asm	Source for C2/4, relocating FC00 to F400, and with emacs-like bindings
+cegmonc2a.bin	binary object for C2/4, relocating FC00 to F400, and with emacs-like bindings
+cegmonc2a.hex	hex object for C2/4, relocating FC00 to F400, and with emacs-like bindings
