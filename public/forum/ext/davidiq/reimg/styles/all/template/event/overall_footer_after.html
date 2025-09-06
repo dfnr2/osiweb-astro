@@ -1,0 +1,48 @@
+<script>
+	const reimgAltLabels = {
+		Loading: 		"{{ lang('LOADING_TEXT')|escape('js') }}",
+		ZoomIn: 		"{{ lang('REIMG_ZOOM_IN')|escape('js') }}",
+		ZoomOut: 		"{{ lang('REIMG_ZOOM_OUT')|escape('js') }}",
+		FullExpand: 	"{{ lang('FULL_EXPAND_TITLE')|escape('js') }}",
+		Previous:		"{{ lang('PREVIOUS_TEXT')|escape('js') }}",
+		PreviousTitle:	"{{ lang('PREVIOUS_TITLE')|escape('js') }}",
+		Next:			"{{ lang('NEXT_TEXT')|escape('js') }}",
+		NextTitle:		"{{ lang('NEXT_TITLE')|escape('js') }}",
+		Close:			"{{ lang('CLOSE_TEXT')|escape('js') }}",
+		CloseTitle:		"{{ lang('CLOSE_TITLE')|escape('js') }}",
+		Play:			"{{ lang('PLAY_TEXT')|escape('js') }}",
+		PlayTitle:		"{{ lang('PLAY_TITLE')|escape('js') }}",
+		Pause:			"{{ lang('PAUSE_TEXT')|escape('js') }}",
+		PauseTitle:		"{{ lang('PAUSE_TITLE')|escape('js') }}",
+		UserLink:		"{{ lang('REIMG_USER_LINK')|escape('js') }}",
+        Current:        "{{ lang('CURRENT_TEXT')|escape('js') }}",
+        XhrError:       "{{ lang('XHRERROR_TEXT')|escape('js') }}",
+        ImgError:       "{{ lang('IMGERROR_TEXT')|escape('js') }}",
+        Counter:        "{{ lang('COUNTER_TEXT')|escape('js') }}"
+	};
+
+	const reimgSettings = {
+		phpExt:			"{{ S_REIMG_PHP_EXT }}",
+		zoomTarget: 	"{{ S_REIMG_ZOOM }}",
+		zoomMethod:		"{{ S_REIMG_ZOOM_METHOD }}",
+		rtl: 			{% if S_CONTENT_DIRECTION eq 'rtl' %}true{% else %}false{% endif %},
+		swapPortrait: 	{% if S_REIMG_SWAP_PORTRAIT %}true{% else %}false{% endif %},
+		handleAttached:	{% if S_REIMG_ATTACHMENTS %}true{% else %}false{% endif %},
+		resizeSigImg:	{% if S_REIMG_RESIZE_SIG_IMG %}true{% else %}false{% endif %},
+		reimgForAll:	{% if S_REIMG_FOR_ALL %}true{% else %}false{% endif %}
+	};
+
+	$(function() {
+		const reimg = new ReIMG(reimgAltLabels, reimgSettings);
+		reimg.ApplyResize();
+	});
+</script>
+
+{% if S_REIMG_ZOOM_METHOD eq '_imglightbox' %}
+{% INCLUDEJS '@davidiq_reimg/js/imagelightbox.min.js' %}
+{% elseif S_REIMG_ZOOM_METHOD eq '_colorbox' %}
+{% INCLUDEJS '@davidiq_reimg/js/jquery.colorbox-min.js' %}
+{% elseif S_REIMG_ZOOM_METHOD eq '_magnific' %}
+{% INCLUDEJS '@davidiq_reimg/js/jquery.magnific-popup.min.js' %}
+{% endif %}
+{% INCLUDEJS '@davidiq_reimg/js/reimg.js' %}

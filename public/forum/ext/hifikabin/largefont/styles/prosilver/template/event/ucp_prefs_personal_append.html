@@ -1,0 +1,41 @@
+<dl>
+	<dt><label for="font1">{{ lang('FONT_CHOICE') ~ lang('COLON') }}</label></dt>
+	<dd>
+		<label for="font1"><input type="radio" name="font" id="font1" value="1"{% if S_USER_FONT %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+		<label for="font0"><input type="radio" name="font" id="font0" value="0"{% if not S_USER_FONT %} checked="checked"{% endif %} /> {{ lang('NO') }}</label>
+			<select name="size" id="font_size">
+				<option value="101"{% if S_USER_FONT_SIZE eq '101' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_105') }}</option>
+				<option value="102"{% if S_USER_FONT_SIZE eq '102' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_110') }}</option>
+				<option value="103"{% if S_USER_FONT_SIZE eq '103' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_115') }}</option>
+				<option value="104"{% if S_USER_FONT_SIZE eq '104' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_130') }}</option>
+				<option value="106"{% if S_USER_FONT_SIZE eq '106' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_150') }}</option>
+				<option value="110"{% if S_USER_FONT_SIZE eq '110' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_200') }}</option>
+				<option value="114"{% if S_USER_FONT_SIZE eq '114' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_300') }}</option>
+				<option value="120"{% if S_USER_FONT_SIZE eq '120' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_400') }}</option>
+			</select>
+	</dd>
+</dl>
+<dl>
+	<dt><label for="mobile_font1">{{ lang('MOBILE_FONT_CHOICE') ~ lang('COLON') }}</label></dt>
+	<dd>
+		<label for="mobile_font1"><input type="radio" name="mobile_font" id="mobile_font1" value="1"{% if S_USER_MOBILE_FONT %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+		<label for="mobile_font0"><input type="radio" name="mobile_font" id="mobile_font0" value="0"{% if not S_USER_MOBILE_FONT %} checked="checked"{% endif %} /> {{ lang('NO') }}</label>
+			<select name="mobile_size" id="mobile_font_size">
+				<option value="101"{% if S_USER_MOBILE_FONT_SIZE eq '101' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_105') }}</option>
+				<option value="102"{% if S_USER_MOBILE_FONT_SIZE eq '102' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_110') }}</option>
+				<option value="103"{% if S_USER_MOBILE_FONT_SIZE eq '103' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_115') }}</option>
+				<option value="104"{% if S_USER_MOBILE_FONT_SIZE eq '104' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_130') }}</option>
+				<option value="106"{% if S_USER_MOBILE_FONT_SIZE eq '106' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_150') }}</option>
+				<option value="110"{% if S_USER_MOBILE_FONT_SIZE eq '110' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_200') }}</option>
+				<option value="114"{% if S_USER_MOBILE_FONT_SIZE eq '114' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_300') }}</option>
+				<option value="120"{% if S_USER_MOBILE_FONT_SIZE eq '120' %} selected="selected"{% endif %}>{{ lang('USER_FONT_SIZE_400') }}</option>
+			</select>
+	</dd>
+</dl>
+<dl>
+	<dt><label for="bold1">{{ lang('FONT_BOLD') ~ lang('COLON') }}</label></dt>
+	<dd>
+		<label for="bold1"><input type="radio" name="bold" id="bold1" value="1"{% if S_USER_FONT_BOLD %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+		<label for="bold0"><input type="radio" name="bold" id="bold0" value="0"{% if not S_USER_FONT_BOLD %} checked="checked"{% endif %} /> {{ lang('NO') }}</label>
+	</dd>
+</dl>

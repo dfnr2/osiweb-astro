@@ -1,0 +1,18 @@
+services:
+    hifikabin.largefont.listener:
+        class: hifikabin\largefont\event\listener
+        arguments:
+            - '@template'
+            - '@user'
+        tags:
+            - { name: event.listener }
+
+    hifikabin.largefont.ucp_listener:
+        class: hifikabin\largefont\event\ucp_listener
+        arguments:
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@language'
+        tags:
+            - { name: event.listener }
