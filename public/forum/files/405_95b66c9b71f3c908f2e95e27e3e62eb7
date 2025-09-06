@@ -1,0 +1,125 @@
+
+'Generate .WAV file from scratch
+'
+'Make Kansas City Standard audio file from a text file
+'8 bit mono file, 24,000 samples/second, 8N2
+'
+'Generate two strings of sample values [B$(0) and B$(1)] which will contain
+'the data samples written to the output file for zero bits and one bits.
+'Each string will contain four repitions of 20 sample values, and so have
+'a length of 80 bytes, B$(1) actually having eight repetitions of 10 bytes.
+'
+DIM B$(1)
+B$(0) = "": B$(1) = ""
+RD = ATN(1) / 45
+FOR I = 0 TO 19
+ S = SIN(18 * I * RD)
+ SS = INT(120 * S + .5) + 128 'signed value biased by 128 to not be negative
+ B$(0) = B$(0) + CHR$(SS)
+ IF (I AND 1) = 0 THEN B$(1) = B$(1) + CHR$(SS)
+NEXT I
+B$(1) = B$(1) + B$(1)
+B$(0) = B$(0) + B$(0) + B$(0) + B$(0)
+B$(1) = B$(1) + B$(1) + B$(1) + B$(1)
+
+'Get file names
+
+CLS
+getfile:
+LINE INPUT "Input file name? "; f1$
+f$ = f1$: GOSUB checkexists
+IF exists GOTO found1
+
+PRINT : PRINT "File not found": PRINT
+GOTO getfile
+
+found1:
+DP = INSTR(f1$, ".")
+IF DP = 0 THEN FR$ = f1$ ELSE FR$ = LEFT$(f1$, DP - 1) ' Filename 'root'
+
+f2$ = FR$ + ".WAV"
+
+found2:
+PRINT : PRINT "Output file will be "; f2$: PRINT
+f$ = f2$: GOSUB checkexists
+IF NOT exists GOTO proceed
+
+PRINT "File already exists"
+LINE INPUT "Overwrite? "; y$
+y$ = LEFT$(y$, 1)
+IF UCASE$(y$) = "Y" THEN KILL f2$: GOTO proceed
+
+PRINT : LINE INPUT "New name for output file? "; f2$
+GOTO found2
+
+proceed:
+
+OPEN "B", 1, f1$
+ch$ = " "
+
+OPEN "B", 2, f2$
+
+'Write file header, per https://docs.fileformat.com/audio/wav/,
+'       as corrected by http://soundfile.sapp.org/doc/WaveFormat/
+
+hd$ = "RIFF": PUT #2, 1, hd$
+'total file length LESS 8 will be filled in at position 5
+hd$ = "WAVE": PUT #2, 9, hd$
+hd$ = "fmt ": PUT #2, 13, hd$      '4th chr is space, not null
+hd$ = MKL$(16): PUT #2, 17, hd$    'length of prededing header
+hd$ = MKI$(1): PUT #2, 21, hd$     '= PCM format
+hd$ = MKI$(1): PUT #2, 23, hd$     '# of channels
+hd$ = MKL$(24000): PUT #2, 25, hd$ 'samples/second
+hd$ = MKL$(24000): PUT #2, 29, hd$ 'samples/sec * bits/sample * channels / 8
+hd$ = MKI$(1): PUT #2, 33, hd$     'bits/sample * channels / 8
+hd$ = MKI$(8): PUT #2, 35, hd$     'bits/sample
+hd$ = "data": PUT #2, 37, hd$
+
+
+dl = 880! * LOF(1) + 48001: fl = dl + 44
+
+hd$ = MKL$(fl - 8): PUT #2, 5, hd$
+hd$ = MKL$(dl):     PUT #2, 41, hd$
+
+'Write one second of leader tone (300 bits of all '1')
+
+FOR I = 1 TO 300
+ PUT #2, , B$(1)
+NEXT
+
+FOR C = 1 TO LOF(1)
+ GET #1, , ch$
+ ch = ASC(ch$)
+ PUT #2, , B$(0) 'start bit
+ BM = 1
+ FOR BC = 0 TO 7
+  B = SGN(ch AND BM)
+  BM = 2 * BM
+  PUT #2, , B$(B)
+ NEXT
+ PUT #2, , B$(1) 'stop bit
+ PUT #2, , B$(1) ' "    "
+NEXT C
+
+FOR I = 1 TO 300  'one second lead-out tone
+ PUT #2, , B$(1)
+NEXT
+
+FS$ = CHR$(128) 'final sample = 0
+PUT #2, , FS$
+
+CLOSE
+END
+
+checkexists:
+ON ERROR GOTO notexist
+exists = -1
+OPEN "I", 1, f$: CLOSE 1
+ON ERROR GOTO 0
+RETURN
+
+notexist:
+exists = 0
+RESUME NEXT
+
+

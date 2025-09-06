@@ -1,0 +1,243 @@
+    1 ;SEB-3 driver
+    2 ;reconstructed source code
+    4           *=$BE00 ; or wherever
+    6           LDA $2363  ; entry with char. in a memory location
+    7                      ; (use $38B6 for 65U)
+    8           STA CSAVE  ; entry with char in accumulator, store locally
+    9           TXA
+   10           PHA
+   11           TYA
+   12           PHA
+   13           LDA CSAVE  ; retrieve character
+   14           AND #$7F   ; mask to 7 bits
+   15           LDX ESCFLG ; continuing an escape sequence?
+   16           BEQ NOTESC ; no
+   17           JMP ESCSEQ ; if yes go to escape sequence handler
+   19 NOTESC    CMP #$20   ; control code?
+   20           BCC CTLCHR ; yes
+   21           JSR ADR2ZP ; else move current address to $E6/$E7  
+   23           CMP #$60   ; "`", second space in OSI chargen ROM?
+   24           BNE NOTGRV
+   25           LDA #$1B   ; substitute ESCape code (rectangle) if so 
+   26 NOTGRV    CMP #$7C   ; code > '{' ($7B)? (Binary had CMP #$7D)
+   27           BCC CODEOK ; no, leave alone 
+   28           CMP #$7F   ; DEL char?
+   29           BEQ EXIT2  ; don't print it if so
+   30           EOR #$01   ; flip bit 0 if $7C, $7D, or $7E (fix chargen err)
+   32 CODEOK    LDY #$00
+   33           STA ($E6),Y  ; store char in video RAM
+   34 FORWRD    INC CURADR   ; increment cursor address low
+   35           BNE INCCOL
+   36           INC CURADR+1 ; and high if needed
+   37 INCCOL    INC COLSAV   ; increment column #    
+   38           LDA COLSAV   ; then get it in A
+   39           CMP #$50     ; did it reach 80?
+   40           BNE EXIT0C   ; exit if not (setting address, clearing wrpflg)
+   41           LDA #$00     ; if it did,
+   42           STA COLSAV   ; set column to 0
+   43           INC ROWSAV   ; and increment row
+   44           LDA ROWSAV   ; get row # in A 
+   45           CMP #$18     ; did it reach 24?
+   46           BNE EXIT0S   ; if not, exit (setting address and SETTING wrpflg)
+   47           JSR SCROL2   ; if so, scroll the screen
+   48           LDA #$30     ; address low of start of last line
+   49           STA CURADR   ; store it
+   50           DEC ROWSAV   ; decrement row # from 24 to 23
+   52 EXIT0S    SEC        ; set "wrap flag" to suppress action of an LF that follows
+   53 EXIT0C =  *+1        ; a branch to EXIT0C will clear the flag via the
+   54           BIT $18    ; hidden CLC instruction ($18) here
+   55 EXIT0     ROR WRPFLG ; bit 7 is what counts, rotate carry into it
+   57 EXIT      LDX CURADR   ; screen address low
+   58           LDA CURADR+1 ; screen address high
+   59           AND #$07     ; mask to 3 bits for CRT controller
+   60           LDY #$0F   ; register # for cursor address low
+   61           STY $DF80  ; select register
+   62           STX $DF81  ; and store the value
+   63           DEY        ; Y=$0E, register # for cursor address high
+   64           STY $DF80  ; select register
+   65           STA $DF81  ; and store the value
+   67 EXIT2     JSR $25D9  ; Control-S check (for 65D; use $2131 for 65U)
+   68           PLA
+   69           TAY
+   70           PLA
+   71           TAX
+   72           LDA CSAVE  ; restore char. to A
+   73           RTS
+   75 CURSUP    LDA ROWSAV ; get current row
+   76 BEXIT2    BEQ EXIT2  ; exit if already at top
+   77           DEC ROWSAV ; else decrement
+   78           LDA CURADR ; get screen address
+   79           SBC #$50   ; subtract 80 (carry is set from CMP of chr)
+   80           JMP STEXIT ; exit setting address, decr adr high if needed
+   82 CTLCHR    CMP #$0D   ; carriage return?
+   83           BEQ CR     ; do it if so  
+   84           CMP #$0A   ; linefeed?
+   85           BEQ LF   
+   86           CMP #$08   ; backspace?
+   87           BEQ BACKSP
+   88           CMP #$0C   ; forward-space (non-destructive)?
+   89           BEQ FORWRD
+   90           CMP #$1A   ; clear screen?
+   91           BEQ CLEAR
+   92           CMP #$0B   ; cursor up?
+   93           BEQ CURSUP
+   94           CMP #$1B    ; ESCape?
+   95           BNE CNOTES  ; no
+   96           STA ESCFLG  ; if ESCape, just store as flag for next call
+   97 CNOTES    CMP #$1E    ; home cursor?
+   98           BEQ HOME    ; do it if so
+   99           BNE EXIT2   ; else exit, not an implemented code
+  101 CR        LDY COLSAV  ; already at fist column (#0)?
+  102           BEQ EXIT2   ; exit if so
+  103           LDA CURADR  ; else get cursor address low
+  104           SBC COLSAV  ; subtract current column # (carry is set from CMP)
+  105           STX COLSAV  ; zero current column # (x=0)
+  107 STEXIT    STA CURADR   ; store address low; high byte will not change if
+  108 BCSX0C    BCS EXIT0C   ; carry is set, so exit setting address, clr wrpflg
+  109           DEC CURADR+1 ; or decrement high byte if needed, then
+  110 BCCX0     BCC EXIT0    ; exit setting address (carry already clr for wrpflg)
+  112 LF        BIT WRPFLG  ; suppress lf action since wrapped around to this line?
+  113           BMI EXIT0C  ; yes, clear the wrap flag and exit
+  114           LDA ROWSAV  ; current screen line
+  115           CMP #$17    ; =23 (bottom row)?
+  116           BEQ SCROLL  ; yes, screen must be scrolled
+  117           INC ROWSAV  ; otherwise increment line
+  118           LDA CURADR  ; get cursor address low
+  119           ADC #$50    ; add 80 to it, and
+  121 SETADX    STA CURADR  ; store; if no carry then
+  122           BCC BCCX0   ; exit (branch to a branch) clearing wrap flag
+  123           INC CURADR+1 ; increment address high if needed, then
+  124           BCS BCSX0C   ; also branch to a branch, exit clearing wrpflg
+  126 SCROLL    JSR SCROL2  ; DO ACTUAL SCROLL
+  127           BCS BCSX0C  ; EXIT (BRANCH TO A BRANCH)
+  129 BACKSP    LDA COLSAV  ; current column
+  130           BNE BS2     ; not at left margin, continue
+  131           LDA ROWSAV  ; current row
+  132           BEQ BEXIT2  ; exit if that's also zero 
+  133           DEC ROWSAV  ; BS around left margin
+  134           LDA #$50    ; to right margin
+  135           STA COLSAV  ; column=80 (temporarily)
+  136 BS2       DEC COLSAV  ; decrement column
+  137           LDA CURADR  ; cursor adr low
+  138           SBC #$01    ; subtract 1 (yes, carry is set)
+  139           JMP STEXIT  ; store, decr hi if needed, exit
+  141 CLEAR     JSR HOM2ZP ; top-of-screen address ($D000) to $E6/$E7
+  142                      ; Y=0, X=8 on return
+  143 CLPGLP    BCS DOCLR  ; carry set (from chr CMP) = clear whole screen
+  144                        ; carry clear here = clear to end of screen
+  145           LDA $E7      ; screen address high pointer on zero page
+  146           CMP CURADR+1 ; compare to current cursor address high  
+  147           BCC CNEXPG   ; branch to increment ZP page pointer if not same
+  148           LDY CURADR   ; page same, use Y to start clear from current pos
+  149                        ; carry is always set once actual clearing starts
+  150 DOCLR     LDA #$20    
+  151 DOCLR1    STA ($E6),Y ; store space in video RAM
+  152           INY         
+  153           BNE DOCLR1  ; loop until page done
+  154 CNEXPG    INC $E7     ; increment pointer to video page
+  155           DEX         ; decrement count of pages to do
+  156           BNE CLPGLP  ; loop if more to do (to clear or skip over)
+  158           LDA ESCFLG   ; was this invoked by ESCape sequence?
+  159           BNE ESEXIT   ; if so, don't change cursor position
+  161 HOME      STX COLSAV   ; zero cursor column
+  162           STX ROWSAV   ; and row
+  163           STX CURADR   ; and address low
+  164           LDA #$D0     ; first video RAM page
+  165           STA CURADR+1 ; store as cursor address hgh
+  166           BNE BCSX0C   ; and exit (branch to branch, carry still set)
+  168 SCROL2    JSR HOM2ZP  ;screen address ($D000) to ZP ($E6/7)
+  169 SCRLOO    LDY #$50    ;one screen line offset
+  170           LDA ($E6),Y ;read chr
+  171           LDY #$00    ;no offset
+  172           STA ($E6),Y ;put chr in preceding line
+  173           INC $E6     ;increment chr addr lo
+  174           BNE SCRLOO
+  175           INC $E7     ; and hi if needed
+  176           DEX         ; decrement pages to do
+  177           BNE SCRLOO  ; loop if not done
+  178           LDX #$30    ; adr lo of start of last line
+  179           LDA #$20    ; space
+  180 BOTLOO    STA $D700,X ; fill line with spaces
+  181           INX
+  182           BNE BOTLOO  ; (and to end of vid mem)
+  183           RTS
+  185 ESCSEQ    BMI SETCOL ; X >= $80 if final byte of address cursor (4th/column)
+  187           CPX #'=    ; third byte of address cursor sequence (2nd was '=')?
+  188           BEQ SETROW ; yes, branch to set row
+  190           CMP #'=    ; second byte of address cursor seq. ?
+  191           BEQ ESXIT1 ; yes, just save value ('=') for next time and exit
+  193           CMP #'T    ; clear to end of line?
+  194           BEQ CLEOL  ; yes, do that
+  196           CMP #'Y    ; clear to end of screen?
+  197           CLC        ; clear carry will distinguish from clear full screen
+  198           BEQ CLEAR  ; so branch to clear screen routine if so
+  200 ESEXIT    LDA #$00   ; clear ESC flag if sequence done or invalid code
+  201 ESXIT1    STA ESCFLG ; save value for next time
+  202           JMP EXIT2  ; and exit
+  204 CLEOL     JSR ADR2ZP ; move cursor address to $E6/$E7
+  205           LDX COLSAV ; X = current column 
+  206           LDA #$20   ; code for space
+  207           LDY #$00
+  208 CLEOLL    STA ($E6),Y ; store a space in screen RAM
+  209           INY         ; inc offset from current cursor
+  210           INX         ; inc column position
+  211           CPX #$50    ; position 80 (past end of line)?
+  212           BNE CLEOLL  ; loop if not
+  213           BEQ ESEXIT  ; yes, ESC sequence done
+  215 SETROW    CMP #$20   ; < $20?
+  216           BCC LOWROW ; skip subtraction
+  217           SBC #$20   ; else subtract $20 (carry is set)
+  218 LOWROW    CMP #$18   ; requested row # 24 or greater?
+  219           BCC ROWOK  ; no, row # is OK
+  220           LDA #$17   ; yes, use 23 (bottom row of 24-line screen) instead
+  221 ROWOK     ORA #$80   ; OR in flag that next byte is last one (column)
+  222           BMI ESXIT1 ; store it and exit
+  224 SETCOL    CMP #$20   ; < $20?
+  225           BCC LOWCOL ; skip subtraction
+  226           SBC #$20   ; else subtract $20 (carry is set)
+  227 LOWCOL    CMP #$50   ; requested column # 80 or greater?
+  228           BCC COLOK  ; no, column # is OK
+  229           LDA #$4F   ; yes, use 79 (right col of 80-col screen) instead
+  230 COLOK     TAX        ; column # to X
+  232           LDA ESCFLG ; stored desired row (with bit 7 set)
+  233           AND #$7F   ; mask off bit 7
+  234           TAY        ; and move to Y
+  235           STY ROWSAV ; save the new row 
+  236           STX COLSAV ; and column
+  238           LDA #$00
+  239           STA ESCFLG   ; Zero ESCape flag
+  240           STA CURADR   ; and cursor address low
+  241           LDA #$D0     ; 1st page of video RAM
+  242           STA CURADR+1 ; save as cursor address high
+  244           INY          ; Y = row+1
+  245 ROWLOO    DEY          ; count down row #
+  246           BEQ HROWAD   ; have row address if Y=0
+  247           LDA CURADR   ; else get address low   
+  248           CLC
+  249           ADC #$50     ; add 80
+  250           STA CURADR   ; update address low
+  251           BCC ROWLOO   ; loop if high byte OK
+  252           INC CURADR+1 ; else increment address high
+  253           BCS ROWLOO   ; then loop
+  255 HROWAD    TXA          ; column #
+  256           CLC
+  257           ADC CURADR   ; add to current address (start of row)
+  258           JMP SETADX   ; jump to store correct address and exit
+  260 ADR2ZP    LDX CURADR    ; get stored screen address low
+  261           LDY CURADR+1  ; and high
+  262           STX $E6       ; and copy to page zero location
+  263           STY $E7       ; (other routines can use same ZP pair)
+  264           RTS
+  266 HOM2ZP    LDY #$00   ; lo byte of cursor home adr (screen upper left corner)
+  267           LDA #$D0   ; hi byte of cursor home adr
+  268           STY $E6    ; copy to zero page
+  269           STA $E7
+  270           LDX #$08   ; count of pages to process (for clear or scroll)
+  271           RTS
+  273 CSAVE     .BYTE $00
+  274 CURADR    .WORD $D000
+  275 COLSAV    .BYTE $00
+  276 ROWSAV    .BYTE $00
+  277 WRPFLG    .BYTE $00
+  278 ESCFLG    .BYTE $00
+
