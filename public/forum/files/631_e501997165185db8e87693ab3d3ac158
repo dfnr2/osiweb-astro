@@ -1,0 +1,187 @@
+#ifdef WITH_SOUND	
+#define sample_length  14112    // 8x SampleFrequency*2*refresh (441 bytes per cycle in stereo/mono or 160msec @ 100% speed)
+#define sample_emu 46			// Emulator sample devider should be a bit linger then 1/SampleFrequency
+
+static int volume = 64;
+int sample_pos = sample_length/2;
+int sound_pos = 0;
+int sound_delta;
+int sound_delta_last = -sample_length/4;		// History value for sound syncronisation
+unsigned int sample_corr = 0;
+int sample_corr_value = 0;
+int sound_counter = 0;
+BOOL Mix_flag = TRUE;
+int corrzw;
+
+BOOL SoundEnable = FALSE;				// Sound controlled by volume, will loop always in the background
+BOOL SoundPlaying = FALSE;
+BOOL DACON_OFF = FALSE;
+
+
+static HWAVEOUT     hWaveOut = 0;
+static PBYTE        pBuffer;
+static PWAVEHDR     pWaveHdr;
+static WAVEFORMATEX waveform;
+
+
+void Sound_play(void){
+	unsigned int z;
+	MMTIME mmt;
+
+	if(SoundEnable){
+		waveOutSetVolume(hWaveOut,0);
+		waveOutReset(hWaveOut);
+		waveOutClose (hWaveOut);
+	}
+	waveform.nSamplesPerSec  = Soundcard_sample*Speed/100;			// Stereo 8 bit at 44.1 kHz
+	waveform.nAvgBytesPerSec = 2*Soundcard_sample*Speed/100;
+	SleepEx(50,true);												// let the soundcard driver finisch
+	SoundPlaying = FALSE;
+	SoundEnable = TRUE;
+	if(waveOutOpen(&hWaveOut, WAVE_MAPPER, &waveform, NULL, 0L, CALLBACK_NULL)!= MMSYSERR_NOERROR){		// Open Wave device
+		SoundEnable = FALSE;
+		return;  // Open Wave device failed
+	}
+	for (int z = 0; z < sample_length; z++) {
+		pBuffer[z] = 0x80;
+	}
+	waveOutPrepareHeader(hWaveOut, pWaveHdr, sizeof(WAVEHDR));
+	if(waveOutWrite(hWaveOut, pWaveHdr, sizeof (WAVEHDR)) != 0)		// this will set soundcard sammple pointer to start(zero)
+	{
+		waveOutUnprepareHeader(hWaveOut, pWaveHdr, sizeof(WAVEHDR));
+		if (pWaveHdr) free (pWaveHdr);
+		SoundEnable = FALSE;										// pushing out sample daza failed, sound will be disabled
+		return;
+	}
+	waveOutSetVolume(hWaveOut,0);		
+	do{																// we need to wait until soundcard device starts up
+		SleepEx(1,true);
+		mmt.wType = TIME_SAMPLES;
+		waveOutGetPosition(hWaveOut, &mmt, sizeof(MMTIME));
+		sound_pos = (mmt.u.sample % (sample_length/2));
+	}while(sound_pos<2);
+	
+	sample_pos = sample_length/2;									// and initialize sound play pointers to middle of buffer
+	SoundPlaying = TRUE;	
+}
+
+
+void Sound_mute(void){
+	if(SoundEnable){
+		waveOutSetVolume(hWaveOut,0);
+		waveOutReset(hWaveOut);
+		SoundPlaying=FALSE;
+	}
+}
+
+void Sound_unmute(void){
+	if(GetMenuState(hmenu, IDM_Sound_Port, MF_BYCOMMAND) & MF_CHECKED)
+	{
+		if(SoundEnable){
+			Sound_play();
+			waveOutSetVolume(hWaveOut,(volume<<8)+(volume<<24));	// update volume
+		}
+	}
+	if(!SoundEnable) CheckMenuItem( hmenu, IDM_Sound_Port, MF_UNCHECKED);
+}
+
+void Sound_init(void){
+	SoundEnable = FALSE;
+
+	pWaveHdr = (PWAVEHDR)malloc(sizeof (WAVEHDR));
+	pBuffer = (PBYTE)malloc(sample_length);
+	if(!pBuffer || !pWaveHdr)
+	{
+		if(pWaveHdr) free(pWaveHdr);
+		if(pBuffer) free(pBuffer);
+		SoundEnable = FALSE;
+		return;
+	}
+
+     // Set up headers and prepare them
+               
+	pWaveHdr->lpData          = (char *)pBuffer;
+	pWaveHdr->dwBufferLength  = sample_length;
+	pWaveHdr->dwBytesRecorded = 0;
+	pWaveHdr->dwUser          = 0;
+	pWaveHdr->dwFlags         = WHDR_BEGINLOOP | WHDR_ENDLOOP;		// single endless loop
+	pWaveHdr->dwLoops         = -1;
+	pWaveHdr->lpNext          = NULL;
+	pWaveHdr->reserved        = 0;
+
+	waveform.wFormatTag      = WAVE_FORMAT_PCM;
+	waveform.nChannels       = 2;
+	waveform.nSamplesPerSec  = Soundcard_sample*Speed/100;			// Stereo 8 bit at 44.1 kHz
+	waveform.nAvgBytesPerSec = 2*Soundcard_sample*Speed/100;
+	waveform.nBlockAlign     = 2;
+	waveform.wBitsPerSample  = 8;
+	waveform.cbSize          = sizeof(WAVEFORMATEX);
+
+	Sound_play();
+	return;
+}
+
+
+void Sound_kill(){												// Called on program termination
+	if(SoundEnable){
+		waveOutReset(hWaveOut);
+		waveOutClose (hWaveOut);
+		SoundEnable=FALSE;
+	}
+	if (pWaveHdr) free (pWaveHdr);
+	if (pBuffer) free (pBuffer);
+}
+
+
+void Sound_Sync(){												// Emulator sampling speed correction to be in sync to soundcard
+	int zw;
+	MMTIME mmt;
+	
+		if(Speed>200) return;									// Do nothing on speed >200%
+
+		mmt.wType = TIME_SAMPLES;
+		waveOutGetPosition(hWaveOut, &mmt, sizeof(MMTIME));
+		sound_pos = (mmt.u.sample % (sample_length/2));
+
+#if DEBUG_OUTPUT
+		wsprintf(TempA,"\r\nM=%8u\r\n",sound_pos);
+		MessageBox(0, TempA,TEXT("SOUND Message"), MB_ICONSTOP);
+#endif	
+		sound_delta=sample_pos/2-sound_pos;
+		if(sound_delta>=0) sound_delta=sound_delta_last;
+		zw=-(sound_delta+sound_delta_last)/2;					// Shows the current phase shift between Emulator sampling and Soundcard
+		sound_delta_last=sound_delta;							// Target value is sample_length/4 +/- ample_length/16
+
+		sample_corr_value=(sample_length/4-zw)/100;				// Correct deviations by changing streching/shrinking emulator sample intervall
+		if(sample_corr_value>8) sample_corr_value=8;
+		if(sample_corr_value<-8) sample_corr_value=-8;
+}
+#endif
+
+
+/*
+
+int ttmp1[1024];
+int ttmp2[1024];
+int ttmpc;
+
+		wsprintf(TempA,"Corr=%05d \r\n",sample_corr_value);
+		h_serial_Edit = GetDlgItem (h_serialio, IDC_TERMINAL_EDIT);
+		SendMessageA(h_serial_Edit, EM_SETSEL, GetWindowTextLength (h_serial_Edit), GetWindowTextLength (h_serial_Edit)); // set selection - end of text
+		SendMessageA(h_serial_Edit, EM_REPLACESEL, 0, (LPARAM)TempA); // append!		
+		
+
+		ttmp1[ttmpc]=sound_pos;
+		ttmp2[ttmpc++]=sample_pos/2;	
+		if (ttmpc >=1024) {
+			for(ttmpc=0;ttmpc<1024;ttmpc++){
+
+					wsprintf(TempA,"Sound=%05d  %05d\r\n",ttmp1[ttmpc],ttmp2[ttmpc]);
+					h_serial_Edit = GetDlgItem (h_serialio, IDC_TERMINAL_EDIT);
+					SendMessageA(h_serial_Edit, EM_SETSEL, GetWindowTextLength (h_serial_Edit), GetWindowTextLength (h_serial_Edit)); // set selection - end of text
+					SendMessageA(h_serial_Edit, EM_REPLACESEL, 0, (LPARAM)TempA); // append!
+			}
+			ttmpc=0;
+		}
+*/		
+
