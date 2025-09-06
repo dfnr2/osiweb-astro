@@ -1,0 +1,67 @@
+pointl = $fe
+pointh = $ff
+
+flag = $70
+flip = $71
+mod = $72
+ 
+	.ORG $0230    
+	jmp start
+begin:	.byte $03
+end:	.byte $A0
+
+start: lda #0
+       tay
+       sta pointl
+biglp: sta flag  
+       ldx #2
+       stx mod
+pass:  lda begin
+       sta pointh
+       ldx end
+       lda flag
+       eor #$ff
+       sta flip
+clear: sta (pointl),y
+       iny
+       bne clear
+       inc pointh
+       cpx pointh
+       bcs clear
+       ldx mod       
+       lda begin
+       sta pointh
+fill:  lda flag
+top:   dex
+       bpl skip
+       ldx #2
+       sta (pointl),y
+skip:  iny
+       bne top
+       inc pointh
+       lda end
+       cmp pointh
+       bcs fill
+       lda begin
+       sta pointh
+       ldx mod
+pop:   lda flip
+       dex
+       bpl slip
+       ldx #2
+       lda flag
+slip:  cmp (pointl),y
+       bne out
+       iny
+       bne pop
+       inc pointh
+       lda end
+       cmp pointh
+       bcs pop
+       dec mod
+       bpl pass
+       lda flag
+       eor #$ff
+       bmi biglp
+out:   sty pointl
+       jmp $FE00
