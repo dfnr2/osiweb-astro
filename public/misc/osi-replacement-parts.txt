@@ -1,0 +1,101 @@
+-*- text -*-
+This is a list of possible replacement parts for OSI board repairs.
+History:
+11/18/2011: updated part numbers on molex connectors, clarified some
+notes on buffers.
+2/17/2012: updated to reflect WDC 40-pin DIP parts.
+5/27/2015: added information on keyboard replacement switches.
+
+Finding parts:
+If you have a part number for a currently made part, you can search for
+distributor inventory on:
+http://findchips.com
+http://octopart.com
+
+If the part is no longer made, I suggest:
+Unicorn Electronics, http://unicornelectronics.com  - excellent service,
+and have an amazing number of vintage computer parts
+
+American Micro Semi, http://americanmicrosemi.com - larger operation,
+all kinds of obsolete semiconductor parts, excellent quality and service.
+
+Jameco, http://jameco.com - A perennial standby for classic computer parts.
+Reliable, good service.
+
+
+Replacement for keyboard switches (542/542B/542C keyboard, 543 keypad, 600/600D superboard):
+
+This replacement switch was discovered by Bill Dromgoole and by Grant (from the forum, creator of the 600/610 replica).
+Forum link: http://osiweb.org/osiforum/viewtopic.php?f=3&t=204
+
+Switch: Futaba MD-4PCS
+
+This can be purchased from Electronic Surplus:
+http://www.electronicsurplus.com/futaba-md-4pcs-switch-p-b-no-keyboard-package-of-20
+
+The switches were also sold by George Risk Industries with the part number KBM-01-01.  The data sheet is here:
+http://osiweb.org/datasheets/GRI-KBM-01-01.pdf
+
+
+Replacements for OSI Molex PCB connectors:
+
+12-pin right-angle (horizontal) edge connector (sockets): Molex 09-52-3121
+12-pin vertical molex connector (sockets): Molex 09-52-3123
+12-pin header (pins): Molex 26-60-2120
+
+6502 CPU
+The Western Design Center currently makes new DIP CMOS versions of the 6502 and 6521,
+available from major distributors.  The part number is W65C02S .
+For vintage chips, there are a large number of online vendors, including Jameco and Unicorn.
+
+
+
+Notes on PIA:
+6820 PIA can be hard to find. The 6821 and 6521 are electrically improved
+direct replacements.  New old-stock parts can be ordered from
+Unicorn Electronics (http://unicornelectronics.com)
+
+The Western Design Center makes a DIP CMOS versions of the 6521,
+available from major distributors.  The 40-pin electrically and mechanically
+compatible version is the W65C21N.  You can find distributors for this
+chip by searching on http://findchips.com or http://octopart.com
+
+
+
+Potential replacements for 8T26/8T28:
+
+1) note that the 8T28 and 8T26 are basically interchangeable in OSI
+   computers, as long as a machine has uniformly one or the other.
+   For RAM boards, it doesn't matter which you use: you can use either
+   chip, or you can use an 8T26 in one socket and an 8T28 in the
+   other.
+
+3) 74LS240 and 74LS241 (and 74HCT240/1) are perhaps the closest
+   replacements for the 8T26 and 8T28, respectively.  These are 20-pin
+   devices instead of 16-pin devices.  There are two "halves", with
+   opposing physical orientation, and complementary enable lines.
+   Unlike the 8T26/8T28, which which tie the driver output and
+   receiver input to a common "bus" pin, these chips have an input and
+   output pin for each direction.  This is why these chips have 4 more
+   pins than the 8T2x chips.Tying together neigboring input and output
+   lines on the "left" side of the chip (2+3, 4+5, 6+7, 8+9) results
+   in a logically identical replacement for the 8T26/8.  However, the
+   chips are not electrically identical.  In particular, the 8T26/8
+   have a much higher drive current on the BUS lines.  For most OSI
+   designs, this should not be of consequence, but care should be
+   taken with respect to the fannout.  For a direct replacement, an
+   adapter would be required.
+
+2) 74LS242/3 (or 74HCT24/23), 14-pin quad bidirectional inverting
+   ('242) and non-inverting ('243) transcievers.  These can be used in
+   many OSI boards, since on many boards, the input and output buffers
+   on the 8T28 are tied together.  Like 8T28, these have complementary
+   read/write enables.  Differs from 8T28 in that there are no
+   separate inputs/outputs; just A1-4 and B1-4.  The i/o pins are tied
+   together on most OSI boards, except the 542 keyboard.  Where it can
+   be used, an adapter would have to be made.
+
+3) Nat. Semi DS8641 (formerly Dallas Semi. part).  Similar to 8T26,
+   except pinout is different.  Open collector outputs require
+   resistor termination.  Also apparently obsolete, so not a great
+   choice.

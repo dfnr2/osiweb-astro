@@ -1,0 +1,43 @@
+Notes on OSI ROMS
+by Mark Spankus
+
+BASIC1.ROM    - image of 1st 2K basic rom 
+BASIC2.ROM    - image of 2nd 2K basic rom
+BASIC3.ROM    - image of 3rd 2k basic rom
+BASIC4.ROM    - image of 4th 2K basic rom
+OSIBASIC.ROM  - combined 8K image of basic at $A000
+CEGMON.ROM    - C2E replacement monitor rom (uses nonstandard mapping)
+CHARGEN.ROM   - character generator for OSI540 board
+OSI_IBM.ROM   - IBM character set in OSI540 compatible format
+OSIHIRES.ROM  - block graphics character set for plotting
+SYN600.ROM    - OSI monitor rom for multiple systems
+
+SYN600 Notes:
+The 3 of the 8 256 byte pages in this rom are mapped into 3 areas
+of the computers, $FD00, $FE00, and $FF00.  Different pages are
+used depending on the system. (Tape based, Disk based, model etc.)
+The $FD00 page is for the polled keyboard. The $FF00 page sets the
+IRQ, NMI & RST vectors and does the initial startup, the $FE00 page
+contains part of the tiny monitor & tape I/O etc.
+
+page 000 'H/D/M'   maps to $FF00 for a C2/C4 disk system
+page 100 keypoller maps to $FD00 for a C2/C4 system
+page 200 monitor   maps to $FE00 for a C2/C4 system
+page 300 'C/W/M'   maps to $FF00 for a C2/C4 tape system
+page 400 ??
+page 500 keypoller maps to $FD00 (for a C1 system?)
+page 600 monitor   maps to $FE00 (for a C1 system?)
+page 700 'D/C/W/M' maps to $FF00 for a C1 system
+
+On a C2/C4 system:
+ACIA is at $FC00-FCFF
+Keyboard at $DF00-DFFF
+Video $D000-D7FF, Color at $E000-E7FF
+Disk PIA, ACIA $C000-C0FF
+Basic ROM $A000-BFFF
+
+On a C1 system: (not sure if correct)
+ACIA at $F000
+Disk Prom at $F800
+Keyboard at $DF00-DFFF
+Video $D000-D3FF

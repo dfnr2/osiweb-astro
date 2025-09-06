@@ -1,0 +1,259 @@
+OSI hardware by board number (info below)
+
+
+400 CPU Board 6502 family or 6800
+420 4K static RAM board
+430 Cassette & Analog I/O
+440 Video Board
+450 8K EPROM & Parallel I/O + PROM Programmer
+455 8K EPROM & Parallel I/O
+470 Floppy Disk Controller
+480 8 slot Backplane
+495 Prototyping Board
+498 Card Extender Board
+500 CPU/4K Ram/Parallel I/O
+502 CPU/8K Ram
+505 CPU/Diskette Controller/Parallel I/O
+510 3 CPU Board (6502, Z80, 6800)
+520 16K Static RAM board
+525 16K Dual port Static RAM Board
+527 24K Static RAM board
+530 Dynamic RAM Board
+540 64x32 Video board (A series has serial->Cassette) (B series incl. color, AC interface)
+542 Polled Keyboard
+550 16 port ACIA
+560Z CPU Expander Z80 CPU and IM-6100, with 6502 for IOT microcode (PDP-8 compatible)
+600 aka C1/Superboard II has CPU/Video/Keyboard/Cassette
+530 Dynamic Ram Board - no info
+550 16 port ACIA - no info
+
+D & N Hardware
+MEM-CM9 24K Ram, Disk controller, real time clock
+8K Memory board
+
+
+Model 420C Memory Board
+-----------------------
+A 4Kx8 static ram memory board
+Uses 2102 1Kx1 static memories, with optional battery backup using 2 on-board NiCd cells or external battery. It has 18 address bits allowing for 256K of memory in a system. It can be populated as 4Kx12 for use with the 560Z PDP-8.
+Address: any 4K memory address $0000-$0FFF
+
+
+Model 430B Cassette & Analog I/O
+--------------------------------
+Can be populated for Kansas City Standard Cassette Interface or for RS-232. Has 8 parallel I/O lines, 2 fast D/A converters, and fast tracking A/D converter with 8channel multiplexer.
+
+Cassette 300 or up to 1200 baud, RS-232 or current loop, up to 50,000 baud. Uses S1883 UART
+D/A - 2 8bit 2v output 300ns settling time 1408L8 chip
+A/D - 8Bit -1 to +1v one conversion per system cycle, usable with signals up to 20 KHz bandwidth. 1408L8
+8-channel multiplexor National 3705
+8 parallel I/O - 8 TTL latched outputs, 3 used by multiplexor, 8 TTL inputs, non-latched
+Address: Noramlly $FB0x. Decodes 3 lowest adddress bits
+	User 8bit out write $FB02 
+	D/A #1 write $FB00
+	D/A #2 write $FB01
+	User 8bit in read $FB01
+	A/D conversion read $FB00
+	UART	(-SWE) $FB05 read
+		(-RDA) $FB07 read
+		(-RDE) $FB03 read
+		(RESET)$FB06 read
+		(-TDS) $FB04 write
+		(CS)   $FB05 write
+
+550 16 port 6850 Serial Port Board
+----------------------------------
+(no information) 
+Up to 16 6850 ACIA.
+For use with multishare system? C3?
+
+
+
+Model 440B Video board
+----------------------
+The OSI 440 video graphics board is a versitile high performance computer to TV interface.
+It can be economically populated as a terminal providing up to 32x32 characters on a screen and a keyboard input port. It can maximally be populated for 32x32 characters, 128x128 graphics and 4 color alphabetics.
+Video - 2V p-p into hi-Z, composite or ttl sync 60hz, 15.450Khz
+Font 5x7 uppercase ASCII
+Format 32 rows x 32 columns, unmodified TV sets typically display 24 x 24.
+Keyboard input: 7 bit parallel ASCII with continuous strobe or at least 50us long-pulsed strobe
+Ram: 1K x 6bit
+Graphics option: req. 446 kit, 420 memory board, (additional parts)
+Address: Noramally jumpered for $???
+
+
+Model 450B 8K Eprom & Parallel I/O + prom programmer
+Model 455 4K Eprom & Parallel I/O
+-----------------------------------
+These boards provide EPROM storage and up to 16 lines of parallel I/O
+Full address decoding anywhere in 64K address space. 4K or 8K
+Uses 6820 PIA at $xFxx
+
+
+Model 475 Floppy disk system with 470 Controller board
+------------------------------------------------------
+475 Kit include full size General System International Model 110 Disk Drive preassembeled with 470 controller board, 4 foot cable, OS65D w/ 8K basic on disk.
+The 475 board supports soft & hard sector formats at single and dual densities. Standard OS-65D software configures the disk for single density soft sector format with 250K bytes of user workspace per disk. OS-65D uses single index hole disks.
+Requires: OSI 65F Floppy Disk bootstrap prom, OSI 6500 system running at 1 or 2 Mhz.
+470 board:
+Contains Real-Time clock divider 10us,100us,1ms,10ms,100ms,1S - for jumper to PIA CB1,CB2,CA1,CA2 (don't know which was used)
+
+ Uses 6520 PIA & 6850 ACIA
+ PIA: *PB7 - Head Load         *PA7 - Index
+       PB6 - Low Current        PA6 - Select Drive 2
+      *PB5 - Select Drive 1     PA5 - Write Protect (optional)
+       PB4 - Fault Reset        PA4 - Ready (Drive 2)
+      *PB3 - STEP               PA3 - Sector (optional)
+      *PB2 - Step In            PA2 - Fault
+       PB1 - Erase Enable      *PA1 - Track 0
+      *PB0 - Write Enable      *PA0 - Ready (Drive 1)
+ ACIA: DCD wired to -(-Index & -Sector)
+       TXclk 250Khz
+
+Model 480 Backplane
+--------------------
+8-slots with buffering allowing additional 480 boards to be connected together for up to 250 slots
+
+Model 495 Prototyping
+---------------------
+
+Model 498 Card Extender
+-----------------------
+
+Model 500 CPU (C2P)
+-------------
+6502 CPU board with 4 -2Kx8 roms supplied with Microsoft Basic in ROM, 4K of on-board ram, RS-232 or current loop, ACIA, PIA, 3 256 x8 system roms.
+
+Address: Ram: 		$0000-0400
+	 Roms (4) 2Kx8: $A000-BFFF
+	 SYSROM (3): 	$FDxx, $FExx, $FFxx 
+	 ACIA 6850: 	$FCxx
+	 6820 PIA: 	$F7xx
+Works with OSI 65A serial prom monitor, 65V video prom monitor, and floppy disk bootstrap proms
+
+
+Model 510 CPU board (C3)
+-------------------
+3 CPUs -6502A, 6800, Z-80, ACIA, PIA, 3 1702A PROMS for 6502 (256x8), 1 1702A PROM for 6800
+Address decoding for up to 1MB memory
+
+6502 Proms at $FDxx, $FExx, $FFxx
+6800 Prom  at $FFxx
+Processor selection manual or connected to PIA PA6, PA7 (01 = Z80, 10=6800, 11=6502)
+PIA PA0-PA3 -> A16 -A19. PA4 ->ROM/RAM sel, PA5 ->Processor Switch
+
+Model 520 16K ram board
+------------------------
+Uses 4Kx8 EMM 4200 Static rams (3 voltages, +5, +12, -9)
+
+Model 525 16K Dual Port RAM
+---------------------------
+Uses 4K, 8K, or 16K of 2114 1Kx4 static rams.
+
+Model 527 24K static ram board
+------------------------------
+Usually populated as 8K, 16K, 24K board using 2114 static rams.
+Additional address decoding for up to 1MB (A6-A19)
+
+Model 560Z CPU expander
+-----------------------
+Supports Z80 CPU and IM-600 (PDP compatible) microprocessors plus three-way bus switching and run/single step circuitry. The 560Z runs under the command of a 6502 based 400, 500, or 510 system.
+
+Model 400 CPU board
+-------------------
+Supports one of 6502, 6502A, 6501, 6512, Motorola 6800, 6800A, 6802, 6802B
+PROM supports up to two of the following: OSI 65A Serial Monitor, OSI 65V Video Monitor, OSI 65F Floppy disk bootstrap
+RAM: optional 1Kx8 of 2102
+Serial: ACIA based 20ma current loop or RS-232, up to 100,000 baud.
+Parallel: Supports one of the following PIA devices for up to 16 I/O lines: 6820, 6520, 6522, 6530, 6830
+Buffering from up to 250 OSI boards. Provisions for user supplied front panel and DMA capability
+Addressing for 2 PROMS: $FExx, $FFxx
+		RAM: $0000- $03FF
+		PIA: $FDxx
+		ACIA $FCxx
+
+Model 542 Polled Keyboard
+-------------------------
+Usually connect through 540 Video board at $DFxx
+Contains A15 connector I/O board, 8x8 keyboard matrix, 8bit resistor ladder D/A conversion "noise" output, 8bit "tone" output.
+
+Keyboard write @ $DF00 sets row, read at $DF00 read columns. A bit is set when a key is pressed.
+Tone enable when bit 1 (0x02) is set at $DE00
+
+Tone generator: frequency out = 49152/I where I= value stored at $DF01
+Frequency is based on ???
+DAC: Capacitively coupled output from simple R2R resistor DAC of value stored @ $DF01
+
+
+Model 540 Rev A board
+---------------------
+Supports 32x32, and 64x32 video modes B&W, with 542 polled keyboard interface
+Character memory $D000-D7FF each display row always $40 bytes long
+Can be populated with 6bit of memory for 64 uppercase characters, or 8bit for full OSI character set.
+Contains KCS cassette interface for 500 board serial <-> cassette conversion.
+
+
+Model 540B Video board
+----------------------
+Supports 32x32, and 64x32 video modes with color, 542 keyboard interface
+Character memory $D000-D7FF each display row always $40 bytes long
+Color memory $E000-E7FF 4bits.
+bit 0: 0=invert (inverse (bright) txt, color background), 1=normal
+bit 1-3: 0=yellow, red, green, olive, blue, purple, sky blue, black
+
+Write Register @ $DE00 controls video modes:
+bit 0 1=32, 0=64
+bit 1 1=tone on (542 keyboard)
+bit 2 1=color on 
+bit 3 1=enable 38-40Khz AC Home control output
+
+Read Register @ $DE00
+bit 7 = video timing counter bit, 0 for 1/120 second, 1 for 1/120 second, based on video clock (60Hz)
+
+Model 502 CPU board (C8P)
+-------------------
+CPU board w/ ROM, ACIA
+8K Basic in ROM via 4 2Kx8 ROMS, 2K Monitor ROM using priority encoder to map various pages to
+$FFxx, $FExx, $FDxx. ACIA 6850 at $FC00. 8K RAM using 2114 @ $0000-$1FFF Built in KCS Cassette
+interface
+
+
+Model 505 CPU Board (C4P/MF)
+-------------------
+CPU board w/ ROM, ACIA, Floppy Disk I/O, Real Time Clock
+ROM $FDxx, $FExx, $FFxx
+Floppy disk interface: 6850 PIA at $C000, 6850 ACIA at $C010
+ACIA 6850 at $FC00 for RS-232 serial I/O. Baud jumpers for 75,150,300,600,1200,2400,4800,9600 
+Disk PIA $C0xx CB1 connected to 400mSEC (2.5/sec) clock divided from system clock (RTC)
+Home security - PIA $F700-F703 
+
+I/O at $C704-C70E for connection to A15 I/O board which contains connectors for keypads, joystick, buffered I/O contains A0-A3, ø2, R/W, D0-D7 for Head End Cards. (MDS-since it requires external hardware, without harware installed, looks like NULLREAD space I think...)
+
+PIA $F7xx CA2 can be wired to WAIT input allowing control of CPU speed, 1 or 2Mhz
+PIA $F7xx CB2 output controls CTS select from Modem or Printer serial interface
+
+CA-15 board
+-----------
+Mounted in back of a OSI C4P-MF, C4P-DMF, C8P-DF
+Contains the following connectors: Joystick & Numeric Keypad, Modem & Serial Printer, 16 PIA lines
+normally used for the Home Security System (AC-17P), 16 pin I/O Bus for HEAD END CARD
+Attaches via 16 pin DIP socket.
+
+CA-20 card
+----------
+contains the necessary logic to decode 8 distinct HEAD END CARD interfaces, needs 1 OSI slot in backplane. Recommended for C2 & C3 series computers, may also be made to work in C4P & C8P.
+Contains battery backed clock
+
+HEAD END CARDS
+--------------
+CA-21 Board - bit sitching & sensing. 48 line parallel I/O featuring 3 PIA & prototyping area.
+
+CA-22 Board - Analog I/O Designed as a high speed analog I/O but differs from other HEAD END CARDs in that it can be plugged directly into the computers standard bus. 16 channel analog multiplexor, sample & hold. 8 or 12 bit operation. 66K samples/sec 8bit 28K in 12bit.  2 high speed DAC, 8 or 12 bits. 3 TTL level inputs, 6 open collector outputs.
+
+CA-23 Board - EPROM Programmer for 1K to 8K EPROMS.
+
+CA-24 Board - Prototyping. Solderless breadboard design. Clock Generator 25K-70KHz, 16 stage divider.
+
+CA-25 Board - Accessory interface. Designed to implement some of the functions normally associated with the AC-17P Home Security and/or Wireless A.C. Remote Control systems to a C2 and C3 series computers.
+
+

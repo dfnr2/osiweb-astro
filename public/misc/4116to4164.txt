@@ -1,0 +1,52 @@
+Replace all the 4116 RAM with 4164 RAM
+
+Replacing the odd RAM chip in a Williams set with a 4164 is all well
+and good, but what about if we want to replace the whole lot? All the
+modification to each chip is going to get a bit tedious... fortunately
+there is an easy way to modify the board to use ALL 4164's - it will
+not work with a mixture of 4116's and 4164 or with all 4116's.
+
+Let's have another look at the pinouts of the 2 RAM types:
+
+       ___  ___                ___  ___
+ -5v -|1  \/ 16|- Gnd    n/c -|1  \/ 16|- Gnd
+ Din -|2     15|- /CAS     D -|2     15|- /CAS
+ R/W -|3  4  14|- Dout   /WE -|3  4  14|- Q
+/RAS -|4  1  13|- A6    /RAS -|4  1  13|- A6
+  A0 -|5  1  12|- A3      A0 -|5  6  12|- A3
+  A2 -|6  6  11|- A4      A2 -|6  4  11|- A4
+  A1 -|7     10|- A5      A1 -|7     10|- A5
++12v -|8      9|- +5v    Vcc -|8      9|- A7
+       --------                --------
+
+If you remember, the only pins we needed to re-route were those on
+three "corners", the power supply pins 1, 8 and 9. Fortunately for us,
+-5v is only used on the CPU board for the RAM, and +12v regulated is
+only used for the RAM too. The +12v unregulated is used by the reset
+circuit.
+
+So, we need to change the +12v into +5v and the -5v does not need to
+be connected at all. If we manage to do this we can plug 4164's
+straight into the 4116 sockets without having to modify them.
+
+The best way to do this which requires no modification to the CPU
+board is to build a small adapter which plugs in between the CPU board
+power conector and the molex connector supplying power to the CPU
+board. All pins which are normally used should be wired straight
+through except for:
+
+Pin 9 - leave this unconnected (formerly -5v)
+Pin 5 - Connect pin 5 at the PCB side to pin 7, which will provide pin 5 with +5v.
+
+It'd also be a very good idea to cover the ends of the unused pins on
+the male connector with heatshrink or some other insulating material -
+partucularly pins 5 and 9 as we don't want +12v or -5v shorting out on
+anything!
+
+That's it! Just plug in the adapter if you're using a board with
+4164's and remove it if you're using a board with 4116's or modified
+4164's. If you don't use the adapter in the correct circumstance you
+*will* fry something!
+
+Thanks go to Clay who did the groundwork for this mod.
+
