@@ -1,0 +1,12 @@
+;OSI echo keypresses to screen. Uses relative
+;branches, so it can be located anywhere in memory
+
+*=$0300
+    .EXE *
+	LDY #$00
+LOOP
+	JSR $FD00
+	STA $D106,Y
+	INY
+	BNE LOOP
+	BEQ LOOP 

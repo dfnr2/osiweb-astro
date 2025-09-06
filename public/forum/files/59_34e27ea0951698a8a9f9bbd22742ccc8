@@ -1,0 +1,324 @@
+;DOS/65 LOADER
+;OSI Version
+;for c1p and sbii
+;Version 2.10
+;released:       4 august 1983
+;The OSI LOADER and BOOT are unique due to
+;the total impossibility of putting all BOOT
+;code into a single DOS/65 sector. The
+;approach taken is to have all the code in
+;LOADER and to have BOOT supply the variable
+;data such as load address and sectors to
+;load. LOADER can be located in ROM
+;and need not change as MSIZE or PAGES
+;changes.
+;definitions
+
+speed             =                 49             ;49=1MHz
+numtrk            =                 40             ;number of tracks
+sectrs            =                 16             ;sectors per track
+stprte            =                 5              ;step rate in ms
+    ;osi addresses and parameters                  ;
+scrpgs            =                 4              ;pages to clear in screen
+screen            =                 $d385          ;prompt location
+scrcnt            =                 $d800          ;control port for video
+romkbd            =                 $fd00          ;rom polled keyboard input
+    ;pia                                           ;
+flpsts            =                 $c000          ;status port
+    ;bit definitions
+    ; 0               drive 0 ready if 0
+    ; 1               track 0 if 0
+    ; 2
+    ; 3
+    ; 4
+    ; 5               write protect if 0
+    ; 6               drive select (0=B or D, 1=A or C)
+    ; 7               index if 0
+flpcnt =          flpsts+2
+    ;bit definitions
+    ; 0               write enable if 0
+    ; 1               erase enable if 0
+    ;                      enable 200us after write enable
+    ;                      disable 530us after write disable
+    ; 2               step
+    ; 4                 0 if in
+    ;                   1 if out (to track zero)
+    ; 3               step on falling edge
+    ; 4
+    ; 5               side select (0=C or D, 1=A or B)
+    ; 6
+    ; 7               head load if 0
+    ;acia
+flpdta =         $c011    data port
+    ;page zero data initialized by boot
+*           =$00
+ldeadr     *=*+2                      load address
+pointr      =ldeadr                   just used for screen clear
+simadr     *=*+2                      sim entry address
+seclde     *=*+1                      sectors to load
+sectrk     *=*+1                      sectors per track
+nxtsec     *=*+1                      next sector to read
+    ;page zero data used by LOADER but not
+    ;initialized by BOOT
+trkpnt     *=*+2                      track pointer
+rdeadr     *=*+2                      read address
+curtrk     *=*+1                      current track
+    ;main program
+    ; if in rom change the next line to the appropriate address
+*      =         $e340
+       ldx       #$FF                 set stack
+       txs                            
+       cld                            binary mode
+       sei                            disable interrupts
+    ;clear screen                     
+loader ldx       #scrpgs              pages to clear
+       lda       #$d0                 starting page
+       sta       pointr+1             and set
+       ldy       #0                   clear lower part
+       sty       pointr               of pointer
+       lda       #' '                 get space
+clrslp sta       (pointr),y           put space on screen
+       iny                            bump index
+       bne       clrslp               loop if more
+       inc       pointr+1             bump high pointer
+       dex                            drop page count
+       bne       clrslp               loop if more
+    ;do opening                       
+opnlpe lda       opnmsg,x             get char
+       sta       screen,x             put on screen
+       inx                            bump index
+       cpx       #11                  see if past end
+       bne       opnlpe               loop if not
+    ;initialize pia                   
+       lda       #%01000000           
+       ldy       #0                   
+       ldx       #%00000100           
+       sty       flpsts+1             ddr on a side
+       sta       flpsts               all but one are input
+       stx       flpsts+1             back to data
+       sta       flpsts               set output to high
+       sty       flpcnt+1             ddr on b side
+       dey                            y to ff
+       sty       flpcnt               all are output
+       stx       flpcnt+1             back to data
+       sty       flpcnt               set all high
+       jsr       home                 home it
+       jsr       rdytrk               get header
+       bne       error                branch if error
+getv   jsr       rdlbyt               look for rest of header
+       cmp       #'v'                 
+       bne       getv                 loop until v
+       jsr       rdlbyt               now get number
+       cmp       #1                   if not 1
+       bne       error                is error
+       jsr       rdlbyt               now get length
+       cmp       #sectrs/2            see if correct
+       bne       error                error if not
+    ;got good header
+       ldx       #0                   clear index
+btelpe lda       #%00000001           mask for ready
+tstflp bit       flpdta-1             test acia
+       beq       tstflp               loop if not ready
+       lda       flpdta               else get byte
+       bvs       error                parity error
+       sta       $00,x                else put in page zero
+       inx                            bump index
+       bpl       btelpe               then loop
+    ;got a good boot so all is initialized
+    ;start read again
+gettrk jsr       rdetrk               read entire track
+       bcs       error                exit if error
+gottrk jsr       strkpt               set pointer
+       ldy       #0                   now move a sector
+mvesec lda       (trkpnt),y
+       sta       (ldeadr),y
+       iny
+       bpl       mvesec               of 128 bytes
+       clc                            add 128 to pointer
+       tya
+       adc       ldeadr
+       sta       ldeadr
+       bcc       *+4
+       inc       ldeadr+1
+       dec       seclde               drop count
+       beq       alllde               done if all loaded
+       inc       nxtsec               else bump sector
+       lda       nxtsec               get it
+       cmp       sectrk               compare to max
+       beq       gottrk               ok if equal
+       bcc       gottrk               or less
+       lda       #1                   else reset
+       sta       nxtsec               sector
+       jsr       stepin               step in a track
+       jmp       gettrk               and loop to read
+    ;data all read and moved
+alllde jmp       (simadr)             execute
+    ;general error handler
+error  jsr       unldhd               unload head
+       ldx       #0                   now send error message
+errlpe lda       errmsg,x             get char
+       sta       screen,x             send to screen
+       inx                            bump index
+       cpx       #6                   see if too big
+       bne       errlpe               loop if not
+forevr beq       forevr               else loop forever
+    ;messages
+opnmsg .byt      'DOS/65 V2.1'
+errmsg .byt      'ERROR!'
+    ;home drive to track zero
+home   jsr       stepin               step head in one
+       jsr       dly12m               delay 12ms
+hlp    lda       #%00000010           mask for track zero
+       bit       flpsts               test it
+       bne       nthome               continue if not there
+       lda       #0                   clear current
+       sta       curtrk               track
+       rts                            else done
+nthome jsr       stepot               step out
+       jmp       hlp                  and loop
+     ;step towards track zero         
+stepot lda       flpcnt               get control
+       ora       #%00000100           set direction to out
+       bne       step
+     ;step away from track zero
+stepin inc       curtrk               bump track
+       lda       flpcnt               get control
+       and       #%11111011           get direction to in
+step   sta       flpcnt               set it
+       jsr       dly12                wait 12 cycles
+       and       #%11110111           set step bit
+       sta       flpcnt               set it
+       jsr       dly24                delay 24 cycles
+       ora       #%00001000           clear bit
+       sta       flpcnt               set it
+       ldx       #stprte              get rate in ms
+       jmp       dlyxm                delay the right time
+    ;delay=20*y+14 cycles
+dlyy20 jsr       dly15                delay 15 cycles
+       dey                            drop count
+       bne       dlyy20               loop if more
+       nop                            waste time
+       rts
+    ;delay=15 cycles(if z=0)
+dly15  bne      *+2
+    ;delay=12 cycles
+dly12  rts
+    ;delay=24 cycles
+dly24  jsr      dly12                 do 12
+       rts
+    ;delay=l2ms
+dly12m ldx      #12
+    ;delay=xms
+dlyxm  ldy      #speed
+       jsr      dlyy20                do 20 cycles
+       dex
+       bne      dlyxm                 loop if more
+       rts
+    ;load head and wait 40 ms
+loadhd lda      #%01111111            set load bit
+       and      flpcnt                to active
+       sta      flpcnt
+       ldx      #40                   delay 40 ms
+       jmp      dlyxm
+    ;unload head
+unldhd lda      #%10000000            set load bit
+       ora      flpcnt                to inactive
+       sta      flpcnt
+       rts
+    ;set up to read track into buffer
+    ;if header ok then z=1 else z=0
+rdytrk jsr      loadhd                load head with settling delay
+       sei                            disable interrupts
+fndind lda      flpsts                read status
+       bmi      fndind                not there yet
+gotind lda      flpsts                read again
+       bpl      gotind                loop while index
+       lda      #%00000011            master reset
+       sta      flpdta-1              
+       lda      #%01011000            no interrupt,rts* high,8+ep+s,/1
+       sta      flpdta-1              
+trkstr lda      flpsts                get status
+       bpl      inderr                error if index
+       jsr      rdlbyt                read a byte
+tryc   cmp      #'C'                  see if start code
+       bne     trkstr                 if not keep looking
+       jsr     rdlbyt                 read next byte
+       cmp     #'W'                   see if second half
+       bne     tryc                   if not try for C
+       jsr     rdlbyt                 get another byte
+    ;the following line works because system tracks
+    ;are low numbers and hex = bcd
+       cmp     curtrk                 see if correct
+       bne     rdyext                 error it wrong tract
+       jsr     rdlbyt                 get next byte
+       cmp     #'X'                   see if X
+rdyext rts                            
+inderr lda     #1                     say error
+       rts
+    ;read a byte from disk into a (ignore parity)
+rdlbyt lda       flpdta-1             get acia status
+       lsr       a                    check for ready
+       bcc       rdlbyt               loop if not
+       lda       flpdta               get byte
+       rts
+    ;set trkpnt to first byte of desired sector in track buffer      .
+strkpt lda       nxtsec               get next sector
+       sec                            drop b y one
+       sbc       #1                   
+       ldy       #0                   clear high part of pointer
+       sty       trkpnt+1             
+       ldy       #7                   log2 128
+mul128 asl       a                    multiply
+       rol       trkpnt+1             
+       dey                            
+       bne       mul128               loop til done
+       clc                            now add buffer start
+       adc       #<trkbuf
+       sta       trkpnt
+       lda       trkpnt+1
+       adc       #>trkbuf
+       sta       trkpnt+1
+       rts
+    ;read track into buffer
+    ;  if ok then c=0
+    ;  if error then c=1
+rdetrk lda       #<trkbuf             point to start of buffer
+       ldy       #>trkbuf             
+       sta       rdeadr               set pointer
+       sty       rdeadr+1             
+       jsr       rdytrk               get ready to read
+       bne       rdeerr               bad header error
+tryv   jsr       rdlbyt               get next byte
+       cmp       #'v'                 see if v
+       bne       tryv                 loop until is
+       jsr       rdlbyt               and another
+       cmp       #1                   if not   1
+       bne       rdeerr               is error
+       jsr       rdlbyt               get track length
+       cmp       #sectrs/2            compare to correct
+       bne       rdeerr               error if wrong
+       tax                            make a counter
+       ldy       #0                   clear index
+rdelpe lda       #%00000001           get mask for ready
+tstaca bit       flpdta-1             test acia
+       beq       tstaca               loop if not ready
+       lda       flpdta               get byte
+       bvs       rdeerr               parity error
+       sta       (rdeadr),y           put in memory
+       iny                            bump index
+       bne       rdelpe               loop if more in page
+       inc       rdeadr+1             bump pointer
+       dex                            drop page count
+       bne       rdelpe               loop if more pages
+       clc                            else done and ok
+       bcc       rdeext               then exit
+    ;read error
+rdeerr sec
+    ;common read exit
+    ;unload must not alter c bit
+rdeext jmp       unldhd               un load head
+    ;data area
+*      =$300
+trkbuf =*
+    *=sectrs/2*256+*        ;track buffer
+.END
