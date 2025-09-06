@@ -1,0 +1,21 @@
+Appendix J
+65V Monitor command summary
+
+The OS-65V Monitor responds to the following keys:
+
+0-9,A-F	   Hex digits
+
+.	   Change to Address Mode
+
+/	   Change to Data Mode
+
+G	   Go to address shown on screen and execute code there
+
+RETURN	   Increment address (only in Data Mode)
+
+L	   Transfer control to audio cassette/serial line.  This command enters
+	   the Data Mode, ignores the keyboard and listens only to the
+	   cassette port (if present).  To transfer control back to
+	   the keyboard, press reset or load $00FD with a $00 via
+	   tape.
+
