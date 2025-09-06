@@ -1,0 +1,3 @@
+The BASIC 4 ROM replaces the original BASIC4 ROM.
+
+No initialization needed.

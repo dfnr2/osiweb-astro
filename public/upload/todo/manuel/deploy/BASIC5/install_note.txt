@@ -1,0 +1,6 @@
+Installation:
+
+The BASIC5 ROM should be installed $9000
+
+If you have the TEC-II board for the BASIC ROM set, then install the BASIC5 ROM
+at U11. (UK101 and 600 board)

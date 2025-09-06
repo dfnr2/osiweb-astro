@@ -1,0 +1,9 @@
+MK14HAK OSIFTP Updates:
+
+12/11/2015	/ROM BASIC/Premier/Checking Accounts.BAS   (B5 usage)
+		/ROM BASIC/Premier/BASIC 5 Manual		
+		/ROM BASIC/PSGExperiment.BAS  (Marick Software)
+
+		/Hardware/Sound/PSGExperiment.BAS  (Marick Software)
+
+12/16/2015	/Reference/Premier Newsletters (rotated and merged)
