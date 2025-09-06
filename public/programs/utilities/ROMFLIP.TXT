@@ -1,0 +1,5 @@
+ROMFLIP 1.0
+-----------
+Converts an Ohio Scientific (OSI) character rom dump between
+C1/Superboard2 and C2/C4 model computers.
+

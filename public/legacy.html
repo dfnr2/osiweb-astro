@@ -1,0 +1,1144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+    <title>Dave&#39;s OSI repository</title>
+    <meta content="OpenOffice.org 2.0  (Linux)" name="GENERATOR" /><meta content="20060116;1212400" name="CREATED" /><meta content="David Fenyes" name="CHANGEDBY" /><meta content="20060116;1402100" name="CHANGED" />
+  </head>
+  <body dir="ltr" lang="en-US">
+    <div align="center">
+      <h1><font color="#0033ff">Dave&#39;s OSI page</font></h1>
+    </div>
+
+    <p><br />
+      In the 70&#39;s, personal computers were a fresh idea.&nbsp; Your choice of computer was as much an individual expression as your choice of car.&nbsp; One of the earliest makers of complete computer systems was a small company called Ohio Scientific.&nbsp; They specialized in bare boards and kits for hobbyists, later focusing on fully built, integrated systems.&nbsp; I bought my C2-4P used in 1979, after hanging out at computer stores and drooling over PET, Apple, and the OSI challengers (and over glossy ads for the IMSAI, SOL, etc.) for a couple of years.&nbsp; The Challengers were perhaps the most conducive to hacking because of their spacious layout, modular design, and simple architecture.&nbsp; There are other sites that recount the history of these machines and the company that made them (see the links section.)&nbsp; Recently, I dug out my old C2, removed lots of blue wires, restored many traces (I would like to add a hacks page later) and got my machine back to the familiar C/W/M? prompt.<br />
+      <br />
+      This archive is a repository for OSI thoughts, tips, tricks, hacks, literature and software.&nbsp; I&#39;m attempting to arrange it in as sane a fashion as possible.</p>
+
+    <p><font size="5"><strong>Your OSI doesn&#39;t work?&nbsp; Don&#39;t panic. . .</strong></font></p>
+
+    <p><span><span style="font-weight: bold">You can almost certainly fix your machine, perhaps with a bit of help.&nbsp; </span>Even back in the day, OSI owners have traditionally, as a group, been familiar with the guts of our machines, and most have spent many a late hour chasing down bugs, hacking in hardware mods, and intefacing with foreign objects.&nbsp; And OSI machines are generally simple to understand and (usually) to fix.</span></p>
+
+    <p><span>To start, take a look at <a href="misc/Troubleshoot_C1.pdf" title="">this article&nbsp;</a> from Peek(65)&nbsp; Vol 6, issue 11.&nbsp;&nbsp; </span><span>If you have a C1,C2, C4, C8, Superboard, or similar system, then check out the SAMS manuals (in the <a href="#Manuals" title="">Manuals</a> section below).&nbsp; </span><span>Also, Prof. Mark Csele has a nicely illustrated discussion of some specific debugging hints on <a href="http://192.197.62.35/staff/mcsele/OhioScientific.html" title="">his web page</a>.&nbsp; Also, check out the <a href="#Tips" title="">Tips and Tricks</a> section below.&nbsp; Post on the <a href="osiforum" title="">OSIweb forums</a></span><span>.&nbsp;&nbsp; </span>Also, there are some online groups of vintage computer enthusiasts that don&#39;t specifically focus on OSI, but have accumulated wisdom about computer hardware, and probably more than a couple OSI enthusiasts.&nbsp; You may get some help on the classic computer mailing list (the cctalk list; check out <a href="http://www.classiccmp.org/" title="">http://www.classiccmp.org</a>, and also check out the Vintage Computer Federation  <a href="http://vcfed.org/forum/forum.php">forums</a>. You can also contact me directly by email, through the forums.</p>
+
+    <p><font color="#000000">If you have an OSI, or OSI parts that you just don&#39;t feel motivated to repair or maintain, or OSI software or documentation that you would like to share with the world, then consider contributing it to the OSI archive.</font></p>
+
+    <p><font color="#000000">If you want to just chat privately, you can email me at my osiweb.org address (dave, of course).&nbsp; Or register for the forums, and send a private message or email from there. </font></p>
+
+    <p><br />
+      <font size="5"><strong><a href="#Hardware:">OSI Hardware</a></strong><br />
+        <a href="#ThirdPartyHardware" title="">Third Party Hardware</a><br />
+        <a href="software.html">Software</a><br />
+        <a href="journals.html">Journals</a><br />
+        <a href="#Manuals">Manuals</a><br />
+        <a href="#Books">Books</a><br />
+        <a href="#Ads" title="">Ads and Catalogs</a><br />
+        <a href="#Tips">Tips, Tricks, Notes</a><br />
+        <a href="#Links:">Links</a></font><br />
+      <a href="#Credits" title=""><font size="5">Credits</font></a></p>
+
+    <p><br />
+      <font size="5"><a href="osiforum">OSI Forums</a></font><font color="#000000"><font size="5"> </font></font></p>
+
+    <h2><font color="#0000ff">WISH LIST:</font></h2>
+
+    <p>I welcome contributions, especially of software and scanned (or paper) manuals, stories, tips, tricks, hacks, and other info.&nbsp; I am also interested in working and non-working OSI hardware, either photos or the real thing.&nbsp; I am particularly interested in any information on the following:</p>
+
+    <ul>
+      <li><font color="#0000ff" size="4">Documentation or software for the Generic Computer Products Color-Plus card </font></li>
+    </ul>
+
+    <p>Also, any information about, or working or non-working specimens of the following:</p>
+
+    <ul>
+      <li><font color="#0000ff" size="4">OSI 460Z card</font></li>
+      <li><font color="#0000ff" size="4">Any Mittendorf engineering hi-res kits, or similar Aardvark or other video mods for the C2/4 or for the C1/superboard </font></li>
+    </ul>
+
+    <p>I&#39;d love to hear from any other OSI&#39;ers.&nbsp; Please check out the <strong><a href="osiforum">Forums</a></strong> section of the archive, and post any comments, corrections, or memories for all of us to enjoy! You can also email me privately via the Forums section.</p>
+
+    <h2><strong><font color="#0000ff">News (Jun 2020) </font></strong></h2>
+    <p><strong><font color="#0000ff">07-Jun-2020: Added link to David Gesswein's OSI Floppy Test utility.  Thanks to David for making this available!</font></strong></p>
+    <p><strong><font color="#0000ff">06-Feb-2020: Added the Sams C2/C3 manual covering tons of OSI boards.  Many thanks to Jeff Ferguson for the scan!!!</font></strong></p>
+    <p><strong><font color="#0000ff">28-Jan-2020: Added Volumes 1 and 2 of the OSI UK User Group Newsletter.  Many thanks to Pete Targett for the scans, and other useful info</font></strong></p>
+    <p><strong><font color="#0000ff">15-Oct-2019: Added additional <a href="misc/osi-replacement-parts.txt">replacement part number</a> for key switches, George Risk KBM-01-01, and added the <a href="http://osiweb.org/datasheets/GRI-KBM-01-01.pdf">datasheet</a> as well.</font></strong></p>
+    <p><strong><font color="#0000ff">10-Sep-2019: Fixed broken journal links and added missing descriptions for Compute's Gazette articles.  Thanks to Mark S. for the prod</font></strong></p>
+    <p><strong><font color="#0000ff">27-Jul-2019: Added link to John Lockett's utility for analyzing output of the Disk Dump Utility by Mark S.</font></strong></p>
+    <p><strong><font color="#0000ff">03-Mar-2019: Added Aardvark Journal v3 n2.  Thanks to Rene Chaddock!!</font></strong></p>
+    <p><strong><font color="#0000ff">23-Feb-2019: Added the Fifth Book of OSI.  Thanks to Steve Gray for the scan!!</font></strong></p>
+    <p><strong><font color="#0000ff">18-Dec-2018: Added manual for the Okidata 3300 series hard drives, used in the C3 series.  Thanks to Kristoffer!!!</font></strong></p>
+    <p><strong><font color="#0000ff">18-Jun-2018: Updated the SYN600 ZIP file to include pre-built images for C1 and C2/C4, and added a DOS build script.  Thanks to Steve Gray!</font></strong></p>
+    <p><strong><font color="#0000ff">01-Mar-2018: Changed outdated MARCH links to VC Federation forums. Thanks to Evan K. of VCFED for the reminder</font></strong></p>
+
+
+     <p><font color="#0000ff"><a href="#MoreNews" title="">Older News</a></font></p>
+
+    <p></p>
+
+    <p></p>
+
+    <h2><a name="Hardware:"></a>OSI Hardware:</h2>
+
+    <p></p>
+
+    <p></p>
+
+    <p style="margin-bottom: 0in">The most comprehensive listing of OSI boards, with variants and manuals, is the <a href="http://osi.marks-lab.com/boards/boards.html" title="">OSI Board Catalog</a> at <a href="http://osi.marks-lab.com/" title="">Mark&#39;s Lab</a>. Definitely check the site out.&nbsp; I have collected schematics of several boards here, many from my own scans, several contributed by Mark, and several contributed by other kind OSI enthusiasts.&nbsp; Thanks so much to those who have contributed.&nbsp; I&#39;m always looking out for more high-quality scans to archive here.&nbsp; Also, see Mark Spankus&#39; <a href="http://osi.marks-lab.com/boards/boards.html">OSI board catalog</a> for more information and nice photos of many of these boards.</p>
+
+    <p style="margin-bottom: 0in"></p>
+
+    <table bgcolor="#00ffff" border="1" cellpadding="2" cellspacing="2" height="1314" width="997">
+      <tbody>
+	<tr valign="top">
+	  <td>
+	    <p>Board</p>
+	  </td>
+	  <td>
+	    <p>Description</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/OSI_300.pdf" title="">300</a></td>
+	  <td valign="top">Original OSI product.&nbsp; A 6502 trainer with 128 bytes of RAM, and binary switch programming, with two input lines and a 1-bit output latch.&nbsp; Designed as a learning tool, the manual is essentially a comprehensive introduction to bare-metal 6502 programming. Do check it out. Much thanks to Bill Dromgoole for the contribution!</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/OSI_400.pdf" title="">400</a></td>
+	  <td valign="top">OSI called this one the &quot;Superboard.&quot; (The later OSI 600/C1 with video onboard was the Superboard II). A single board computer which could accept either a 6502, 6501, or 6800 as the CPU, with 1K RAM(eight 2102),&nbsp; 512 bytes EPROM/PROM (two 1702A, serial I/O (6850 ACIA), and a 40-pin user discretionary IC spot for a PIA, 6530, or any other chip, and an OSI 48-pin bus interface.&nbsp; A fully usable single board computer along the lines of KIM/SYM, without the keypad, with the bus expansion built in. Thanks to Bill Dromgoole!</td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="manuals/OSI_420-C.pdf" title="">420C</a></p>
+	  </td>
+	  <td>
+	    <p>4K x 8- or optionally 12- bit static memory board, with (optional switched) battery backup.&nbsp; Courtesy of Bill Dromgoole.</p>
+	  </td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="manuals/OSI_430B.pdf" title="">430B</a></p>
+	  </td>
+	  <td>
+	    <p>Super I/O board. 8 Parallel IO, UART Serial IO, RS232 / Cassette interface, 1 ADC w 8-channel multiplexer, 2 DAC, Z-unblank one-shot, fast pulse output.&nbsp; Courtesy of Bill Dromgoole.</p>
+	  </td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="manuals/OSI_440_Video_Graphics.pdf" title="">440</a></p>
+	  </td>
+	  <td>
+	    <p>Early OSI video card,1K RAM, 32 x 32 characters, similar to C1P video.&nbsp; Can use a dedicated 420 memory card for 128 x 128 pixel graphics.&nbsp; Courtesy of Bill Dromgoole.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="manuals/470.pdf">470 single</a><br />
+	      <a href="manuals/OSI-470-centronics.pdf">470 all</a></p>
+	  </td>
+	  <td>
+	    <p>Disk controller card.&nbsp; The interface contained a 6820 PIA for control lines, and a 6850 ACIA to read and write data to the disk.&nbsp; The board requires separated data/clock signals, provided by several 8&quot; drives, but very few 5.25&quot; drives.&nbsp; The MPI B-51 drive was the standard OSI mini-floppy, and held 40 tracks with 2k per track.&nbsp; There were many articles in PEEK(65) on how to improve the disk interface, build data separators, etc.&nbsp; Some of these are in the scan section.&nbsp; Also, the PIA could be populated alone, for use as a parallel I/O card.&nbsp; The second set of schematics showing&nbsp; the 470 configured as a single or dual sided floppy interfacee, and as a centronics interface, was contributed by Bill Dromgoole.</p>
+
+	    <p>OSI 470 gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_470/production-package/OSI_470.zip">OSI_470.zip</a></p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top">
+	    <p><a href="manuals/OSI_appnote_2.pdf" title="">480</a></p>
+	  </td>
+	  <td valign="top">8-slot backplane for backplane-based C2-8P / C8P / C3 systems. Courtesy of Bill Dromgoole.</td>
+	</tr>
+	<tr>
+	  <td valign="top">498</td>
+	  <td valign="top">
+	    <p>OSI 48-line bus card extender.</p>
+
+	    <p>OSI 498 gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_498/production-package/OSI_498.zip">OSI_498.zip</a></p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/OSI_500.pdf" title="">500</a></td>
+	  <td valign="top">
+	    <p>6502-based CPU with on-board 8K BASIC-in-ROM, ROM monitor in 3 x 1702 EPROMS (256 bytes each), 4K RAM as 16 x 2102 chips, 6850-based serial port with 20-ma current loop or RS-232 interface; 6820-based parallel port.&nbsp; Courtesy of Bill Dromgoole.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="manuals/502.pdf">502</a><br />
+	      (pic)</p>
+	  </td>
+	  <td>
+	      <p>Successor to the 500 board.&nbsp; 6502-based CPU with on-board 8K BASIC-in-ROM, 2K ROM monitor (with a complex addressing scheme to allow physical remapping of 256-byte ROM pages, to maintain compatibility with the 1702-based monitor code from the 500 board), 8K RAM as 16 x 2114 chips, 6850-based serial port with audio cassete, 20 ma current loop, or RS-232 interface.&nbsp; The parallel interface was dropped in this version.&nbsp;</p>
+
+	      <p>OSI 502 Gerber files on github:&nbsp; <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_502/production-package/OSI_502.zip">OSI_502.zip</a></p>
+	      <p>Jeff Ferguson's Build guide and log (with BOM) on Github:&nbsp; <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_502/502_Assembly_Instructions_and_Log.pdf">p</a>502_Assembly_Instructions_and_Log.pdf</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="manuals/505_RevA.pdf">505 Rev A</a></p>
+
+	    <p><a href="manuals/505.pdf">505 Rev B</a><br />
+	      (pic)</p>
+	  </td>
+	  <td>
+	    <p>Like the 502, but for disk-based systems.&nbsp;&nbsp; Omits the BASIC-in-ROM and the KCS cassette interface, but adds a 470-equivalent floppy interface. Thanks to Bill Dromgoole for the high-res scan!</p>
+
+	    <p>OSI 505 gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_505/production-package/OSI_505.zip">OSI_505.zip</a></p>
+	  </td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/OSI-510-revc.pdf">510</a></td>
+	  <td>Triple CPU board used in the C3 series.&nbsp; Contains software selectable 6502,&nbsp; Z80, and a 6800.&nbsp; The Z80 can run OSI&#39;s port of CP/M.&nbsp; Scan by Bill Dromgoole.</td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/OSI-512.pdf">512</a></td>
+	  <td>OSI 512 board.&nbsp; Not sure what this is for.&nbsp; It seems to be some kind of FSK encoder that takes a clocked data stream and turns it into bursts of 4.7 MHz (mark) or 6.5 MHz (space).&nbsp; Perhaps this is part of the RF home control system?&nbsp; Any info is welcome.&nbsp; Contributed by Bill D.</td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/OSI-520-revc.pdf">520 Rev C</a></td>
+	  <td>16K Static RAM board based on the SEMI 4200 4096 x 1 static RAM chip.&nbsp; Contributed by Bill D.&nbsp; Thanks!</td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/OSI-522.pdf">522</a></td>
+	  <td>48K static RAM chip, based on the GTE 8104 1024 x 8 static RAM chip.&nbsp; Thanks to Bill D.</td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/OSI_525.pdf" title="">525</a></td>
+	  <td>Dual port static RAM board.&nbsp; (Thanks to Jonathan for the contribution.)&nbsp;</td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="manuals/527_2.pdf">527</a><br />
+	      (pic)</p>
+	  </td>
+	  <td>
+	    <p>24K RAM board.&nbsp; With forty-eight 2114 chips, this board required it&#39;s own power supply, separate from the main supply.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top">
+	    <p><a href="manuals/OSI-535.pdf">535</a></p>
+	  </td>
+	  <td valign="top">48K dynamic RAM board based on the 4116 16k x 1 dynamic RAM and the <a href="manuals/Intel-3242-dram-controller.pdf">Intel 3242 dynamic RAM controller chip</a>.&nbsp; Thanks to Bill D. for the scan!</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/540A.pdf">540A</a><br />
+	    (pic)</td>
+	  <td valign="top">Second-generation video board with 64x32 characters and guard bands (First generation was the 440, with 32x32 characters and no guard bands, similar to the circuit in the Superboard/Challenger I).&nbsp; OSIers loved this card because it was so hackable.</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/OSI-540B.pdf">540 rev B</a> (pic)</td>
+	  <td valign="top">
+	    <p>Design similar to the 540A, but adds 4-bits of color.&nbsp; Thanks to Steve Gray for the hi-res scan!&nbsp; Parts layout (last page) contributed by Bill D.</p>
+
+	    <p>OSI 540B gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_540B/production-package/OSI_540B.zip">OSI_540B.zip</a></p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top">
+	    <p><a href="manuals/541/OSI541top_zps73926f02.JPG">541 pic</a></p>
+
+	    <p><a href="manuals/541/541_schematic1.pdf">541 schematic</a></p>
+
+	    <p><a href="manuals/541/541_Layout.pdf">541 layout</a></p>
+
+	    <p><a href="misc/OSI_541.pdf">541 info</a></p>
+	  </td>
+	  <td valign="top">
+	    <p>This is a High-resolution add-on offered by MA/COM as an add-on for systems with the 540B board, and as part of the C-100 system (which seems to be an upgraded C4P with high-res graphics option.)&nbsp; This info was supplied by Jeff Ferguson, who got one of these boards in his C4P, and was kind enough to supply high-res photos, and to reverse-engineer the schematics.&nbsp; Any addition info is certainly welcome.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/542B.pdf">542 rev B</a><br />
+	    <a href="manuals/OSI-542-revc.pdf">542 rev C</a></td>
+	  <td valign="top">
+	    <p>Keyboard to accompany the 540B.&nbsp; Thanks to Steve Gray for the hi-res Rev B scan, and Bill D. for the Rev C scan!</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/OSI_550.pdf" title="">550</a></td>
+	  <td valign="top">16 port serial board (for multiuser systems) (Thanks to Jonathan for the contribution.)</td>
+	</tr>
+	<tr>
+	  <td valign="top">
+	    <p><a href="manuals/OSI-555.pdf" title="">555</a><a href="manuals/OSI-555_board_images.pdf" title=""> </a></p>
+
+	    <p><a href="manuals/OSI-555_board_images.pdf" title="">Pics</a></p>
+	  </td>
+	  <td valign="top">&quot;Jungle Board&quot; multi-function RAM+I/O board.&nbsp; I believe this was designed for the C3 multi-user and CPM systems. It contains 8K RAM in two blocks, 4 Serial ports, a &quot;Network Node Interface&quot; for multi-user systems, Centronics and NEC-wordprocessor compatible parallel interfaces.</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/OSI560Z.pdf" title="">560Z</a></td>
+	  <td valign="top">&quot;Processor Lab&quot; board.&nbsp; This unique and remarkable board contains a Z80 and intersil 6100, with control of the 6100 and Z-80 chips by the host 6502, which can emulate I/O and other instructions to provide full PDP-8 emulation, Z-80 I/O compatibility, 8080 compatibility, etc.&nbsp; The 6202 assembly source code for PDP-8 IOT emulation, and Z80 I/O emulation is <a href="manuals/560Z_software_listing.pdf" title="">here</a>.&nbsp; Courtesy of Bill Dromgoole (Thanks!)</td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/OSI-573_manual.pdf">573</a></td>
+	  <td>
+	    <p>EPROM Programmer (head end card)</p>
+
+	    <p>OSI 573 gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_573/production-package/OSI_573.zip">OSI_573.zip</a></p>
+	  </td>
+	</tr>
+	<tr>
+	  <td><p><a href="manuals/OSI-574-CA22.pdf">574 / CA22</td>
+	  <td>Analog I/O head end card.solderless breadboard prototyping board (head end card)
+	  </td>
+	</tr>
+	<tr>
+	  <td>575</td>
+	  <td>solderless breadboard prototyping board (head end card)
+	    <p>OSI 575 gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_575/production-package/OSI_575.zip">OSI_575.zip</a></p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>580</td>
+	  <td>8-slot extensible backplane (C2-8P, C8P, C3).&nbsp; Similar to the 480 board, but with ground pours on one side.
+	    <p>OSI 580 gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_580/production-package/OSI_580.zip">OSI_580.zip</a></p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>582</td>
+	  <td>4-slot backplane (for C2-4P, C4)
+	    <p>OSI 582 gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_582/production-package/OSI_582.zip">OSI_582.zip</a></p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="manuals/OSI590.pdf">590</a></p>
+	  </td>
+	  <td>
+	    <p>Hard Disc controller board.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/OSI-592.pdf">592</a></td>
+	  <td>Hard disk interface.&nbsp; Contributed by Bill Dromgoole.</td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/OSI-596-revb.pdf">596</a></td>
+	  <td>Hard disk interface.&nbsp; Contributed by Bill Dromgoole.</td>
+	</tr>
+	<tr>
+	  <td>
+	    <p>600</p>
+	  </td>
+	  <td>
+	    <p>Sold as the &quot;superboard II&quot;, or with a case and power supply as the Challenger I.&nbsp; This was a single board system incorporating a built-in keyboard, 8K BASIC-in-ROM, 2K ROM monitor (without the complex remapping scheme), 8K 2114 RAM, 32x32 char video with 1K 2114 RAM (similar to the 440 card), and a serial port with audio cassette or RS-232 capabilities.&nbsp; Hook up a power supply and monitor, and this is a complete computer system, like an Apple II, but for $279.</p>
+	  </td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="manuals/600revB.pdf" title="">600 rev B</a></p>
+	  </td>
+	  <td>Revision B of the 600 Board.&nbsp; Similar to the original.&nbsp; (Thanks to Frank for the contribution.)</td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="manuals/600revc.pdf">600 rev C</a></p>
+	  </td>
+	  <td>
+	    <p>Like the original, but with an extra 1k x 4-bit video RAM for color</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="manuals/600revD.pdf">600 rev D</a></p>
+	  </td>
+	  <td>
+	    <p>Like the rev C.</p>
+
+	    <p>Klyball&#39;s 600D reproduction gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_600D/OSI_600D.zip">OSI_600D.zip.</a></p>
+	  </td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="manuals/OSI_610.pdf" title="">610</a></p>
+	  </td>
+	  <td>
+	    <p>Expansion for the 600 superboard/C1P.&nbsp; Floppy interface, 24K RAM (Thanks to Mike P.)</p>
+
+	    <p>Klyball&#39;s 610 reproduction gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_610/OSI_610.zip">OSI_610.zip</a></p>
+	  </td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="manuals/620.pdf" title="">620</a></p>
+	  </td>
+	  <td>
+	    <p>Adapter card to interface the 600 Superboard II card to the OSI 48-line bus</p>
+	  </td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="manuals/OSI_630.pdf" title="">630</a></p>
+	  </td>
+	  <td>
+	    <p>Color, I/O, interface board for 2nd generation C1P (Contributed by Mike P.&nbsp; Thanks!)</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/OSI-A13.pdf">A13</a></td>
+	  <td>OSI disk cable adapter board.&nbsp; Mates with OSI 470, 505, 610 boards and third party disk interfaces.&nbsp; Contributed by Bill D.</td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/OSI-A15.pdf">A15</a></td>
+	  <td>Provides multiple ports for parallel I/O, parallel interface bus, joysticks.&nbsp; Mates with 505 board.&nbsp; Contributed by Bill D.
+	    <p>OSI A15 gerber files on github: <a href="https://github.com/osiweb/Hardware/raw/master/repro/OSI_A15/production-package/OSI_A15.zip">OSI_A15.zip</a></p>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+
+    <p></p>
+
+    <h2><a name="ThirdPartyHardware"></a>Third Party Hardware:</h2>
+
+    <table border="1" cellpadding="1" cellspacing="1" style="background-color: rgb(153, 204, 255); border-collapse: collapse; width: 100%;">
+      <thead>
+	<tr>
+	  <th scope="col" style="text-align: left;width=5%">Board</th>
+	  <th scope="col" style="text-align: left;">Description</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  <td><a href="manuals/DN_MEM_CM9.pdf">D&amp;N MEM-CM9</a></td>
+	  <td>D &amp; N Products MEM-CM9 24K RAM (as 48 2114 chips) and OSI-compatible floppy controller card.&nbsp; This is equivalent to an OSI 527 card and a 470 card in a&nbsp; single slot.&nbsp; The RAM is addressable as an 8K block and a 16K block, which can be placed anywhere in the 64K memory space, and also can be assigned a RAM segment withing a multiple-64K memory space for a multi-user environment. (Courtesy of Steve Gray)</td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="manuals/DN_8K_RAM.pdf" title="">D &amp; N 8K</a></p>
+	  </td>
+	  <td>
+	    <p>8K RAM board.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p>CxP (<a href="misc/CxP_Front.jpg">Front</a>, <a href="misc/CxP_Back.jpg">Back</a>)</p>
+	  </td>
+	  <td>CxP 16-bit OSI next-generation upgrade board, based on the WDC 65c802/65c816 processor, .&nbsp; Pictures courtesy of Scott Larson.&nbsp; See Forum thread <a href="http://osiweb.org/osiforum/viewtopic.php?f=3&amp;t=151">here</a>.&nbsp; Described in detail in <a href="Peek65/Peek65_V8N1and2-01-02_1987.pdf">Peek(65) V8 N1&amp;2</a>.&nbsp; Perhaps the only surviving speciment?</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <p></p>
+
+    <p></p>
+
+    <p></p>
+
+    <h2><a name="Manuals"></a>Manuals</h2>
+
+    <p style="margin-bottom: 0in"></p>
+
+    <table border="1" cellpadding="2" cellspacing="3" style="background-color: #ffff99; width: 800px">
+      <colgroup>
+	<col width="167" />
+	<col width="697" />
+      </colgroup>
+      <tbody>
+	<tr>
+	  <td width="167">
+	    <p><a href="manuals/OSI_ComprehensiveInformationPackageII-300dpi.pdf">OSI Comprehensive Information Package II</a></p>
+	  </td>
+	  <td width="697">This is a package of schematics, notes, and errata for many of the OSI 400 and 500-series boards, as of 1977.&nbsp; Thanks to Paul Chidley for contributing these, by way of Steve Gray!!</td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="manuals/OS65V.pdf">OS65V Manual</a></p>
+	  </td>
+	  <td width="697">
+	    <p>A beginner&#39;s tutorial on 6502 machine-language programming, featuring the (primitive by any standard) OS-65V monitor program.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="misc/OSI_500_General_Purpose_Manual.pdf">OSI 500 General Purpose Manual</a></p>
+	  </td>
+	  <td width="697">
+	    <p>Manual for the 500 board, including information on video and serial systems, interfacing, pinouts, etc. Thanks so much to Bill Dromgoole for this contribution!&quot;</p>
+
+	    <p></p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top">
+	    <p><a href="manuals/os65v_cmd.txt">OS 65V commands</a></p>
+	  </td>
+	  <td valign="top">Very brief list of OS-65V commands</td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="manuals/c4man.pdf">C4P Manual</a></p>
+	  </td>
+	  <td width="697">
+	    <p>The C4P User&#39;s manual.&nbsp; Shipped with C4P systems.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td><a href="manuals/C1P_Manual.pdf">C1P Manual</a></td>
+	  <td>The C1P User&#39;s Manual - (thanks to Mark)</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/C1P_and_C1PMF_Introductory_Manual.pdf" title="">C1P and C1PMF Introductory Manual</a></td>
+	  <td valign="top">An introductory manual for the C1P series II.&nbsp; Thanks to Steve Gray for the scan.</td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="manuals/Superboard_II_Assembly_Instructions.pdf">Superboard II Assembly Instructions</a></p>
+	  </td>
+	  <td width="697">Detailed step-by-step assembly instructions for the SUperboard II.  Also applies to the Klyball 600D clone.  Many thanks to Jeff Ferguson for acquiring and scanning this!!</td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="manuals/c4pman2.pdf">C4p Manual (different scan)</a></p>
+	  </td>
+	  <td width="697">
+	    <p>Looks like a scan of an older version; longer, but with plainer typesetting.&nbsp; Much of the contents appear similar.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="manuals/refcard.pdf">OS65D Reference Card</a></p>
+	  </td>
+	  <td width="697">
+	    <p>The reference card included with my shiny new OS65D binder when I got my disk upgrade.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="manuals/basicnotes.pdf">Notes on ROM Basic</a></p>
+	  </td>
+	  <td width="697">
+	    <p>A scan of a bootleg version of the (I believe) Aardvark notes on ROM Basic.&nbsp; If you have a better version, let me know!</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="misc/OSI_ROM_Basic_Datasheet_from_Aardvark_1979.pdf" title="">Aardvark Rom BASIC Data 1979</a></p>
+	  </td>
+	  <td width="697">
+	    <p>This is the better, full version of the Aardvark notes on ROM BASIC.&nbsp; Thanks to Bill Dromgoole!!</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="manuals/OS65D_Dissasembly_Manual.pdf">OS-65D V3.2 Dissasembly Manual</a></p>
+	  </td>
+	  <td width="697">
+	    <p>A very thoroughly annotated disassembly of OS-65D.&nbsp; Every little trick, bug, secret, and wart is exposed.&nbsp; If you&#39;re looking into any OS-65D mods, development, or disk interfacing, this is your resource.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="manuals/OSI_8K_Basic_in_ROM.pdf" name="8K BASIC MANUAL">OSI 8K BASIC in ROM MANUAL</a></p>
+	  </td>
+	  <td width="697">
+	    <p>This is the manual for the Microsoft 8K ROM Basic (rev 3.2) that shipped with the C1/2/4/8 machines.</p>
+	  </td>
+	</tr>
+	<tr valign="top">
+	  <td style="width: 200px">
+	    <p><a href="manuals/OS-65D_V3.0_usermanual.pdf" title="">OS65D v3.0 User Manual</a></p>
+	  </td>
+	  <td>
+	    <p>Usermanual for OS65D v3.0.&nbsp; (Thanks to Frank)</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td style="width: 200px"><a href="manuals/OS65D_Tutorial_and_Ref_Manual.pdf" title="">OS65D Tutorial and Ref Manual</a></td>
+	  <td>Tutorial and reference for OS65D. The original OSI-supplied documentation. (Thanks to Mike P.)</td>
+	</tr>
+	<tr>
+	  <td width="167">
+        <p><a href="manuals/C1P_sams_jf_300dpi.pdf" title="">SAMS C1P Service Manual (300 dpi)</a></p>
+        <p><a href="manuals/C1P_sams_jf_600dpi.pdf" title="">SAMS C1P Service Manua (600 dpi)l</a></p>
+
+	  </td>
+	  <td width="697">
+	    <p>SAMS repair manual for the Superboard II/C1P/C1PMF.&nbsp; This is for the original version with the black and white video output, and covers the 600 CPU board, as well as the 610 Disk/memory card.&nbsp; Thanks to Jeff Ferguson for these scans!.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td width="167">
+ 	    <p><a href="manuals/C4P_Sams_jf_300dpi.pdf" title="">SAMS C4P Service Manual (300 dpi)</a></p>
+ 	    <p><a href="manuals/C4P_Sams_jf_600dpi.pdf" title="">SAMS C4P Service Manual (600 dpi)</a></p>
+
+	  </td>
+	  <td width="697">
+	    <p>This is the SAMS repair manual for C2/C4, including 502, 505, 527, 540, and 542 Boards.&nbsp; Full color.&nbsp; Thanks to Jeff Ferguson for these scans!</p>
+	  </td>
+	</tr>
+	<tr>
+	    <td width="167">
+ 	        <p><a href="manuals/Sams_C2_C3_optimized.pdf" title="">SAMS C2/C3 Service Manual (optimized, 17MB)</a></p>
+ 	        <p><a href="manuals/Sams_C2_C3_full_resolution.pdf" title="">SAMS C2/C3 Service Manual (full resolution (211 MB!!))</a></p>
+	    </td>
+	    <td width="697">
+	        <p>This is the SAMS repair manual for many C2/C3 OSI boards.  It covers the 470, 505A, 510C, 520B, 520C, 525, 527, 535, 550, 555, 590, 592, and 594 boards.&nbsp; Full color.&nbsp; Many thanks to Jeff Ferguson for these scans!</p>
+	    </td>
+	</tr>
+	<tr>
+	  <td width="167">
+	    <p><a href="manuals/cegmon.pdf" title="">Cegmon User&#39;s Guide</a></p>
+	  </td>
+	  <td width="697">User manual for the CEGMON replacement monitor ROM.&nbsp; Thanks to Graeme!</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/hexdos.pdf" title="">Hexdos User Guide</a></td>
+	  <td valign="top">User guide for the HexDos mini-os for the C1P.&nbsp;&nbsp; Contributed by Graeme!</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/MPI_B51-B52_Product_Manual.pdf" title="">MPI B51 Drive Manual (Short)</a></td>
+	  <td valign="top">This is the drive used by OSI for all their 5.25&quot; drive models.&nbsp; The short version of the manual has a lot of useful information on maintenance, but does not include complete schematics.</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/Okidata_3300_HD.pdf" title="">Okidata 3300 Hard Drive Manual</a></td>
+	  <td valign="top">This hard drive was used in OSI hard disk systems.  These drives ranged up to 80 MB unformatted.  Thanks to Kristoffer!</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/MPI_B51-B52_Product_Manual_Long.pdf" title="">MPI B51/B52_Product Manual (Long)</a></td>
+	  <td valign="top">This is the drive used by OSI for all their 5.25&quot; drive models.&nbsp; The manual has a lot of useful information on maintenance, as well as complete schematics, theory of operation, etc.</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/hazeltine1500_maintenance.pdf" title="">Hazeltine 1500 Maintenance manual</a></td>
+	  <td valign="top">This is the comprehensive maintenance and service manual for the Halzetine 1500, 1510, and 1520 terminals.&nbsp; Very large file!</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <p></p>
+
+    <h2><a name="Books"></a>Books:</h2>
+
+    <table border="1" cellpadding="2" cellspacing="2" style="background-color:rgb(248, 252, 220);height:81px;text-align:left;width:100%;">
+      <tbody>
+	<tr>
+	  <td><a href="books/Micro_on_the_OSI.pdf">Micro on the OSI</a></td>
+	  <td>Compilation of Micro articles for OSI</td>
+	</tr>
+	<tr>
+	  <td style="width: 200px">
+	    <p><a href="books/first_book_of_OSI.pdf">F</a><a href="books/first_book_of_OSI.pdf">irst Book_of_OSI</a></p>
+	  </td>
+	  <td>Elcomp - First Book of OSI, scanned and contributed by Stephan (stm).&nbsp; Lots of articles on OSI machines, compiled form various sources.</td>
+	</tr>
+	<tr>
+	  <td style="width: 200px"><a href="books/Second_Book_of_OSI_Contents.pdf">Second Book of OSI index</a></td>
+	  <td>Contents of the second book of OSI.&nbsp; Scanned and contributed by Mike.</td>
+	</tr>
+	<tr>
+	  <td style="width: 200px"><a href="books/Third_Book_of_OSI.pdf" title="">Third Book of OSI</a></td>
+	  <td>This is based on an expansion system for 6502 micros.&nbsp; Articles describe the ELCOMP expansion bus, and projects based on the bus: 6522/6520 I/0, EPROM programmer, Sound card, memory cards, A/D converter.&nbsp; It seems useful, but not much OSI stuff that can stand on its own.</td>
+	</tr>
+	<tr>
+	  <td style="width: 200px"><a href="books/Fourth_Book_of_OSI_contents.pdf">Fourth Book of OSI index</a></td>
+	  <td>Contents of the fourth book of OSI, Scanned and contributed by Mike.</td>
+	</tr>
+	<tr>
+	  <td style="width: 200px"><a href="books/Fifth_Book_of_OSI.pdf" title="">Fifth Book of OSI</a></td>
+	  <td>This is a collection of articles, programs, and tips for the OSI C1/C2/C4 machines.  Many thanks to Steve Gray for the scan!!.</td>
+	</tr>
+	<tr>
+	  <td style="width: 200px"><a href="books/aardvark-first-book-of-osi.pdf">Aardvark&#39;s First Book of OSI</a></td>
+	  <td>Aardvark&#39;s first book of OSI, lots of misc. info on OSI systems.&nbsp; Scanned and contributed by Bill Dromgoole.</td>
+	</tr>
+	<tr>
+	  <td style="width: 200px"><a href="books/OSI_Basic_In_Rom.PDF">OSI BASIC in ROM</a></td>
+	  <td>An introduction to OSI (Microsoft 6502) BASIC in ROM, along with in-depth discussion of variable and program storage and other under-the-hood details.&nbsp; Contributed by Jeff Ferguson.</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <h2><a name="Ads"></a>Ads and Catalogs:</h2>
+
+    <p></p>
+
+    <table bgcolor="#99ccff" border="1" bordercolor="#000000" cellpadding="3" cellspacing="0" style="width: 100%; border-collapse: collapse">
+      <tbody>
+	<tr>
+	  <td><a href="catalogs/AuroraCatalog.pdf">Aurora Software</a></td>
+	  <td>Aurora Software Associates catalog, spring/summer 1981.&nbsp; Games, utilities, and more.</td>
+	</tr>
+	<tr>
+	  <td><a href="catalogs/CCCC1981.pdf">Cleveland Computer 1981</a></td>
+	  <td>Cleveland Consumer Computers &amp; Components 1981 catalog.&nbsp; OSI dealer with great descriptions of the systems, and great Q&amp;A section at the end.&nbsp; Thanks to Danny!</td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="ads_and_catalogs/Omega_Science-Sept_80.pdf" title=""><span style="right: auto">Omega Science </span></a></p>
+	  </td>
+	  <td>
+	    <p><span style="right: auto">Omega Science OSI dealer price list for Sept 1980.&nbsp; Thanks to Steve Gray!</span></p>
+	  </td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="ads_and_catalogs/OSI_software_list.pdf" title="">OSI software handout</a></p>
+	  </td>
+	  <td>
+	    <p><span style="right: auto">List of OSI Disk and Cassette software. &nbsp;Thanks to Steve Gray!</span></p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="ads_and_catalogs/OSI_May_1976_Catalog.pdf" title="">OSI May 76 Catalog</a></td>
+	  <td valign="top">Contributed by Bill Dromgoole.&nbsp; This is a very early catalog( The first OSI magazine ad of which I&#39;m aware is from Feb 1976.)&nbsp; Includes the OSI 300 trainer, OSI 400 board, 410 board, 440 board, and the 480 backplane (shown interfaced to a Kim-1!)</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="ads_and_catalogs/OSI_1976_Winter_Catalog.pdf" title="">OSI Winter 76 Catalog</a></td>
+	  <td valign="top">Introduces the Challenger line, based on 400-series boards.&nbsp; The 470 floppy system appears here, as does the 460Z with the 6100 and Z80, plus a spot for another microprocessor of your choice. Thanks to Bill Dromgoole!</td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="ads_and_catalogs/OSI_spring_1978_catalog.pdf" title="">OSI spring 78 catalog</a></p>
+	  </td>
+	  <td>
+	    <p>OSI spring 1978 catalog: C3 systems including 74MB winchester.&nbsp; C2 systems.&nbsp; Still offered the 500 CPU and the 440 video board.&nbsp; No superboard or C1.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="ads_and_catalogs/OSI_brochure.pdf" title="">OSI catalog, circa 1980</a></td>
+	  <td valign="top">Two years later, C2 is gone, C3 is not included in this catalog, lineup is heavy on C4/C8, with C8 targeted at business.&nbsp; Bullet points include speed of execution of an ADD instruction (600 ns).&nbsp; C1 is mentioned as an entry level machine.</td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="ads_and_catalogs/ORION_super_expansion.pdf" title="">Orion Super Expansion Board</a></p>
+	  </td>
+	  <td>
+	    <p>Ad from Micro (Dec 1982) for the Orion Super Expansion boards, a series of video cards with advanced capabilities relative to the OSI native graphics,&nbsp; with additional I/O features.&nbsp; If anyone has any info on these boards, let me know!</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td><a href="catalogs/OrionCatalog.pdf">Orion Software Catalog</a></td>
+	  <td>Orion Software Associates catalog.&nbsp; Games, utilities, and office applications (by Dwo Quong Fok Lok Sow).&nbsp; Contributed by forum member Danny.</td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="misc/C-100.pdf" title="">MA/COM C-100 System</a></p>
+	  </td>
+	  <td>An ad from the final days of the OSI systems.&nbsp; The C-100 appears to be a C4 with an additional high-resolution add-on card.</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <p></p>
+
+    <h2><a name="Tips"></a>Tips, Tricks, and Notes:</h2>
+
+    <p style="margin-bottom: 0in"></p>
+
+    <table bgcolor="#ffccff" border="1" cellpadding="2" cellspacing="2">
+      <tbody>
+	<tr>
+	  <td valign="top"><a href="manuals/OSI_appnote_1.pdf" title="">OSI App Note #1</a></td>
+	  <td valign="top">
+	    <p>Discusses adding a 6530 with the TIM monitor to the OSI 400 Board.&nbsp; Courtesy of Bill Dromgoole.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top">
+	    <p><a href="manuals/OSI_appnote_2.pdf" title="">OSI App Note #2</a></p>
+	  </td>
+	  <td valign="top">
+	    <p>Discusses OSI system expansion.&nbsp; This is aimed at the 400 board, but applies to the later 500 series boards as well, and to expansion for the 600 board.&nbsp; It discusses memory map, the OSI 48-line bus, the 480 backplane, and more.&nbsp; This is also the manual for the 480 backplane board used in C2-8P and C3 systems. Courtesy of Bill Dromgoole.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top">
+	    <p><a href="manuals/OSI_appnote_3.pdf" title="">OSI App Note #3</a></p>
+	  </td>
+	  <td valign="top">
+	    <p>Series 400 construction hints (applies to all OSI boards.)</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="manuals/OSI_appnote_4a.pdf" title="">OSI App Note #4A</a></td>
+	  <td valign="top">
+	    <p>&nbsp;6502 Clock circuits</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="misc/osi-hardware.txt">osi-hardware.txt</a></p>
+	  </td>
+	  <td>
+	    <p>A list of known OSI boards.&nbsp; If you have additions, let me know!</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="misc/4116to4164.txt">4116to5164.txt</a></p>
+	  </td>
+	  <td>
+	    <p>Notes on replacing 4116 triple-supply chips with 4164 5V-supply chips, which are also cheaper and easier to find.&nbsp; Lifted from the video-game repair community archives.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="repairs_and_mods/OSI_Superboard_II_-_Fixing_Keyboard_Switch.pdf" title="">Keyboard Switch Repair</a></td>
+	  <td valign="top">A beautifully detailed guide to repairing the key switches.&nbsp; Large PDF, but worth the download.&nbsp; Lots of pictures.&nbsp; Thanks to Josh for the contribution!</td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="misc/DiskDriverRoutines.txt">DiskDriverRoutines.txt</a></p>
+	  </td>
+	  <td>
+	    <p>Notes on the Disk driver routines for OSI Disk BASIC</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="misc/OSI-rom-notes.txt">OSI-rom-notes.txt</a></p>
+	  </td>
+	  <td>
+	    <p>A few notes on various OSI Roms, by Mark Spankus.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="misc/OSI_ROM_routines.txt">OSI_ROM_routines.txt</a></p>
+	  </td>
+	  <td>
+	    <p>More notes on the OSI ROM, including a nice description of the addressing scheme, excerpted from Peek(65) v5n1 Jan 1984</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="misc/osi-replacement-parts.txt">osi-replacement-parts.txt</a></p>
+	  </td>
+	  <td>
+	    <p>Notes on modern replacements for hard-to-find OSI components</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="firmware/cegmon/Howto_CEGMON_C2.txt">Howto_Cegmon.txt</a></p>
+	  </td>
+	  <td>
+	    <p>How to modify a 502 board (and CEGMON ROM) to use the CEGMON monitor with minimal surgery.</p>
+	  </td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="repairs_and_mods/50x30_Char_Conversion.pdf">50x30_Char_Conversion.pdf</a></p>
+
+	    <p><a href="repairs_and_mods/C1P_video_mods.pdf">Alternate version</a></p>
+	  </td>
+	  <td>
+	    <p>Instructions for converting C1 display to 64 x 32 (no guard bands).&nbsp; Two versions, contributed by Frank and by Jeff Ferguson.&nbsp;</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td><a href="repairs_and_mods/progressive_computing_c1p_vid32.pdf">Superboard/C1P 32/64 char mod</a></td>
+	  <td>Progressive Computing&#39;s C1P/Superboard II mod for full 32 chars/line with guard bands, and once you have that, a 64 char/line mod. Thanks to Jeff F. &nbsp; If this is interesting, check out another 32/64 char mod with guard bands published in Peek(65) <a href="Peek65/Peek65_V5N2-02_1984.pdf" title="">Vol 5 No. 2</a>, and <a href="Peek65/Peek65_V5N3-03_1984.pdf" title="">Vol 5 No. 3</a>.</td>
+	</tr>
+	<tr>
+	  <td><a href="repairs_and_mods/Multiplexor_Board_600.pdf">C1P Video multiplexor</a></td>
+	  <td>Instructions for an add-on circuit to allow selection between 32 and 64 characters per line on SBII/C1P systems modified for 64 chars/line.&nbsp; Contributed by Jeff F.</td>
+	</tr>
+	<tr>
+	  <td><a href="repairs_and_mods/Superboard_Speedup_Mod.PDF">C1P Speedup</a></td>
+	  <td>Instructiosn for speeding up the SBII/C1P, from the Feb 1980 issue of MICRO.&nbsp; Contributed by Jeff F.</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="misc/OSI600_RAM_ROM.zip" title="">OSI600_RAM_ROM.zip</a></td>
+	  <td valign="top">C1P/600 board mod for 32K on board.&nbsp; Moves BASIC to a single 27C64, and adds a 32K RAM chip.</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="repairs_and_mods/c1p_sound_board.pdf">C1P Sound Board</a></td>
+	  <td valign="top">Instructions for wire-wrapping a Sound board for the C1P, based on the TI 76477 sound chip.&nbsp; Contributed by Jeff F.</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="misc/OS65D_Single_Disk_Copy.pdf" title="">Single Disk Copy</a></td>
+	  <td valign="top">Article with routine and instructions for single disk copy.&nbsp; Courtesy of Thomas B. Owen</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="misc/c1-lightpen.pdf" title="">C1 Light Pen (Aardvark)</a></td>
+	  <td valign="top">Article with instructions for building a light pen for the C1, and example BASIC program.&nbsp; Thanks to Steve Gray!</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="misc/Bills_Micro_Services_C1_Memory_Map.pdf" title="">Bills Micro Services Memory Map for C1</a></td>
+	  <td valign="top">List of important ROM software memory locations for the C1.&nbsp; Thanks to Steve Gray!</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <h2><a name="Links:"></a>Links:</h2>
+
+    <p style="margin-bottom: 0in"></p>
+
+    <table bgcolor="#99ff99" border="1" cellpadding="2" cellspacing="2">
+      <tbody>
+	<tr>
+	  <td>
+	    <p><a href="https://github.com/osiweb">OSIWeb GitHub</a></p>
+	  </td>
+	  <td>
+	    <p>OSI Software and hardware sources, PCB reproductions, new projects.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="http://osi.marks-lab.com">Mark&#39;s Ohio Scientific/Compukit UK101 Archive</a></p>
+	  </td>
+	  <td>
+	    <p>An excellent pan-OSI emulator for Windows, WinOSI, by Mark Spankus.&nbsp; Mark also has plenty of other goodies, many of which are on this site.&nbsp; Much material on this site was contributed by Mark (unattributed, unfortunately)</p>
+	  </td>
+	</tr>
+	<tr>
+	    <td>
+	        <p><a href="http://www.pdp8online.com/osi/osi-floppy-test.shtml" title="">David Gesswein's OSI Floppy Test Program</a></p>
+	    </td>
+	    <td>
+	        <p>A comprehensive utility for testing floppy disk drives.  Supports video and serial-based systems.</p>
+	    </td>
+	</tr>
+	<tr>
+	  <td><a href="http://www.pcjs.org/docs/c1pjs/">C1P.js</a></td>
+	  <td>Jeff Parson&#39;s Javascript C1P emulator.&nbsp; This has a built-in debugger, and other goodies.&nbsp; Run it right in the browser!</td>
+	</tr>
+	<tr>
+	  <td><a href="http://uk101.sourceforge.net/">UK101 emulator</a></td>
+	  <td>UK101 emulator written in Java, by Tim Baldwin.&nbsp; Actively developed as of Feb 2017.</td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="http://technology.niagarac.on.ca/people/mcsele/OhioScientific.html" title="">Professor Mark Csele&#39;s OSI page</a></p>
+	  </td>
+	  <td>Lots of great OSI info, including many beautiful hardware photos, and detailed descriptions of several hacks and mods to get your machine up and running.&nbsp; Very helpful.</td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="http://www.6502.org/users/sjgray/computer/osi-c4p/index.html" title="">Steve Gray&#39;s OSI / C4P page </a></p>
+	  </td>
+	  <td>
+	    <p>Great C4P and Superboard II pictures and scans, including some uncommon hardware and custom cases.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="http://www.compukit.org/">The Compukit 101 Homepage</a></p>
+	  </td>
+	  <td>
+	    <p>A comprehensive site dedicated to the Compukit 101, with plenty of scanned articles, manuals, software, and an emulator.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="http://www.gifford.co.uk/%7Ecoredump/uk101.htm">Compukit 101</a></p>
+	  </td>
+	  <td>
+	    <p>Another nice compukit 101 site, with pictures.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="http://www.doublebit.com/archives/software/challenger1p/">Doublebit Software</a></p>
+	  </td>
+	  <td>
+	    <p>A C1P site with a C1P emulator for windows</p>
+	  </td>
+	</tr>
+
+  <tr>
+      <td>
+          <p><a href="http://lockett.altervista.org/osidd/osidd.html">Lockett's OSI disk dump analyzer utility</a></p>
+      </td>
+      <td>
+          <p>OSI Disk Dump utility - A very useful utility for analyzing 8" OS65D disk dumps (from Mark Spankus' dump utility) and for generating images from dumps</p>
+      </td>
+  </tr>
+	<tr>
+	  <td valign="top"><a href="http://www.classic-computers.org.nz/blog/2014-06-30-fixing-C4P-ram-expansion-board.htm">Tezza&#39;s C4P Adventures</a></td>
+	  <td valign="top">Terry Stewart&#39;s Summer 2014 Retrochallenge project--Repair and restoration of a C4P cassette system, with lots of pictures and other info. Take a look at the rest of the site as well.</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="http://www.vintagecomputer.net/" title="">Bill Degnan&#39;s VintageComputer.net</a></td>
+	  <td valign="top">Lots of great detail photos of OSI systems.&nbsp; From the main page, click &quot;Directory&quot;, then &quot;OSI&quot;.&nbsp; Don&#39;t forget to check out the plethora of other systems!</td>
+	</tr>
+	<tr>
+	  <td valign="top"><a href="http://vintagecomputer.net" title="">vintagecomputer.net</a></td>
+	  <td valign="top">Historical Computer Restoration website, by Bill Degnan.&nbsp; Lots of interesting hands-on restoration photos and discussion. Great site.</td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="http://6502.org/">6502.org</a></p>
+	  </td>
+	  <td>
+	    <p>A resource for 6502 programmers.&nbsp; Useful resources include a code library, forums, and hardware designs.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="http://cc65.github.io/cc65/">cc65 - the 6502 C compiler</a></p>
+
+	    <p></p>
+	  </td>
+	  <td>
+	    <p>A free, maintainted, mature C compiler, assembler, linker, and utilities for the 6502, with a target for the C1P by Stephan (stm on the forum).&nbsp; Way to go Stephan!&nbsp; Documentation on the C1/Superboard port is <a href="http://cc65.github.io/doc/osi.html">here</a>.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a href="http://srecord.sourceforge.net/">srecord</a></p>
+	  </td>
+	  <td>
+	    <p>A very powerful binary file manipulation utility.&nbsp; It reads and writes numerous binary formats, including OS65V, and can write BASIC DATA and assembler .db statements.</p>
+	  </td>
+	</tr>
+	<tr valign="top">
+	  <td>
+	    <p><a href="http://www.pagetable.com/?p=46" title="">Universal integrated Microsoft 6502 BASIC source</a></p>
+	  </td>
+	  <td>
+	    <p>Recompilable disassembly of Microsoft 6502 BASIC, with conditional asssembly switches, which can assemble to several byte-accurate versions of Microsoft 6502 BASIC, including OSI (including the GC bug), Commodore (v1 and v2), Applesoft (v1 and v2), KIM-1 basic, and more.&nbsp; Very interesting.&nbsp; This site contains a large number of other interesting articles as well.</p>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+
+    <h2><a name="MoreNews">&nbsp;Older News:</a></h2>
+
+    <p><font color="#0000ff">03-Dec-2017: Added scans for the WP3 manual and the manual for the OSI 574 analog I/O board (CA-22)</font></p>
+
+    <p><font color="#0000ff">25-Nov-2017: Added better quality scans of all the previously available Aardvark Journal. Many thanks to Steve Gray!</font></p>
+
+    <p><font color="#0000ff">25-Nov-2017: Added several new Aardvark Journal scans contributed by Steve Gray.  The collection is almost complete.  Thanks, Steve!</font></p>
+
+    <p><font color="#0000ff">16-Nov-2017: Added Superboard II assembly manual.  Thanks to Jeff Ferguson for the scan!!</font></p>
+
+    <p><font color="#0000ff">16-Nov-2017: Added Aardvark Tiny BASIC Compiler listing to SOFTWARE section.  Thanks to Steve Gray!</font></p>
+
+    <p><font color="#0000ff">16-Nov-2017: Added more TOSIE Printout scans.  Many Thanks to Steve Gray!</font></p>
+
+    <p><font color="#0000ff">28-Apr-2017: Added manual for OSI Chess.&nbsp; Thanks Stephan!</font></p>
+
+    <p><font color="#0000ff">10-Apr-2017: Added Klyball&#39;s 600D and 610 reproductions PCB gerber files.</font></p>
+
+    <p><font color="#0000ff">02-Apr-2017: Added links to Gerber files for 470, 498, 502, 505, 540B, 573, 575, 580, 582, and A15 boards!</font></p>
+
+    <p><font color="#0000ff">02-Apr-2017: Previous wish for examples of running 560Z boards came true!! see <a href="http://osiweb.org/osiforum/viewtopic.php?f=3&amp;t=322"><font color="#0000ff">forum thread</font></a></font><font color="#0000ff"> and <a href="http://www.glitchwrks.com/2017/02/26/osi-560z-build">this link</a> for Glitch and Klyball builds!</font></p>
+
+    <p><font color="#0000ff">27-Feb-2017: Added two more Aardvark catalogs, and the WEMON monitor ROM for C1P/SBII/UK101.&nbsp; Thanks to Steve Gray!</font></p>
+
+    <p><font color="#0000ff">27-Feb-2017: Added proper attribution for Omega Sciences price list and OSI Software Handout--Thanks Steve Gray!</font></p>
+
+    <p><font color="#0000ff">08-Feb-2017: Added link to Tim Baldwin&#39;s java UK101 emulator</font></p>
+
+    <p><font color="#0000ff">20-Sep-2016: Added WP2 disk image (for C2/4/8, 5/25&quot;).&nbsp; Thanks to Mike for the contribution! Original image by Mark Spankus.&nbsp; WP2 Manual also added.</font></p>
+
+    <p><font color="#0000ff">17-Sep-2016: Added WP6502&nbsp; (Duo Quong Fok Lok Sow) manual, disassembly listing, and review.</font></p>
+
+    <p><font color="#0000ff">17-Sep-2016: Added HexDOS image and manual to software Section.&nbsp; This is a bootable image created form source, contributed w/manual and newsletter scans by forum member Danny.&nbsp; Thanks!</font></p>
+
+    <p><font color="#0000ff">17-Sep-2016: Added numerous scans: catalogs (orion, aurora), multiple C1P mods, and OSI BASIC-in-ROM book contributed by Jeff Ferguson--Thanks!</font></p>
+
+    <p><font color="#0000ff">17-Sep-2016: Steven P. Hendrix has contributed the source code for HexDos 4.0 to the </font><a href="https://github.com/osiweb"><span style="color:#EE82EE;">OSIWeb GitHub</span></a><font color="#0000ff"> for non-commercial use.&nbsp; Thanks so much!!&nbsp; </font></p>
+
+    <p><font color="#0000ff">17-Sep-2016: Added FBASIC disk image to FBASIC software section. Thanks John!</font></p>
+
+    <p><font color="#0000ff">17-Sep-2016: Added the Aardvark First book of OSI.&nbsp; Thanks to Bill Dromgoole! </font></p>
+
+    <p><font color="#0000ff">17-Sep-2016: Added several scans by Bill Dromgoole, including the 520, 522, 535 RAM boards, 510 triple CPU, and many more.</font></p>
+
+    <p><font color="#0000ff">17-Sep-2016: Added Elcomp&#39;s First Book of OSI.&nbsp; Thanks to Stephan!&nbsp; There have been a large number of contributions from many folks over the past year, and I will be adding them as I am able.</font></p>
+
+    <p><font color="#0000ff">27-May-2015: Added FBASIC manuals (version 1.0 and 1.1), and the intro for a FigForth for OS65U manual.&nbsp; Many thanks to John, from the forum, for these long sought after contributions!!</font></p>
+
+    <p><font color="#0000ff">27-May-2015: Updated replacement parts list to include replacement for keyboard switches. (Thanks to Grant and to Bill Dromgoole)</font></p>
+
+    <p><font color="#0000ff">15-Mar-2015: Added WinOSI-compatible disk images for C1P versions of the OS65D v3.3 tutorial disks, and an OS65D v3.1 boot disk, prepared by Grant (Klyball) from the C4P images.&nbsp; The library is growning!</font></p>
+
+    <p><font color="#0000ff">8-Mar-2015: Added multiple WinOSI compatible disk images to the software page.&nbsp; Huge thanks to Phil for gathering and preparing these, and for making them available to everyone!&nbsp; Also, thanks to Eric Klein (of vintage-computer. com for making the disks available for imaging.</font></p>
+
+    <p><font color="#0000ff">6-Mar-2015: Updated the cc65 link to the new github reposityor, and removed the &quot;No OSI port&quot; statement, which Stephan rendered obsolete by doing the port.&nbsp; Big thanks to Stephan!!</font></p>
+
+    <p><font color="#0000ff">5-Mar-2015: Added the &quot;Ohio Scientific Comprehensive Information Package II&quot;.&nbsp; Thanks to Paul Chidley for donating the documents, and to Steve Gray for making the high quality scans!!</font></p>
+
+    <p><font color="#0000ff">13-Jan-2015: Finally added a link to Jeff Parsons&#39; very cool Javascript C1P emulator.&nbsp; Awesome, Jeff!</font></p>
+
+    <p><font color="#0000ff">6-Dec-2014: Added pictures of the CxP CPU board, courtesy of Scott Larson.&nbsp; Thanks!</font></p>
+
+    <p><font color="#0000ff">5-Dec-2014: Added many new files contributed by Mike from NZ, the second home of OSI.&nbsp; Several BASIC enhancement ROMS from Premier Publications, A ROM word processor (Word Wizard 3) for UK101/C1P, Specially patched OS65Dv3.3 disk images for the C1P and C4P (8 inch disk images), and table-of-contents scans from the Second Book of OSI and the Fourth Book of OSI.&nbsp; Mike uploaded these over a year ago, it&#39;s about time I posted them.&nbsp; Thanks Mike!!!</font></p>
+
+    <p><font color="#0000ff">1-Aug-2014: Added info for the 541 board, a 512 x 256 high-res add-on for the 540 board, thanks to Jeff Ferguson, who reverse engineered the schematic (!) Thanks!!</font></p>
+
+    <p><font color="#0000ff">30-May-2014: Added the OSI 500 board general purpose manual, scanned and contributed by Bill Dromgoole--Thanks Bill!</font></p>
+
+    <p><font color="#0000ff">27-Jul-2013: Added DABUG ROM to the firmware section.&nbsp; Thanks to Leslie Ayling for discovering and preserving this!!</font></p>
+
+    <p><font color="#0000ff">11-Mar-2013: Added two catalogs (May 1976, Winter 1976) contributed by Bill Dromgoole.&nbsp; Thanks!! </font></p>
+
+    <p><font color="#0000ff">25-Feb-2013: Finally added a bunch of documents contributed by Steve Gray, including the Aardvark C1 light pen, Bill&#39;s Micro C1 memory Map, Ads, and more.&nbsp; Thanks Steve! </font></p>
+
+    <p><font color="#0000ff">09-Feb-2013: Added Peek(65) Vol 4, no 8 and 12.&nbsp; Scans courtesy of Bill Degnan.&nbsp; This completes the Peek(65) collection!! Thanks Bill!!!!! </font></p>
+
+    <p><font color="#0000ff">16-Dec-2012: Added OSI 300 and 400 manuals, and 4 OSI App Notes, courtesy of Bill Dromgoole.</font></p>
+
+    <p></p>
+
+    <p><font color="#0000ff">08-Dec-2012: Added Newton Software Exchange journals (Journal section); the full Aardvark notes on ROM BASIC; the Nov. 1979 Aardvark catalog.&nbsp; Thanks to Bill Dromgool!!</font></p>
+
+    <p><font color="#0000ff">08-Dec-2012: Added the long version of the MPI B51/52 disk drive manual, including schematics (Thanks to Philip Lord)</font></p>
+
+    <p><font color="#0000ff">05-Dec-2012: Updated OSI-SSJ Oct 1977 to include front cover, thanks to Philip Lord (recovered from an Ebay Auction photo - brilliant!) </font></p>
+
+    <p><font color="#0000ff">18-Nov-2012: Added Hazeltine 15x0 family maintenance manual.</font></p>
+
+    <p><font color="#0000ff">20-Dec-2011:Added 65V-loadable format Memory test utility, and game of Nim from the OSI Small Systems Journal.&nbsp; Contributed by Philip Lord.</font></p>
+
+    <p><font color="#0000ff">09-Dec-2011:Added the SAMS C1P service manual, courtesy of Bill Degnan. </font></p>
+
+    <p><font color="#0000ff">04-Dec-2011: Restored topics and posts from the OLD OSIforum, before it was destroyed by over-spam.&nbsp; Since the database of legit. posts was small, I was able to reconstruct it by hand, and add them to the existing forum.&nbsp; If this was a C64 or Apple board, that would be impossible (too big)!&nbsp; Unfortunately, posting dates and times were lost.&nbsp; There&#39;s some interesting stuff there, however. </font></p>
+
+    <p><font color="#0000ff">02-Dec-2011: Added Josh&#39;s guide to repairing OSI keyboard switches. A great, detailed document with many pictures!</font></p>
+
+    <p><font color="#0000ff"><span>19-Nov-2011: Added manual for DAC1 music program (by OSI).&nbsp; Thanks to Steve Gray for the scan! </span></font></p>
+
+    <p><font color="#0000ff"><span>17-Nov-2011: Added scans of schematics for the 525 dual port static RAM board, and the 550 16-port serial board.&nbsp; Thanks to Glitch for the contribution! </span></font></p>
+
+    <p><font color="#0000ff"><span>13-Nov-2011: Added C1P/C1PMF Introductory Manual, TOSIE and Aardvark Scans, and an interesting C1P ROM replacement (manual in German).&nbsp; Thanks to Steve Gray! </span></font></p>
+
+    <p><font color="#0000ff"><span>05-Nov-2011: Added Manuals for D&amp;N MEM-CM9 (thanks to Steve Gray!) and D&amp;N 8K RAM. </span></font></p>
+
+    <p><font color="#0000ff"><span>11-Oct-2011: Added manual for OSI 560Z card (including software listing) courtesy of Bill Dromgoole.&nbsp; THANKS Bill!! </span></font></p>
+
+    <p><font color="#0000ff"><span>9-Oct-2011: Added links to the (nearly) complete Peek(65) journal collection, with annotation of highlights.&nbsp; Check it out!</span></font></p>
+
+    <p><font color="#0000ff"><span>9-Oct-2011:&nbsp; Added manual for the OSI-500 board, the immediate predecessor of the 502 card.&nbsp; Courtesy of Bill Dromgoole.&nbsp; Thanks!</span></font></p>
+
+    <h2>Credits:</h2>
+
+    <p>Thanks to Steve Carroll, our local OSI dealer in Memphis Tennessee, who never complained about a couple of kids hanging out in his shop, and was something of a mentor and teacher to use younger OSI enthusiasts.&nbsp; I don&#39;t know where you are now, Steve, but thanks!</p>
+
+    <p>Earl Morris contributed plenty of documentation and hardware to the effort.&nbsp; Earl also helped make much of that documentation (such as the journals) interesting by contributing high-mileage articles.</p>
+
+    <p>Mark Spankus has contributed a heap of documentation, some of which I&#39;m still parsing, as well as expert discussion, including an excellent exposition on the floppy format, and the floppy image format for the emulator.&nbsp; Also, mark has a fantastic online catalog of OSI boards, with high quality photos, manuals, and schematics, of much value to anybody interested in OSI machines.&nbsp; He also developed the excellent Win-OSI emulator, which was adapted from Thomas Buescher&#39;s original version.&nbsp;</p>
+
+    <p>Douglas Scanned a great number of documents that would otherwise be impossible to find.&nbsp; These were passed on to me by Mark Spankus.</p>
+
+    <p>Bill Dromgoole contributed Manuals and software for the 500 and 560Z boards</p>
+
+    <p>Steve Gray contributed scans of the C1P Introductory Manual, TOSIE and Aardvark journals, D&amp;N MEM-CM9 and 8K RAM board manuals, and more.</p>
+
+    <p>Graeme&nbsp; contributed CEGMON and HEXDOS users guides, and scans of several journals.</p>
+
+    <p>Glitch contributed some hard-to-find hardware manuals/schematics, including the 525 dual port RAM board, and the 550 multi-serial board.</p>
+
+    <p>Philip Lord contributed many disk images, documents, and programs; and many interesting forum posts.&nbsp; Glad to have you here Phil!</p>
+
+    <p>Mike contributed numerous ROM images, software, and disk images, and scans, and also has contributed expertise on the forums.&nbsp; Much thanks to Mike!!</p>
+
+    <p>Scott Larson for some interesting forum discussion, and for the high-res photos of the CxP board.</p>
+
+    <p>Jeff Ferguson provided high quality scans of the invaluable SAMS manuals for the C1P, C4P, and C2/C3 systems, and meticulously stitched together the schematics to make them readable and usable.  Jeff also provided high-res photos of the rare OSI 541 high-res graphics add-on board, and went the extra mile to reverse engineer the schematics. Many thanks, Jeff!!</p>
+
+    <p>Stephan M&uuml;hlstrasser ported cc65 to the C1P/Superboard II.&nbsp; Nice work!</p>
+
+    <p>Erik Klein contributed the disks from which Philip created various floppy images.&nbsp; Thanks!</p>
+
+    <p>Grant contributed multiple C1P 5.25&quot; disk images, as well as lots of interesting discussion on the forum.</p>
+
+    <p> Pete Targett contributed scans of the OSI UK User Group Newsletter. Awesome, thanks!
+
+    <p>I hope I didn&#39;t leave anybody out.&nbsp; If I did, please let me know and I will fix it!</p>
+  </body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Software</title>
+</head>
+<body>
+<h1 style="text-align: center; font-weight: bold">OSI Software and Firmware</h1>
+
+<p><a href="index.html">HOME</a></p>
+
+<p><a href="#Disk Images">Disk Images</a><br style="font-weight: bold" />
+<a href="#BASIC_ROMS">BASIC ROMS</a><br />
+<a href="#Monitor_ROMS">Monitor ROMS</a><br />
+<a href="#Assembly_and_object_code">Assembly and object code programs</a><br />
+<a href="#BASIC_code">BASIC code</a><br />
+<a href="#Commercial_programs">Commercial Programs</a></p>
+
+<p></p>
+
+<h1><a id="Disk Images" name="Disk Images"></a>Disk Images</h1>
+
+<p>These disk images are compatible with the WinOSI emulator.</p>
+
+<h2>OSI System Disks</h2>
+
+<table align="left" border="1" cellpadding="1" cellspacing="1" style="background-color: rgb(255, 170, 236); text-align: left; width: 100%;">
+	<thead>
+		<tr>
+			<th scope="col">Name</th>
+			<th scope="col">Target</th>
+			<th scope="col">DIsk Size</th>
+			<th scope="col">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td style="text-align: left; width: 15%"><a href="disk_images/C1P-OS65D33-mike.zip">C1P-OS65D33-mike.zip</a></td>
+			<td style="text-align: center; width: 5%">C1P</td>
+			<td style="text-align: center; width: 5%">8&quot;</td>
+			<td>
+			<p>File: C1P_OS65D338_1.65U an&nbsp; 8&quot; image for winOSI or dump to your OSI -C1P.&nbsp; Contributed by Mike.&nbsp;<br />
+			<br />
+			&quot;This is the same as the OS65D338_1.65U image for the C2/C4 but with the appropriate changes for the C1P (standard video)&nbsp; ie&nbsp; inverted keyboard,screen format and ACIA locations.&nbsp;&nbsp; This image has been constructed using Debug on the PC from the 5.25 image supplied with the winOSI emulator.&nbsp; All the necessary conversion changes required for track and sector layout, buffer sizes, DOS code, BASIC code, Bexec*, BASIC utilites and macine code utilities etc have been made.&nbsp; It includes some bug fixes and will work with the original and Cegmon monitors. Also included are two utilities from Tutorial disk 2 and the demo data file handling programs from the OSI manual.&nbsp; Disclaimer: I had only the info available from the OSI manual to go by as far as the BASIC utility changes and track layout went. The other changes I discovered myself during many hours coding. I have given the image a reasonable test using the winOSI emulator and it works fine to date.&quot;<br />
+			<br />
+			If you find any bugs or have comments please <a href="http://osiweb.org/osiforum/viewtopic.php?f=4&amp;t=91#p557">post here</a><br />
+			<br />
+			( winOSI : Cegmon_C1.rom or SYN600. Machine Type 2 - OSI C1PMF&nbsp; 8&quot; Disk Drive ! )<br />
+			&nbsp;</p>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/C4P-OS65D33-mike.zip">C4P-OS65D33-mike.zip</a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">8&quot;</td>
+			<td>
+			<p>Image file:&nbsp;&nbsp; OS65D338_1.65U, an 8&quot; image for winOSI or dump to your OSI C2/4/8P.&nbsp; Contributed by Mike:</p>
+
+			<p><br />
+			&quot;This image has been constructed using Debug on the PC from the 5.25 image supplied with the winOSI emulator. Intended for&nbsp; dumping this down to&nbsp; OSI&nbsp; via&nbsp; RS232 and reconstructing a bootable disk.&nbsp; It also gives us an 8&quot; image for the winOSI emulator !&nbsp;&nbsp; All the necessary conversion changes required for track and sector layout, buffer sizes,&nbsp; DOS code, BASIC code, Bexec* , BASIC utilites and macine code utilities have been made.&nbsp; It includes some bug fixes and will work with the original and Cegmon monitors. Also included are two utilities from Tutorial disk 2 and the demo data file handling programs from the OSI&nbsp; manual.&nbsp; Disclaimer: I had only the info available from the OSI manual to go by as far as the BASIC Utility changes and track layout went. The other changes I had to discover myself during many hours coding.&nbsp;&nbsp; I have given the image a reasonable test using the winOSI emulator and it works fine to date.</p>
+
+			<p>( Machine Type=5 Cegmon_F6.rom )</p>
+
+			<p>If you find any bugs or have comment please <a href="http://osiweb.org/osiforum/viewtopic.php?f=4&amp;t=91#p557">post here</a>.<br />
+			&nbsp;</p>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/OS-65D_V3.2_(NMHZ).65D">OS65D V3.2 (NMHZ) </a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>Straight up C4P version of OS65D v3.2, with the &quot;NMHz&quot; patch that times determines disk timings using the UART, rather than hand-coded delay loops, and therefore does not need special patching 2 MHz or 4 MHz machines.&nbsp; Contributed by Philip Lord.</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/OS-65D_V3.3_C4P_Tutorial_Disk_1.65D">OS65D V3.3 Tutorial 1 (C4P)</a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.3, Tutorial Disk 1. Contains some simple games, loan interest calculator, etc. Designed to be a non-threatening intro to running programs via boot menues in OS65D. Contributed by Philip Lord.</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/OS-65D V3.3 C4P Tutorial_Disk 2.65D">OS65D V3.3 Tutorial 2 (C4P)</a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.3, Tutorial Disk 2, boots directly into the disk BASIC prompt.</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/OS-65D_V3.3_C4P_Tutorial_Disk_3.65D">OS65D V3.3 Tutorial 3 (C4P)</a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.3, Tutorial Disk 3. Contains several pre-allocated &quot;dummy&quot; files for the tutorial on saving and loading files. Contributed by Philip Lord.</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/OS-65D_V3.3_C4P_Tutorial_Disk_4.65D">OS65D V3.3 Tutorial 4 (C4P)</a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.3, Tutorial Disk 4. Contains several pre-allocated dummy program and data files for tutorial on sequential and random data files. Contributed by Philip Lord.</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/OS-65D_V3.3_C4P_Tutorial_Disk_5.65D">OS65D V3.3 Tutorial 5 (C4P)</a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.3, Tutorial Disk 5. Normal OS65D v3.3 boot disk. Contributed by Philip Lord.</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/C1P-OS65D_3.3_Tutorial1.65D">OS65D V3.3 Tutorial 1 (C1P)</a></td>
+			<td style="text-align: center;">C1P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.3, Tutorial Disk 1. Contains some simple games, loan interest calculator, etc. Designed to be a non-threatening intro to running programs via boot menues in OS65D.&nbsp; Constructed from C4P images by Grant (Klyball)</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/C1P-OS65D_3.3_Tutorial2.65D">OS65D V3.3 Tutorial 2 (C1P)</a></td>
+			<td style="text-align: center;">C1P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.3, Tutorial Disk 2, boots directly into the disk BASIC prompt. Constructed from C4P images by Grant (Klyball)</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/C1P-OS65D_3.3_Tutorial3.65D">OS65D V3.3 Tutorial 3 (C1P)</a></td>
+			<td style="text-align: center;">C1P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.3, Tutorial Disk 3. Contains several pre-allocated &quot;dummy&quot; files for the tutorial on saving and loading files. Constructed from C4P images by Grant (Klyball)</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/C1P-OS65D_3.3_Tutorial4.65D">OS65D V3.3 Tutorial 4 (C1P)</a></td>
+			<td style="text-align: center;">C1P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.3, Tutorial Disk 4. Contains several pre-allocated dummy program and data files for tutorial on sequential and random data files. Constructed from C4P images by Grant (Klyball)</td>
+		</tr>
+		<tr>
+			<td><a href="OS65D V3.3 Tutorial 5 (C1P)">OS65D V3.3 Tutorial 5 (C1P)</a></td>
+			<td style="text-align: center;">C1P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.3, Tutorial Disk 5. Normal OS65D v3.3 boot disk. Constructed from C4P images by Grant (Klyball)</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/C1P-OS65D_3.1.65D">OS65D V3.3 Tutorial 1 (C1P)</a></td>
+			<td style="text-align: center;">C1P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>OS65D v3.1 boot disk.&nbsp; Constructed from C4P images by Grant (Klyball)</td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<h2>Other OS disks</h2>
+
+<table align="left" border="1" cellpadding="1" cellspacing="1" style="background-color: rgb(255, 170, 236); text-align: left; width: 100%;">
+	<thead>
+		<tr>
+			<th scope="col">Name</th>
+			<th scope="col">Target</th>
+			<th scope="col">DIsk Size</th>
+			<th scope="col">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+			<p><a href="software/hexdos/Hexdos.zip">HexDOS 4.0 Disk image</a></p>
+
+			<p><a href="software/hexdos/HexdosManual.pdf">HexDOS 4.0 Manual</a></p>
+			</td>
+			<td style="text-align: center;">C1P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>
+			<p>HexDOS 4.0.&nbsp; Bootable disk created by forum member Danny.&nbsp; Hexdos is the popular and efficient alternative C1P OS created by Steven Hendrix, who contributed the source for non-commercial use.&nbsp; Source is on <a href="https://github.com/osiweb/HEXDOS">Github.</a></p>
+
+			<p>Also, check out the HexDOS <a href="software/hexdos/HexdosNews.pdf">newsletter </a></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<h2>Applications Disks</h2>
+
+<h2>Language and development disks</h2>
+
+<p></p>
+
+<table align="left" border="1" cellpadding="1" cellspacing="1" style="background-color: rgb(255, 170, 236); text-align: left; width: 100%;">
+	<thead>
+		<tr>
+			<th scope="col">Name</th>
+			<th scope="col">Target</th>
+			<th scope="col">DIsk Size</th>
+			<th scope="col">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><a href="disk_images/Aardvark_Disk_Catalog.65D">Aardvark Disk Catalog</a></td>
+			<td style="text-align: center;">C2/4</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>Not what you would think.&nbsp; It&#39;s a program to catalog files on your floppy disk.&nbsp; Written in BASIC, like many OSI utilities.&nbsp; Thanks to Philip Lord</td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<h2>Applications Disks</h2>
+
+<p></p>
+
+<table align="left" border="1" cellpadding="1" cellspacing="1" style="background-color: rgb(255, 170, 236); text-align: left; width: 100%;">
+	<thead>
+		<tr>
+			<th scope="col">Name</th>
+			<th scope="col">Target</th>
+			<th scope="col">DIsk Size</th>
+			<th scope="col">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><a href="disk_images/Aardvark_Maxi-Pros.65D">Aardvark Maxi-Pros</a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>Aardvark&#39;s line-oriented word processor.&nbsp; Written entirely in BASIC.</td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<h2>Games and Recreation disks</h2>
+
+<p></p>
+
+<p></p>
+
+<table align="left" border="1" cellpadding="1" cellspacing="1" style="background-color: rgb(255, 170, 236); text-align: left; width: 100%;">
+	<thead>
+		<tr>
+			<th scope="col">Name</th>
+			<th scope="col">Target</th>
+			<th scope="col">DIsk Size</th>
+			<th scope="col">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><a href="disk_images/Aardvark_Galaxia.65D">Galaxia</a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>Inspired by Gaxians, implemented using OSI character graphics.&nbsp; Thanks to Philip Lord.</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/Aardvark_Games.65D">Aardvark Games</a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>Seawolf, Starfighter, bomber, one-on-one tank, bomber, ten-tank blitz</td>
+		</tr>
+		<tr>
+			<td><a href="disk_images/Aardvark_Timetrek.65D">Aardvark Time Trek</a></td>
+			<td style="text-align: center;">C4P</td>
+			<td style="text-align: center;">5.25&quot;</td>
+			<td>Adaptation of the classic trek game of the 70&#39;s.</td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<h1><a name="BASIC_ROMS"></a>BASIC ROMS</h1>
+
+<p></p>
+
+<p>The OSI 8K version of Microsoft BASIC had a famous bug in the garbage collection routine, which would cause the system to crash when running certain string-intensive programs.&nbsp; Several fixes have been published, generally involving re-burning one of the BASIC ROMs (ROM#3).&nbsp; Here are the ROM images, suitable for burning to 2K EPROMS.&nbsp; They can be concatenated to an 8K EPROM if desired.</p>
+
+<p>Premier Publications offered a series of enhanced BASIC ROMs that significantly extended the functionality of the ROM BASIC.&nbsp; Many thanks to Mike in New Zealand for contributing these!&nbsp; Mike contributed the ROMS and the accompanying information in the table below.&nbsp; Any additional documentation would be much appreciated.</p>
+
+<table border="1" cellpadding="2" cellspacing="2" style="text-align: left; width: 100%; background-color: #33ffff">
+	<tbody>
+		<tr>
+			<td style="vertical-align: top; width: 15%"><a href="roms/basic-roms.zip">OSI ROM BASIC</a></td>
+			<td style="vertical-align: top">4 EPROM images for 1977 Microsoft 8K OSI BASIC in ROM</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="roms/basfix02.zip">Fixed BASIC3 ROM</a></td>
+			<td style="vertical-align: top">Ed&#39;s Replacement ROM3 fixing the garbage collector bug.&nbsp; Read the README.TXT file.&nbsp;&nbsp; Check the <a href="index.html#Links:">links</a> section for more of Ed&#39;s OSI goodies.</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%">
+			<p><a href="roms/BASIC4.zip">Premier BASIC 4 ROM (ZIP)</a></p>
+
+			<p></p>
+			</td>
+			<td style="vertical-align: top">
+			<p>BASIC4&nbsp; by Premier Publications.&nbsp;&nbsp; Replaces OSI ROM. Modified Load / Save routines. Initializes BASIC5 if present.&nbsp; Any further info would be much appreciated.&nbsp; Thanks Mike!!</p>
+
+			<p>UPDDATE 12/3/15: Full package with docs submitted by Manuel, thanks!</p>
+			</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%">
+			<p><a href="roms/BASIC5.zip">Premier BASIC 5 ROM (ZIP)</a></p>
+			</td>
+			<td style="vertical-align: top">BASIC 5&nbsp; by Premier Publications.&nbsp; From Mike: &quot;This is installed at $9000-$97FF. &nbsp; Modifies save and load vectors.&nbsp; $9200 cold start&nbsp; $9288 re enter.&nbsp; PRNTUSNG,var / number&nbsp;&nbsp;&nbsp;&nbsp; or&nbsp;&nbsp;&nbsp; PRNTUSNG &quot;###.##&quot;,var / number&nbsp;&nbsp; ... I dont remember syntax.&quot;.&nbsp; Adds many additional features summarized in the manual.&nbsp; Many thanks, Mike!<br />
+			UPDDATE 12/3/15: Full package with PDF manual submitted by Manuel, thanks!</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="roms/Premier_Basic6_ROM.bin">Premier BASIC 6 ROM</a></td>
+			<td style="vertical-align: top">
+			<p>BASIC 6 by Premier Publications.&nbsp; Installs at $9800-$9FFF.&nbsp;&nbsp; According to Mike, from the NET, credited to Mutek&nbsp;&nbsp;&nbsp; &nbsp;T. Shaw.&nbsp;&nbsp;&nbsp; Adds:<br />
+			Repeat, Until, While, Doke, Deek, Curs, Else, Err, Break, Hex, Do, Erl, Brl, Where, View, MC.&nbsp; Any further info would be much appreciated.&nbsp; Thanks to Mike!</p>
+			</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="roms/Premier_Basic_X_ROM.bin">Premier BASIC(X) ROM</a></td>
+			<td style="vertical-align: top">BASIC(X) by Premier Publications.&nbsp; Installs at $6800-$6FFF.&nbsp; From Mike: &quot;Reset, Noise, Env, Chan, Vol, Mode, Reg, Create, Close, Open, Dump, Get, Rspo, Psga, PAR, LFO, IN, OUT, LISP, IF, ELSE, PRNT, XREG, REPEAT, UNTIL, HANG, VI.&nbsp; Command syntax at offset 700 , routine jumps at 781. May have been for Practical Electronics sound card. No further info.&quot;&nbsp; Any further info would be much appreciated.<br />
+			&nbsp;</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="roms/Premier_Toolkit_ROM.bin">Premier Toolkit ROM</a></td>
+			<td style="vertical-align: top">BASIC Tool Kit by Premier Publications.&nbsp; Installs at $8000-$87FF.&nbsp; According to Mike: &quot;$8000 start. (&amp;GO$8000 from BASIC5.) Modifies Cont-C and&nbsp; I/O vectors. Relocatable. Useful adddition.&nbsp; Includes: Auto line # (CTRL-T to terminate); Delete line#; Renum start start/increment; Find line# line-line; Replace; Tron / Troff; View; List&nbsp; 1-100/5&nbsp;&nbsp;&nbsp; list/1 &nbsp;&nbsp;&nbsp; any key for next; Dupl&nbsp;&nbsp;&nbsp; ?; Old&nbsp;&nbsp;&nbsp; ?; MC&nbsp;&nbsp;&nbsp; jump to Cegmon; Syntax errors enable Cegmon editor.; OK replaced by Ready.; No other info.&quot;&nbsp; Thanks to mike.&nbsp; Any further info greatly appreciated.</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="roms/ENCODER.zip">Premier ENCODER ROM</a></td>
+			<td style="vertical-align: top">ROM Assembler and Disassembler using the ROM BASIC editor (supplemented by CEGMON, etc.).</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="roms/Progressive_Computing_ROMS_Rev2_Instrustions.pdf">Progressive Computing ROMs</a></td>
+			<td style="vertical-align: top">Installation and manual for Progressive Computing ROM3 and ROM4 replacements.</td>
+		</tr>
+	</tbody>
+</table>
+
+<h1><a name="Monitor_ROMS"></a>Monitor ROMS</h1>
+
+<table border="1" cellpadding="2" cellspacing="2" style="text-align: left; width: 100%; background-color: #ffff99">
+	<tbody>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="roms/synmon1.zip">SYNMON1</a></td>
+			<td style="vertical-align: top">An early monitor ROM which contained serial code as well as 540 video code.</td>
+		</tr>
+		<tr>
+		  <td style="vertical-align: top"><a href="roms/syn600_images.zip">SYN600</a></td>
+			<td style="vertical-align: top">A later ROM which contained C1P and C2/4/8P video code.&nbsp; No serial code.&nbsp; The C2/4 sections are identical to the SYNMON1 code. ** Thansk to Steve Gray, updated to include a DOS build script, and includes the full 2K ROM images for C1 and C2. **  </td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top">
+			<p><a href="roms/cegmon-collection.zip">CEGMON (asm, hex, ROM files and docs)</a></p>
+
+			<p><a href="roms/CEGMON.zip">CEGMON C1/UK101 version only</a></p>
+			</td>
+			<td style="vertical-align: top">
+			<p>An improved ROM with editing features and a fancier monitor.&nbsp; Included in the zipfile are instructions on how to <a href="roms/Howto_CEGMON_C2.txt">modify </a>your 502 board to use the file, and a review describing its <a href="roms/cegmrev.txt">features</a>.</p>
+
+			<p>UPDATE 12/3/15: PDF manual contributed by Manuel, thanks!</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top"><a href="firmware/wemon/wemon.zip">WEMON</a></td>
+			<td valign="top">This is an improved ROM monitor for the C1P/SBII/UK101 by Watford Electronics, providing full-featured screen editing, alpha-lock on the keyboard, improved machine language monitor, and improved cassette handling with named files, and more.&nbsp; Contributed by Steve Gray (Thanks!)</td>
+		</tr>
+		<tr>
+			<td valign="top"><a href="firmware/Baer_C1P/BAER_ROM.zip" title="">BAER ROM</a></td>
+			<td valign="top">This is a ROM replacement for the C1P with enhanced editing and BASIC keyboard shortcuts, written by Wolfgang Baer.&nbsp; The manual is in German.&nbsp; Very interesting!&nbsp; Contributed by Steve Gray</td>
+		</tr>
+		<tr>
+			<td valign="top"><a href="firmware/DABUG/DABUG_III_EP2C_C1P_S2.zip" title="">DABUG</a></td>
+			<td valign="top">This is a C1/Superboard replacement ROM, created by David Anear, contributed by Leslie Ayling.&nbsp; He found it installed in his newly acquired Superboard.&nbsp; Thanks, Leslie!&nbsp; It sure would be great if the author happens to drop by and share his OSI experiences on the Forum, and maybe even some info (or source code?) for the ROM.&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+
+<h1>Third Party ROMS</h1>
+
+<p>The BASIC ROMs could be replaced by other third party ROMs to create a dedicated platform.</p>
+
+<table border="1" cellpadding="2" cellspacing="2" style="text-align: left; width: 100%; background-color: #33ffff">
+	<tbody>
+		<tr>
+			<td style="vertical-align: top; width: 15%">
+			<p><a href="roms/Word_Wizard_3.bin">Word Wizard 3 ROM</a></p>
+			</td>
+			<td style="vertical-align: top">Word Wizard 3&nbsp; UK101 Word Processor machine code ROM.&nbsp; Contributed by Mike.&nbsp; From Mike: &quot;No documentation available but will provide further info upon investigation of operation at a later date.&quot;</td>
+		</tr>
+	</tbody>
+</table>
+
+<h1><a name="Monitor_ROMS"></a>Utilities</h1>
+
+<table border="1" cellpadding="2" cellspacing="2" style="text-align: left; width: 100%; background-color: #ffff99">
+	<tbody>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="programs/utilities/OSITOOLS.ZIP">OSI Disk Dump Tools</a></td>
+			<td style="vertical-align: top">OSI-based programs for dumping OSI disk contents to the serial port (Source: Ed)</td>
+		</tr>
+		<tr>
+			<td valign="top"><a href="programs/utilities/memory_test.zip" title="">Memory Test</a></td>
+			<td valign="top">Memory Test for video-based OSI computers, as published in the OSI Small Systems Journal, Vol 1, No 3; Sept. 1977.&nbsp; Contributed by Nama</td>
+		</tr>
+	  <tr>
+	      <td>
+	          <p><a href="http://www.pdp8online.com/osi/osi-floppy-test.shtml" title="">David Gesswein's OSI Floppy Test Program</a></p>
+	      </td>
+	      <td>
+	          <p>A comprehensive utility for testing floppy disk drives.  Supports video and serial-based systems.</p>
+	      </td>
+	  </tr>
+	</tbody>
+</table>
+
+<h1><a name="Games">Games</a></h1>
+
+<table border="1" cellpadding="2" cellspacing="2" style="text-align: left; width: 100%; background-color: #33ffff">
+	<tbody>
+		<tr>
+			<td style="vertical-align: top; width: 15%">
+			<p><a href="programs/games/nim.zip" title="">NIM</a></p>
+			</td>
+			<td style="vertical-align: top">
+			<p>The Game of NIM, as published in the &quot;1K corner&quot; column, OSI Small Systems Journal, Vol 1 No 1; July 197; contributed by Nama</p>
+			</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 15%"><a href="software/osichess/OSIChess.pdf">OSI Chess</a></td>
+			<td style="vertical-align: top">Manual only. Thanks Stephan!&nbsp; It would be nice to have the software to match!</td>
+		</tr>
+	</tbody>
+</table>
+
+<h1><a name="BASIC_code"></a>BASIC code</h1>
+
+<p>I have not been very lucky in my attempts to recover code from the few surviving old cassettes and disks I have.&nbsp; Therefore everything in this section has been lifted from the various links.&nbsp; I&#39;d like to comb through the code and write little summaries of the programs and create a little index.&nbsp; If you try some of these, please send me your comments.</p>
+
+<p>By the way, the programs below are in cassette-dump format, meaning that each line ends with a &lt;CR&gt; and several nulls.&nbsp; This is reccomended if you plan to encode the files for cassette input, or upload via the serial port, since BASIC needs a few moments to digest each input line.&nbsp; If you wish to remove the nulls (for example, to edit under Unix/Linux or DOS), you can use the &#39;tr&#39; command, standard on unix/linux, and available for DOS/win.&nbsp; The following removes nulls and CRs:</p>
+
+<p><br />
+<span style="font-family: courier new,courier,monospace">tr -d &#39;\000\015&#39; &lt; ASM.BAS &gt;tmp</span><br />
+<br />
+or<br />
+<br />
+<span style="font-family: courier new,courier,monospace">for i in *; do tr -d &#39;\000\015&#39; &lt; $i &gt;tmp; mv tmp $i; done</span></p>
+
+<table border="1" cellpadding="2" cellspacing="2" style="background-color: rgb(255, 255, 153); text-align: left; width: 100%;">
+	<tbody>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="programs/basic/OsiBas.zip">OsiBas.zip</a></td>
+			<td style="vertical-align: top">A big, unsorted collection of OSI basic and machine-code (OS65V format) programs.&nbsp; I plan to sort throught these, list the good ones individually with some commentary, and add more when I have the time.</td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<p></p>
+
+<h1><a name="Assembly_and_object_code"></a>Assembly and object code</h1>
+
+<p></p>
+
+<table border="1" cellpadding="2" cellspacing="2" style="background-color: rgb(51, 255, 255); text-align: left; width: 100%;">
+	<tbody>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="programs/object/MCTrace.zip">MCTrace</a></td>
+			<td style="vertical-align: top">MCTrace, from the 5th book of OSI.&nbsp; This is a debugger with trace/breakpoint capability.&nbsp; Looks very nice.&nbsp; ZIP file includes a loadable file for the OSI ROM monitor, a copy of the documentation from the 5th book of OSI, and documentation by Mike.&nbsp; Contributed by Mike--thanks!</td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<p></p>
+
+<h1><a name="Commercial_programs"></a>Commercial applications and tools</h1>
+
+<p></p>
+
+<table border="1" cellpadding="2" cellspacing="2" style="background-color: rgb(51, 255, 255); text-align: left; width: 100%;">
+	<tbody>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="software/fbasic/fbasic_v1.0.pdf">FBASIC 1.0 manual</a></td>
+			<td style="vertical-align: top">FBASIC Version 1.0 manual.&nbsp;
+			<p>Thanks so much to forum member John for contributing these scans!!</p>
+
+			<ul>
+			</ul>
+			</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%">
+			<p><a href="software/fbasic/fbasic1.img">FBASIC 1.12 disk image</a></p>
+
+			<p><a href="software/fbasic/fbasic_v1.1.pdf">FBASIC 1.1 manual</a></p>
+
+			<p><a href="software/fbasic/fbasic_release_notes_v1.1.pdf">FBASIC 1.1 notes</a></p>
+			</td>
+			<td style="vertical-align: top">
+			<p>FBASIC V1.12.&nbsp; 8&quot; disk image for C2/4/8.&nbsp; Thanks so much to forum member John!!</p>
+
+			<p>FBASIC is a compiler for a subset of Microsoft BASIC.&nbsp; Some of the missing features are:</p>
+
+			<ul>
+				<li>Only 1-D arrays (so 2D arrays must include additional row / column offset calculation)</li>
+				<li>No string manipulation functions (MID#, RIGHT$, LEFT$, STR$/VAL, etc.)</li>
+				<li>Only unsigned 16-bit integer variables.&nbsp;</li>
+				<li>No floating point and no transcendental functions (sin/cos/tan/exp/log)</li>
+				<li>No sgn function, irrelevant for unsigned vars</li>
+				<li>new/run/stop/exit irrelevant, not implemented</li>
+				<li>no USR(X), but there is another mechanism for calling machine code</li>
+				<li>No STEP in FOR/NEXT loop</li>
+				<li>No garbage collection of strings.</li>
+			</ul>
+
+			<p>Some extensions are:</p>
+
+			<ul>
+				<li>Direct access to 6502 registers in the code; directly transfer between registers and variables</li>
+				<li>Directly GOSUB to machine language routines, so no need for USR(X)</li>
+				<li>WHILE / WEND loop construct</li>
+				<li>Location of arrays can be specified at time of declaration</li>
+			</ul>
+
+			<p>Version 1.1 adds: Improved INPUT, adds SPC, TAB, POS functions, adds MOD and RND functions, adds ON/GOTO, compiler can understand disk drive specifier (A:/B:). &nbsp; Adds several compiled versions of OS65D utilities.&nbsp; Thanks to John!!</p>
+			</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="software/figforth-65u/figFORTH_OS65U.pdf">FigFORTH OS65U manual</a></td>
+			<td style="vertical-align: top">Intro section of the manual for a version of Fig Forth for OS65U, ported by Software Consultants (Memphis, TN).&nbsp; Thanks to John for the contribution!!</td>
+		</tr>
+                <tr>
+                  <td>
+                    <p><a href="software/aardvark/TinyCompiler_1.3.pdf">Aardvark Tiny Compiler v1.3</a></p>
+                  </td>
+                  <td>
+                    <p>
+                      Version 1.3 of the Aardvark Tiny BASIC Compiler. Manual and BASIC Source code listing.  Limited BASIC subset (cannot compile itself.)  Many thanks to Steve!!
+                    </p>
+                  </td>
+                </tr>
+
+	</tbody>
+</table>
+
+<p></p>
+
+<h1><a name="Commercial_programs"></a>Commercial applications and tools</h1>
+
+<p>This section is for full-fledged applications and tools, above and beyond the typical Aardvark program.&nbsp; I was only aware of a few such programs for OSI.&nbsp; I&#39;m still looking for copies of:<br />
+<br />
+FORTH for OSI<br />
+&nbsp;</p>
+
+<table border="1" cellpadding="2" cellspacing="2" style="background-color: rgb(255, 255, 153); text-align: left; width: 100%;">
+	<tbody>
+		<tr>
+			<td style="vertical-align: top; width: 20%">
+			<p><a href="software/wp6502/wp6502_v1.3_manual.pdf">WP6502 v1.3 Manual</a></p>
+
+			<p><a href="software/wp6502/wp6502_v1.3_disassembly.pdf">WP6502 disassembly</a></p>
+			</td>
+			<td style="vertical-align: top">Word Processing application by Duo Quong Fok Lok Sow.&nbsp; I&#39;ve also included a scan of a disassembled version.&nbsp; This appears to be an in-progress project, with handwritten notes on the listing.&nbsp; Also, check out this Nov 2, 1981 <a href="software/wp6502/wp6502_review_infoworld.pdf">InfoWorld review</a></td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top">
+			<p><a href="software/wp2/WP2.zip">WP-2 image, C2/4/8 5.25&quot;</a></p>
+
+			<p><a href="software/wp2/wp2-manual.pdf">WP-2 manual</a></p>
+			</td>
+			<td style="vertical-align: top">WP2, the OSI word processor offering.&nbsp; This disk image was provided by Mike, constructed from a disk image provided by Mark Spankus.&nbsp; Thanks Mike and Mark!</td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top">
+			<p><a href="software/wp3/wp3-manual.pdf">WP-3 manual</a></p>
+			</td>
+			<td style="vertical-align: top">WP3, the next generation OSI word processor offering.</td>
+		</tr>
+	</tbody>
+</table>
+
+<p></p>
+
+<h1><span><a name="OSIDemoCode">OSI products / demos</a></span></h1>
+
+<h1></h1>
+
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+	<tbody>
+		<tr>
+			<td valign="top"><strong>File</strong></td>
+			<td valign="top"><strong>Description</strong></td>
+		</tr>
+		<tr>
+			<td style="vertical-align: top; width: 20%"><a href="manuals/DAC1_Users_Manual.pdf" title="">DAC1</a></td>
+			<td style="vertical-align: top">OSI Music program, manual only at this time. &nbsp; Scan contributed by Steve Gray.&nbsp;&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+
+<h1></h1>
+</body>
+</html>

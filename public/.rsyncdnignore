@@ -1,0 +1,36 @@
+# Rsync exclude patterns for osiweb project
+
+# Forum cache and temporary files
+forum/cache/
+forum/store/
+
+# Version control
+.git/
+.gitignore
+
+
+# Temporary directories
+tmp/
+temp/
+tt/
+t/
+
+# Backups
+backup/
+backups/
+
+# Upload directories with user content
+
+
+# Local development files
+*.log
+error_log
+*.phpupgrader.*
+CLAUDE.md
+
+# Scripts, to prevent reversion to older versions.  Local versions are considered up-to-date
+.rsyncdnignore
+.rsyncupignore
+syncdn
+syncup
+osiwebadmin.sh

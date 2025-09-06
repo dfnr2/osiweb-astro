@@ -1,0 +1,661 @@
+
+ROMFLIP.SCR
+
+Scr # 0 
+  0 \ Information                                          DX-FORTH2 
+  1                                                                  
+  2 OSI character rom conversion utility                             
+  3                                                                  
+  4 Converts an Ohio Scientific character rom dump between           
+  5 C1/Superboard2 and C2/C4 models.                                 
+  6                                                                  
+  7                                                                  
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 1 
+  0 \ Load - TITLE                                                   
+  1 empty forth definitions decimal application                      
+  2                                                                  
+  3 : TITLE ." ROMFLIP version 1.0  11-Sep-01" cr ;                  
+  4                                                                  
+  5 cr .( Compiling: )  title  2 load                                
+  6                                                                  
+  7 cr .( Save to disk? )  y/n  [if]                                 
+  8   turnkey program  ROMFLIP  [then]                               
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 2 
+  0 \ Load -                                                         
+  1  4 5 thru                       \ error handling                 
+  2  6 8 thru                       \ file primitives                
+  3  9 13 thru                      \ default files                  
+  4 \ 14 load                        \ buffered input file           
+  5 \ 15 load                        \ buffered output file          
+  6 \ 16 18 thru                     \ string functions              
+  7  19 24 thru                     \ command-line parsing           
+  8  25 30 thru                     \ application                    
+  9                                                                  
+ 10 ' (break?)   is break?          \ enable user break              
+ 11 ' closefiles is (error)         \ closefiles on error            
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+ROMFLIP.SCR
+
+Scr # 3 
+  0 \ Load -                                                         
+  1                                                                  
+  2                                                                  
+  3                                                                  
+  4                                                                  
+  5                                                                  
+  6                                                                  
+  7                                                                  
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 4 
+  0 \ Error - (ERROR) ERROR1-2                                       
+  1 \ (ERROR) is used to trap error events.  When debugging in       
+  2 \ forth ' QUIT IS (ERROR) will prevent exit to dos on error.     
+  3                                                                  
+  4 defer (ERROR)                                                    
+  5                                                                  
+  6 \ quit to dos with return code 1                                 
+  7 : ERROR1  ( -- )  (error)  1 return ;                            
+  8                                                                  
+  9 \ quit with abort msg                                            
+ 10 : ERROR2  ( -- )  ."  ... aborting" cr  error1 ;                 
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 5 
+  0 \ Error - (BREAK?) BREAK?                                        
+  1 \ Check for user break                                           
+  2 : (BREAK?)  ( -- )  key? if                                      
+  3     key  dup 27 =  swap 3 =  or if ( esc or ctrl-c )             
+  4       beep cr ." User break - exit program? "                    
+  5       y/n if  error2  then  then  then ;                         
+  6                                                                  
+  7 defer BREAK?                                                     
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+ROMFLIP.SCR
+
+Scr # 6 
+  0 \ Files - ERROR3-6 READF WRITEF                                  
+  1 : ERROR3  ( -- )  cr ." Read error"  error2 ;                    
+  2 : ERROR4  ( -- )  cr ." Write error"  error2 ;                   
+  3 : ERROR5  ( -- )  cr ." Position error"  error2 ;                
+  4 : ERROR6  ( -- )  cr ." Size error"  error2 ;                    
+  5                                                                  
+  6 \ Read binary                                                    
+  7 : READF  ( a u handle -- a u2 )                                  
+  8   break?  >r over swap r>  read-file if error3 then ;            
+  9                                                                  
+ 10 \ Write binary                                                   
+ 11 : WRITEF  ( a u handle -- )                                      
+ 12   break?  write-file if error4 then ;                            
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 7 
+  0 \ Files - READL WRITEL FPOS REPOSF                               
+  1 \ Read text.  flag=0 if EOF                                      
+  2 : READL  ( a u handle -- a u2 flag )                             
+  3   break?  >r over swap r>  read-line if error3 then ;            
+  4                                                                  
+  5 \ Write text                                                     
+  6 : WRITEL  ( a u handle -- )                                      
+  7   break?  write-line if error4 then ;                            
+  8                                                                  
+  9 \ File position                                                  
+ 10 : FPOS  ( handle  -- ud )  file-position if error5 then ;        
+ 11                                                                  
+ 12 \ Reposition file                                                
+ 13 : REPOSF  ( ud handle  -- )  reposition-file if error5 then ;    
+ 14                                                                  
+ 15                                                                  
+
+Scr # 8 
+  0 \ Files - FSIZE RESIZEF                                          
+  1 \ File size                                                      
+  2 : FSIZE  ( handle  -- ud )  file-size if error6 then ;           
+  3                                                                  
+  4 \ Resize file                                                    
+  5 : RESIZEF  ( ud handle  -- )  resize-file if error6 then ;       
+  6                                                                  
+  7                                                                  
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+ROMFLIP.SCR
+
+Scr # 9 
+  0 \ Default files - buffers                                        
+  1 1024 constant INBUFSIZE         \ buffered file size             
+  2 1024 constant OUTBUFSIZE                                         
+  3                                                                  
+  4 variable INFILE                 \ file open flag                 
+  5 variable INHANDLE               \ file handle                    
+  6 variable INPTR                  \ buffer pointer                 
+  7 variable INSIZ                  \ current buffer size            
+  8 create   INNAME  65 allot       \ filename buffer                
+  9                                                                  
+ 10 variable OUTFILE                                                 
+ 11 variable OUTHANDLE                                               
+ 12 variable OUTPTR                                                  
+ 13 variable OUTSIZ                                                  
+ 14 create   OUTNAME  65 allot                                       
+ 15                                                                  
+
+Scr # 10 
+  0 \ Default files - CLOSEFILES                                     
+  1 defer RESETINBUF   ' noop is resetinbuf                          
+  2 defer RESETOUTBUF  ' noop is resetoutbuf                         
+  3                                                                  
+  4 \ Close files.  Must never invoke the standard error handler.    
+  5 : CLOSEFILES  ( -- )                                             
+  6   infile  dup @ if  inhandle  @ close-file drop  then  off       
+  7   outfile dup @ if  outhandle @ close-file drop  then  off ;     
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 11 
+  0 \ Default files - OPENINFILE                                     
+  1 \ Open infile                                                    
+  2 : OPENINFILE  ( mode -- )                                        
+  3   infile off                                                     
+  4   cr ." infile:  "                                               
+  5   inname count  2dup upper  2dup type                            
+  6   rot open-file  if                                              
+  7     5 = if  ."  access denied"  else  ."  not found"  then       
+  8     error2  then                                                 
+  9   inhandle !  infile on  resetinbuf ;                            
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+ROMFLIP.SCR
+
+Scr # 12 
+  0 \ Default files - OPENOUTFILE                                    
+  1 \ Open outfile                                                   
+  2 : OPENOUTFILE  ( mode -- )                                       
+  3   outfile off                                                    
+  4   cr ." outfile: "                                               
+  5   outname count  2dup upper  2dup type                           
+  6   2dup r/o open-file  0= if  close-file drop                     
+  7     beep ."  exists - overwrite? "  y/n 0= if error2 then        
+  8   else  drop  then                                               
+  9   rot create-file  if                                            
+ 10     ."  create error"  error2  then                              
+ 11   outhandle !  outfile on  resetoutbuf ;                         
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 13 
+  0 \ Default files - READDATA WRITEDATA READTEXT WRITETEXT          
+  1 \ Unbuffered file functions                                      
+  2 \ Read binary from infile                                        
+  3 : READDATA  ( a u1 -- a u2 )  inhandle @ readf ;                 
+  4                                                                  
+  5 \ Write binary to outfile                                        
+  6 : WRITEDATA  ( a u -- )  outhandle @ writef ;                    
+  7                                                                  
+  8 \ Read text from infile.  fl=0 if EOF                            
+  9 : READTEXT  ( a u1 -- a u2 fl )  inhandle @ readl ;              
+ 10                                                                  
+ 11 \ Write text to outfile                                          
+ 12 : WRITETEXT  ( a u -- )  outhandle @ writel ;                    
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 14 
+  0 \ Default files - INBUF REFILLREAD READCHAR                      
+  1 \ Buffered file functions                                        
+  2 create INBUF  inbufsize allot                                    
+  3                                                                  
+  4 \ Refill read buffer from infile                                 
+  5 : REFILLREAD  ( -- a u )                                         
+  6   inbuf inbufsize readdata  dup insiz !  over inptr ! ;          
+  7                                                                  
+  8 \ Read char from buffered infile                                 
+  9 : READCHAR  ( -- char -1 | 0 )                                   
+ 10   insiz @  0= if  refillread swap drop  0= if 0 exit then  then  
+ 11   inptr @  c@  1 inptr +!  -1 insiz +!  -1 ;                     
+ 12                                                                  
+ 13 \ Reset buffer pointers                                          
+ 14 : (RESETINBUF)  ( -- )  inbuf inptr !  insiz off ;               
+ 15 ' (resetinbuf) is resetinbuf                                     
+ROMFLIP.SCR
+
+Scr # 15 
+  0 \ Default files - OUTBUF FLUSHWRITE WRITECHAR                    
+  1 \ Buffered file functions                                        
+  2 create OUTBUF  outbufsize allot                                  
+  3                                                                  
+  4 \ Flush write buffer to outfile                                  
+  5 : FLUSHWRITE  ( -- )                                             
+  6   outbuf  dup  outsiz @  writedata  outptr !  outsiz off ;       
+  7                                                                  
+  8 \ Write char to buffered outfile                                 
+  9 : WRITECHAR  ( char -- )                                         
+ 10   outsiz @  outbufsize = if  flushwrite  then                    
+ 11   outptr @ c!  1 outptr +!  1 outsiz +! ;                        
+ 12                                                                  
+ 13 \ Reset buffer pointers                                          
+ 14 : (RESETOUTBUF)  ( -- )  outbuf outptr !  outsiz off ;           
+ 15 ' (resetoutbuf) is resetoutbuf                                   
+
+Scr # 16 
+  0 \ Strings - STRING MLEN$ $! $OFF                                 
+  1 \ Define string variable with max length u (255 max)             
+  2 : STRING                                                         
+  3   create  ( u -- )  255 min  1 max  dup c,  0 c,  allot          
+  4   does>  ( -- sa su )  1+ count ;                                
+  5                                                                  
+  6 \ Return maximum length of string variable                       
+  7 : MLEN$  ( sa su -- u )  drop  2- c@ ;                           
+  8                                                                  
+  9 \ Store string a u into the string variable sa su                
+ 10 : $!  ( a u sa su -- )  over >r  mlen$ min  r> 1-  place ;       
+ 11                                                                  
+ 12 \ Clear string variable sa su                                    
+ 13 : $OFF  ( sa su -- )  0 0 2swap $! ;                             
+ 14                                                                  
+ 15                                                                  
+
+Scr # 17 
+  0 \ Strings - LEN$ MID$ LEFT$ RIGHT$                               
+  1 \ Return string length                                           
+  2 : LEN$  ( a u -- u )  swap drop ;                                
+  3                                                                  
+  4 \ Return u2 characters from string starting at offset n          
+  5 : MID$  ( a1 u1 n u2 -- a2 u3 )  >r  0 max  /string  r> min ;    
+  6                                                                  
+  7 \ Return u2 left-most characters from the string                 
+  8 : LEFT$  ( a1 u1 u2 -- a2 u3 )  0 swap  mid$ ;                   
+  9                                                                  
+ 10 \ Return u2 right-most characters from the string                
+ 11 : RIGHT$  ( a1 u1 u2 -- a2 u3 )  2dup -  swap  mid$ ;            
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+ROMFLIP.SCR
+
+Scr # 18 
+  0 \ Strings - $= $+                                                
+  1 \ Compare strings for equality                                   
+  2 : $=  ( a1 u1 a2 u2 -- flag )  compare 0= ;                      
+  3                                                                  
+  4 255  ( maximum length of concatenated string)                    
+  5 here ( where it will go )                                        
+  6 over allot                                                       
+  7                                                                  
+  8 \ Concatenate two strings placing result in temp buffer          
+  9 : $+  ( a1 u1 a2 u2 -- a3 u3 )                                   
+ 10   2swap  [ over ] literal min  0 max  >r  [ dup ] literal        
+ 11   r@ cmove  [ dup ] literal  r>  2swap 2over  [ over ] literal   
+ 12   swap  /string  rot min  0 max  dup >r  cmove  r> + ;           
+ 13                                                                  
+ 14 2drop                                                            
+ 15                                                                  
+
+Scr # 19 
+  0 \ Cmdline parser - ARGC ARGV                                     
+  1 \ ARGC controls the parsed string ARGV will return.  ARGC is     
+  2 \ incremented on each ARGV call.  ARGC=0 parses from start.      
+  3                                                                  
+  4 variable ARGC   argc off                                         
+  5                                                                  
+  6 \ Parse the next space-delimited string from command-line.       
+  7 : ARGV  ( -- a u -1 | 0 )                                        
+  8   1 argc +!  0 0  argc @                                         
+  9   128 count  rot 0 ?do                                           
+ 10     2swap 2drop                                                  
+ 11     bl skip  2dup bl scan                                        
+ 12     rot over -  rot rot  loop                                    
+ 13   2drop                                                          
+ 14   dup if  -1  else  and  then ;                                  
+ 15                                                                  
+
+Scr # 20 
+  0 \ Cmdline parser - BADOPTION /NUM /HEXNUM /NUMRANGE              
+  1 : BADOPTION  ( -- )  cr ." Invalid option"  error2 ;             
+  2                                                                  
+  3 \ Parse number n from string a+1 u-1                             
+  4 : /NUM  ( a u -- 0 0 n )                                         
+  5   1 /string  number? if  drop  else  badoption  then             
+  6   0 0 ( stops further parsing) rot ;                             
+  7                                                                  
+  8 \ Parse hex number n from string a+1 u-1                         
+  9 : /HEXNUM  ( a u -- 0 0 n )                                      
+ 10   base @ >r  hex /num  r> base ! ;                               
+ 11                                                                  
+ 12 \ As for /NUM but checks n3 is in the range n1 to n2             
+ 13 : /NUMRANGE  ( a u n1 n2 -- 0 0 n3 )                             
+ 14   2>r /num  dup  2r> 1+  within  0= if badoption then ;          
+ 15                                                                  
+ROMFLIP.SCR
+
+Scr # 21 
+  0 \ Cmdline parser - SETOPTION                                     
+  1 \ Process each character in a switch option string               
+  2                                                                  
+  3 defer SETOPTION  ( a u char -- a u )  ' drop is setoption        
+  4                                                                  
+  5 exit                                                             
+  6                                                                  
+  7 \ Example                                                        
+  8 : (SETOPTION)  ( a u char -- a u )                               
+  9   upcase [char] A = if  a-variable on  else  badoption  then ;   
+ 10                                                                  
+ 11 ' (setoption) is setoption                                       
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 22 
+  0 \ Cmdline parser - PARSEOPTION                                   
+  1 \ Parse multiple switch options from the command-line            
+  2 : PARSEOPTION  ( -- )                                            
+  3   begin                                                          
+  4     argv                                                         
+  5   while  ( not end )                                             
+  6     over c@                                                      
+  7     dup   [char] /  =                                            
+  8     swap  [char] -  =  or if ( switch char )                     
+  9       begin  1 /string  dup                                      
+ 10       while  over c@  setoption                                  
+ 11       repeat  2drop                                              
+ 12     else                                                         
+ 13       2drop  -1 argc +! ( stop parsing )  exit                   
+ 14     then                                                         
+ 15   repeat ;                                                       
+
+Scr # 23 
+  0 \ Cmdline parser - PARSEFILENAME                                 
+  1 \ Parse filenames or non-option strings on the command-line      
+  2                                                                  
+  3 defer PARSEFILENAME  ( -- )  ' noop is parsefilename             
+  4                                                                  
+  5 exit                                                             
+  6                                                                  
+  7 \ Example                                                        
+  8 : (PARSEFILENAME)  ( -- )                                        
+  9   argv 0= if ." no filename specified"  abort  then              
+ 10   64 min inname place ;                                          
+ 11                                                                  
+ 12 ' (parsefilename) is parsefilename                               
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+ROMFLIP.SCR
+
+Scr # 24 
+  0 \ Cmdline parser - PARSECMD                                      
+  1 \ Parse command-line setting options and filenames.              
+  2 : PARSECMD  ( -- )                                               
+  3   argc off  parseoption  parsefilename ;                         
+  4                                                                  
+  5                                                                  
+  6                                                                  
+  7                                                                  
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 25 
+  0 \ HELP                                                           
+  1 : HELP  ( -- )                                                   
+  2   cr ." Usage:  ROMFLIP infile [outfile]" cr                     
+  3                                                                  
+  4   cr ." OSI character rom conversion utility."                   
+  5   cr ." Converts an Ohio Scientific character rom dump"          
+  6   cr ." between C1/Superboard2 and C2/C4 models."                
+  7   cr error1 ;                                                    
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 26 
+  0 \ HELP                                                           
+  1                                                                  
+  2                                                                  
+  3                                                                  
+  4                                                                  
+  5                                                                  
+  6                                                                  
+  7                                                                  
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+ROMFLIP.SCR
+
+Scr # 27 
+  0 \ (PARSEFILENAME)                                                
+  1 \ Parse filenames                                                
+  2 : (PARSEFILENAME)  ( -- )                                        
+  3   argv  0= if  help  then  64 min  inname place                  
+  4   argv  0= if  inname count  -filename  then                     
+  5   s" NEW" +filename  64 min  outname place ;                     
+  6                                                                  
+  7 ' (parsefilename) is parsefilename                               
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 28 
+  0 \ REVERSEBYTE REVERSEDATA                                        
+  1 \ Reverse sequence of bits in a byte                             
+  2 : REVERSEBYTE  ( x1 -- x2 )                                      
+  3   0  8 0 do                                                      
+  4     >r  2 /mod swap  r> 2* +  loop                               
+  5   swap drop ;                                                    
+  6                                                                  
+  7 \                                                                
+  8 : REVERSEDATA  ( a u -- )                                        
+  9   over + swap ?do                                                
+ 10     i c@ reversebyte  i c!  loop ;                               
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 29 
+  0 \ ROMFLIP                                                        
+  1 \                                                                
+  2 : ROMFLIP  ( -- )                                                
+  3   r/o openinfile                                                 
+  4   r/w openoutfile  cr                                            
+  5   pad 2048 readdata                                              
+  6   2dup reversedata                                               
+  7   writedata                                                      
+  8   closefiles                                                     
+  9   cr ." done" cr ;                                               
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+ROMFLIP.SCR
+
+Scr # 30 
+  0 \ DEFAULTS PROGRAM                                               
+  1 \ Set defaults                                                   
+  2 : DEFAULTS  ( -- )                                               
+  3   ;                                                              
+  4                                                                  
+  5 \ Main                                                           
+  6 : PROGRAM  ( -- )                                                
+  7   cr title                      \ show program name              
+  8   defaults                      \ set defaults                   
+  9   parsecmd                      \ get filenames and options      
+ 10   romflip ;                     \ execute                        
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 31 
+  0                                                                  
+  1                                                                  
+  2                                                                  
+  3                                                                  
+  4                                                                  
+  5                                                                  
+  6                                                                  
+  7                                                                  
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 32 
+  0                                                                  
+  1                                                                  
+  2                                                                  
+  3                                                                  
+  4                                                                  
+  5                                                                  
+  6                                                                  
+  7                                                                  
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+ROMFLIP.SCR
+
+Scr # 33 
+  0                                                                  
+  1                                                                  
+  2                                                                  
+  3                                                                  
+  4                                                                  
+  5                                                                  
+  6                                                                  
+  7                                                                  
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 34 
+  0                                                                  
+  1                                                                  
+  2                                                                  
+  3                                                                  
+  4                                                                  
+  5                                                                  
+  6                                                                  
+  7                                                                  
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  
+
+Scr # 0 
+  0 \ Information                                          DX-FORTH2 
+  1                                                                  
+  2 OSI character rom conversion utility                             
+  3                                                                  
+  4 Converts an Ohio Scientific character rom dump between           
+  5 C1/Superboard2 and C2/C4 models.                                 
+  6                                                                  
+  7                                                                  
+  8                                                                  
+  9                                                                  
+ 10                                                                  
+ 11                                                                  
+ 12                                                                  
+ 13                                                                  
+ 14                                                                  
+ 15                                                                  

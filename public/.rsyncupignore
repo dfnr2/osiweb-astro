@@ -1,0 +1,39 @@
+# Rsync exclude patterns for osiweb project
+
+
+# local files and backups
+local/
+backups/
+backup/
+*.sql
+*.sql.gz
+*.tar.gz
+
+# We don't pull the forum cache, so don't delete when pushing
+forum/cache/
+forum/store/
+
+# Temporary directories
+tmp/
+temp/
+tt/
+t/
+*~
+
+# Local development files
+*.log
+error_log
+*.phpupgrader.*
+CLAUDE.md
+
+# Dump files, usually inherited from remote
+dump/
+
+# Version control
+.git/
+
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.tmp
