@@ -1,0 +1,19 @@
+# Rsync exclude patterns for downloading forum from server
+# Syncing from server's public_html/forum/ to local public/forum/
+# Paths are relative to the forum directory
+
+# Forum cache and temporary files (don't need these locally)
+cache/
+store/
+
+# Temporary files
+*.log
+error_log
+*~
+*.tmp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# NOTE: We DO want to sync files/ for user uploads

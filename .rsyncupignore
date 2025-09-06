@@ -1,0 +1,24 @@
+# Rsync exclude patterns for uploading to server
+# Syncing from dist/ to server's public_html/
+# Paths are relative to dist/
+
+# Forum cache and store (preserve server-side versions)
+forum/cache/
+forum/store/
+# NOTE: forum/files/ should be uploaded if present (user uploads)
+
+# Temporary files
+*~
+*.tmp
+*.log
+error_log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# These shouldn't exist in dist but just in case
+.git/
+node_modules/
+*.sql
+*.sql.gz

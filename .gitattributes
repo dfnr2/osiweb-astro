@@ -1,0 +1,32 @@
+# Git LFS tracking for large files (>20MB)
+
+# Large PDFs in public directory
+public/books/Fifth_Book_of_OSI.pdf filter=lfs diff=lfs merge=lfs -text
+public/books/Micro_on_the_OSI.pdf filter=lfs diff=lfs merge=lfs -text
+public/journals/OSI_UK_UG_Newsletter/OSI_UK_Newsletter_V1N3.pdf filter=lfs diff=lfs merge=lfs -text
+public/journals/OSI_UK_UG_Newsletter/OSI_UK_Newsletter_V1N4.pdf filter=lfs diff=lfs merge=lfs -text
+public/journals/OSI_UK_UG_Newsletter/OSI_UK_Newsletter_V2N1.pdf filter=lfs diff=lfs merge=lfs -text
+public/journals/OSI_UK_UG_Newsletter/OSI_UK_Newsletter_V2N2.pdf filter=lfs diff=lfs merge=lfs -text
+public/journals/OSI_UK_UG_Newsletter/OSI_UK_Newsletter_V2N3.pdf filter=lfs diff=lfs merge=lfs -text
+public/journals/OSI_UK_UG_Newsletter/OSI_UK_Newsletter_V2N5.pdf filter=lfs diff=lfs merge=lfs -text
+public/journals/OSI_UK_UG_Newsletter/OSI_UK_Newsletter_V2N6.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/C1P_Manual.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/C1P_sams_jf_600dpi.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/c4man.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/C4P_Sams_jf_300dpi.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/C4P_Sams_jf_600dpi.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/c4pman2.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/hazeltine1500_maintenance.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/Okidata_3300_HD.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/OSI_540B-full.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/OSI_ComprehensiveInformationPackageII-300dpi.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/Sams_C2_C3_full_resolution.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/SAMS_C4P.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/SAMS-C4P-Service-Manual.pdf filter=lfs diff=lfs merge=lfs -text
+public/manuals/Superboard_II_Assembly_Instructions.pdf filter=lfs diff=lfs merge=lfs -text
+public/software/wp6502/wp6502_v1.3_disassembly.pdf filter=lfs diff=lfs merge=lfs -text
+# Large forum upload files (>20MB)
+public/forum/files/631_1d8eddbde3dc994ba07c94e584585d75 filter=lfs diff=lfs merge=lfs -text
+public/forum/files/631_a6bfd35dd6db929ceb8a83b33e48015c filter=lfs diff=lfs merge=lfs -text
+public/forum/files/631_ae6a0673884437bebbd77d67b4c11746 filter=lfs diff=lfs merge=lfs -text
+public/forum/files/631_7658f274e23840302a221716f8b25203 filter=lfs diff=lfs merge=lfs -text
