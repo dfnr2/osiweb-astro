@@ -2,14 +2,30 @@
 title: Useful Links
 description: External links to OSI-related sites and resources
 ---
+<style>
+{`
+table td:first-child {
+  width: 40%;
+}
+`}
+</style>
 
 ## OSI Resources
 
 | Site | Description |
 |------|-------------|
-| [OSIWeb GitHub](https://github.com/osiweb) | OSI Software and hardware sources, PCB reproductions, new projects. |
 | [Mark's Ohio Scientific/Compukit UK101 Archive](http://osi.marks-lab.com) | An excellent pan-OSI emulator for Windows, WinOSI, by Mark Spankus. Mark also has plenty of other goodies, many of which are on this site. Much material on this site was contributed by Mark (unattributed, unfortunately) |
-| [David Gesswein's OSI Floppy Test Program](http://www.pdp8online.com/osi/osi-floppy-test.shtml) | A comprehensive utility for testing floppy disk drives. Supports video and serial-based systems. |
+| [Anachrocomputer UK101 page](https://anachrocomputer.github.io/uk101.htm) | A nice Compukit 101 site by John Honniball |
+| [OSIWeb GitHub](https://github.com/osiweb) | OSI Software and hardware sources, PCB reproductions, new projects. |
+
+## Restoration & Hardware discussions
+
+| Site | Description |
+|------|-------------|
+| Mark Csele's [Superboard II page](https://markcsele.ca/hobbies/my-vintage-computers/ohio-scientific-superboard-ii) and [Challenger II page](https://markcsele.ca/hobbies/my-vintage-computers/ohio-scientific-500-series-challenger-ii) | Lots of great OSI info, including many beautiful hardware photos, and detailed descriptions of several hacks and mods to get your machine up and running. Very helpful. |
+| [Steve Gray's OSI / C4P page](http://www.6502.org/users/sjgray/computer/osi-c4p/index.html) | Great C4P and Superboard II pictures and scans, including some uncommon hardware and custom cases. |
+| [Tezza's C4P Adventures](http://www.classic-computers.org.nz/blog/2014-06-30-fixing-C4P-ram-expansion-board.htm) | Terry Stewart's Summer 2014 Retrochallenge project--Repair and restoration of a C4P cassette system, with lots of pictures and other info. Take a look at the rest of the site as well. |
+| [vintagecomputer.net](http://vintagecomputer.net) | Historical Computer Restoration website, by Bill Degnan. Lots of interesting hands-on restoration photos and discussion. Great site. |
 
 ## Emulators
 
@@ -18,30 +34,14 @@ description: External links to OSI-related sites and resources
 | [C1P.js](http://www.pcjs.org/docs/c1pjs/) | Jeff Parson's Javascript C1P emulator. This has a built-in debugger, and other goodies. Run it right in the browser! |
 | [UK101 emulator](http://uk101.sourceforge.net/) | UK101 emulator written in Java, by Tim Baldwin. Actively developed as of Feb 2017. |
 
-## OSI Community Sites
-
-| Site | Description |
-|------|-------------|
-| [Professor Mark Csele's OSI page](http://technology.niagarac.on.ca/people/mcsele/OhioScientific.html) | Lots of great OSI info, including many beautiful hardware photos, and detailed descriptions of several hacks and mods to get your machine up and running. Very helpful. |
-| [Steve Gray's OSI / C4P page](http://www.6502.org/users/sjgray/computer/osi-c4p/index.html) | Great C4P and Superboard II pictures and scans, including some uncommon hardware and custom cases. |
-| [The Compukit 101 Homepage](http://www.compukit.org/) | A comprehensive site dedicated to the Compukit 101, with plenty of scanned articles, manuals, software, and an emulator. |
-| [Compukit 101](http://www.gifford.co.uk/~coredump/uk101.htm) | Another nice compukit 101 site, with pictures. |
-| [Doublebit Software](http://www.doublebit.com/archives/software/challenger1p/) | A C1P site with a C1P emulator for windows |
-
 ## Utilities
 
 | Site | Description |
 |------|-------------|
-| [Lockett's OSI disk dump analyzer utility](http://lockett.altervista.org/osidd/osidd.html) | OSI Disk Dump utility - A very useful utility for analyzing 8" OS65D disk dumps (from Mark Spankus' dump utility) and for generating images from dumps |
-| [srecord](http://srecord.sourceforge.net/) | A very powerful binary file manipulation utility. It reads and writes numerous binary formats, including OS65V, and can write BASIC DATA and assembler .db statements. |
-
-## Restoration & Hardware
-
-| Site | Description |
-|------|-------------|
-| [Tezza's C4P Adventures](http://www.classic-computers.org.nz/blog/2014-06-30-fixing-C4P-ram-expansion-board.htm) | Terry Stewart's Summer 2014 Retrochallenge project--Repair and restoration of a C4P cassette system, with lots of pictures and other info. Take a look at the rest of the site as well. |
-| [Bill Degnan's VintageComputer.net](http://www.vintagecomputer.net/) | Lots of great detail photos of OSI systems. From the main page, click "Directory", then "OSI". Don't forget to check out the plethora of other systems! |
-| [vintagecomputer.net](http://vintagecomputer.net) | Historical Computer Restoration website, by Bill Degnan. Lots of interesting hands-on restoration photos and discussion. Great site. |
+| [David Gesswein's OSI Floppy Test Program](http://www.pdp8online.com/osi/osi-floppy-test.shtml) | A comprehensive utility for testing floppy disk drives. Supports video and serial-based systems. |
+| [Mark Spankus' OSI tools page](https://osi.marks-lab.com/software/tools.html) | Although Mark's site is linked above, this page deserves a special link because it holds so many crucial tools for OSI machines, including the OSIHFE, OSIDump, DiskTool, which move images between real floppies, OSI disk images, and FlashFloppy HFE format. Please check this page out.|
+| [srecord](http://srecord.sourceforge.net/) | A very powerful binary file manipulation utility. It reads and writes numerous binary formats, including OS65V/A loader, and can write BASIC DATA and assembler .db statements. |
+| [Ed's DX Forth and Utilities Page](https://dxforth.mirrors.minimaltype.com) | Lots of useful utilities for vintage computers.  The KCS decoder/encoder, hex/binary conversion tool, binary->OSI Loader converter, A65 assembler are of particular interest to OSIers.|
 
 ## 6502 Development Resources
 
@@ -49,4 +49,5 @@ description: External links to OSI-related sites and resources
 |------|-------------|
 | [6502.org](http://6502.org/) | A resource for 6502 programmers. Useful resources include a code library, forums, and hardware designs. |
 | [cc65 - the 6502 C compiler](http://cc65.github.io/cc65/) | A free, maintained, mature C compiler, assembler, linker, and utilities for the 6502, with a target for the C1P by Stephan (stm on the forum). Way to go Stephan! Documentation on the C1/Superboard port is [here](http://cc65.github.io/doc/osi.html). |
+| [llvm-mos - the 6502 backend for llvm](https://llvm-mos.org) | A 6502 backend for llvm, newer than cc65, but rapidly becoming competitive.  This could bring a wide array of powerful tools to 6502 development, and perhaps open the door to multiple language support for the 6502. |
 | [Universal integrated Microsoft 6502 BASIC source](http://www.pagetable.com/?p=46) | Recompilable disassembly of Microsoft 6502 BASIC, with conditional assembly switches, which can assemble to several byte-accurate versions of Microsoft 6502 BASIC, including OSI (including the GC bug), Commodore (v1 and v2), Applesoft (v1 and v2), KIM-1 basic, and more. Very interesting. This site contains a large number of other interesting articles as well. |
