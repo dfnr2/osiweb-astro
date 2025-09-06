@@ -1,5 +1,4 @@
 # Git LFS tracking for large files (>20MB)
-
 # Large PDFs in public directory
 public/books/Fifth_Book_of_OSI.pdf filter=lfs diff=lfs merge=lfs -text
 public/books/Micro_on_the_OSI.pdf filter=lfs diff=lfs merge=lfs -text
@@ -30,3 +29,4 @@ public/forum/files/631_1d8eddbde3dc994ba07c94e584585d75 filter=lfs diff=lfs merg
 public/forum/files/631_a6bfd35dd6db929ceb8a83b33e48015c filter=lfs diff=lfs merge=lfs -text
 public/forum/files/631_ae6a0673884437bebbd77d67b4c11746 filter=lfs diff=lfs merge=lfs -text
 public/forum/files/631_7658f274e23840302a221716f8b25203 filter=lfs diff=lfs merge=lfs -text
+public/books/OSI_Basic_In_Rom.PDF filter=lfs diff=lfs merge=lfs -text
