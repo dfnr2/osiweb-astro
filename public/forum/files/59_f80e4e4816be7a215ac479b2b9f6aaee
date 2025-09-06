@@ -1,0 +1,47 @@
+ Diablo printer used a 12bit data bus, with 3 strobe lines 4 control lines,
+ with 6 return status lines.  Data consists of character & print hammer impression
+ selections, carriage direction and distance selections, paper feed direction & 
+ distance selections when strobed by the character, print carriage or paper feed strobes.
+ Printer Select enables the 4 printer ready output lines. See Nec Spinwriter 5500Q
+
+ There are 3 strobes that cause the printer to act upon the 12bit data, carriage stobe to
+ move the print head horizontally, feed strobe to feed the paper, and print strobe to print
+ a character.
+ *Strobe Restore - Active Low - Restore Carriage & print wheel to home position
+ *Strobe Print - Active Low - interprets the lower 7 bits as printable ASCII
+ *Strobe Feed - Active Low, interpret the low 11 bits as a paper movement command
+ *Strobe Carriage - Active Low, Interpret the 12bit data as a carriage movement command
+
+
+The sequence to send a 12bit word to the printer is as follows: Put the 1st 4 high order
+ bits i PB0-PB3, strobe the appropriate bit on PortA to cause the latch to be loaded with
+ the data, Put the 8 lower bit on PB0-PB7, Activate the proper data strobe to send the data
+ to the printer.
+
+Because of the large number of stobe lines, the control lines are used as well. Bits 2,4, & 5
+of both PIA control registers must be set to 1 to allow CA2 and CB2 pins to be controlled by
+bit 3 of their respective control registers. This gives 2 additional stobe output lines.
+
+ $F500- input bit 0 = busy, hi=busy
+ $F502- output bit 0-6
+
+ PIA PORT B -> LPT D0-D7
+ PA0 <-In Carraige Ready
+ PA1 <-In Print Wheel Ready
+ PA2 ->Out Latch Stobe (DB9-DB12)
+ PA3 <-In Device Ready
+ PA4 <-In Device Check (Error)
+ PA5 <-In Feed Ready
+ PA6 ->Out Carriage Strobe
+ PA7 ->Out Restore (Clear)
+ CB2 ->Out Print Strobe
+ CA2 ->Out Feed Stobe
+
+
+ All databits use negative logic
+ output
+ 12-bit data for print strobe: bit 0-7 specify ASCII character 
+ 12-bit data for Feed Strobe: bit 10=direction (0=forward, 1=reverse) bit 0-9 specify value * 1/48th inch
+ 12-bit data for Carriage Strobe: bit 10=direction 0=fwd, 1=rev, 0-9,11 = horiz movement value * 1/120th inch
+ 12-bits order: (hi) CMO, DIR, CM10, CM09, CM08, ...CM01 (lo)
+
