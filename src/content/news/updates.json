@@ -1,0 +1,48 @@
+{
+  "items": [
+    {
+      "date": "2020-06-07",
+      "content": "Added link to David Gesswein's OSI Floppy Test utility. Thanks to David for making this available!"
+    },
+    {
+      "date": "2020-02-06", 
+      "content": "Added the Sams C2/C3 manual covering tons of OSI boards. Many thanks to Jeff Ferguson for the scan!!!"
+    },
+    {
+      "date": "2020-01-28",
+      "content": "Added Volumes 1 and 2 of the OSI UK User Group Newsletter. Many thanks to Pete Targett for the scans, and other useful info"
+    },
+    {
+      "date": "2019-10-15",
+      "content": "Added additional [replacement part number](/misc/osi-replacement-parts.txt) for key switches, George Risk KBM-01-01, and added the [datasheet](/datasheets/GRI-KBM-01-01.pdf) as well."
+    },
+    {
+      "date": "2019-09-10",
+      "content": "Fixed broken journal links and added missing descriptions for Compute's Gazette articles. Thanks to Mark S. for the prod"
+    },
+    {
+      "date": "2019-07-27",
+      "content": "Added link to John Lockett's utility for analyzing output of the Disk Dump Utility by Mark S."
+    },
+    {
+      "date": "2019-03-03",
+      "content": "Added Aardvark Journal v3 n2. Thanks to Rene Chaddock!!"
+    },
+    {
+      "date": "2019-02-23",
+      "content": "Added the Fifth Book of OSI. Thanks to Steve Gray for the scan!!"
+    },
+    {
+      "date": "2018-12-18",
+      "content": "Added manual for the Okidata 3300 series hard drives, used in the C3 series. Thanks to Kristoffer!!!"
+    },
+    {
+      "date": "2018-06-18",
+      "content": "Updated the SYN600 ZIP file to include pre-built images for C1 and C2/C4, and added a DOS build script. Thanks to Steve Gray!"
+    },
+    {
+      "date": "2018-03-01",
+      "content": "Changed outdated MARCH links to VC Federation forums. Thanks to Evan K. of VCFED for the reminder"
+    }
+  ]
+}

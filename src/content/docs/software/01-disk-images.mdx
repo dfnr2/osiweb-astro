@@ -1,0 +1,51 @@
+---
+title: Disk Images
+description: OSI disk images compatible with WinOSI emulator
+---
+
+These disk images are compatible with the WinOSI emulator.
+
+## OSI System Disks
+
+| Name | Target | Disk Size | Description |
+|------|--------|-----------|-------------|
+| [C1P-OS65D33-mike.zip](/disk_images/C1P-OS65D33-mike.zip) | C1P | 8" | File: C1P_OS65D338_1.65U an 8" image for winOSI or dump to your OSI -C1P. Contributed by Mike.<br/><br/>"This is the same as the OS65D338_1.65U image for the C2/C4 but with the appropriate changes for the C1P (standard video) ie inverted keyboard,screen format and ACIA locations. This image has been constructed using Debug on the PC from the 5.25 image supplied with the winOSI emulator. All the necessary conversion changes required for track and sector layout, buffer sizes, DOS code, BASIC code, Bexec*, BASIC utilites and macine code utilities etc have been made. It includes some bug fixes and will work with the original and Cegmon monitors. Also included are two utilities from Tutorial disk 2 and the demo data file handling programs from the OSI manual. Disclaimer: I had only the info available from the OSI manual to go by as far as the BASIC utility changes and track layout went. The other changes I discovered myself during many hours coding. I have given the image a reasonable test using the winOSI emulator and it works fine to date."<br/><br/>If you find any bugs or have comments please [post here](http://osiweb.org/osiforum/viewtopic.php?f=4&t=91#p557)<br/><br/>( winOSI : Cegmon_C1.rom or SYN600. Machine Type 2 - OSI C1PMF 8" Disk Drive ! ) |
+| [C4P-OS65D33-mike.zip](/disk_images/C4P-OS65D33-mike.zip) | C4P | 8" | Image file: OS65D338_1.65U, an 8" image for winOSI or dump to your OSI C2/4/8P. Contributed by Mike:<br/><br/>"This image has been constructed using Debug on the PC from the 5.25 image supplied with the winOSI emulator. Intended for dumping this down to OSI via RS232 and reconstructing a bootable disk. It also gives us an 8" image for the winOSI emulator ! All the necessary conversion changes required for track and sector layout, buffer sizes, DOS code, BASIC code, Bexec* , BASIC utilites and macine code utilities have been made. It includes some bug fixes and will work with the original and Cegmon monitors. Also included are two utilities from Tutorial disk 2 and the demo data file handling programs from the OSI manual. Disclaimer: I had only the info available from the OSI manual to go by as far as the BASIC Utility changes and track layout went. The other changes I had to discover myself during many hours coding. I have given the image a reasonable test using the winOSI emulator and it works fine to date.<br/><br/>( Machine Type=5 Cegmon_F6.rom )<br/><br/>If you find any bugs or have comment please [post here](http://osiweb.org/osiforum/viewtopic.php?f=4&t=91#p557). |
+| [OS-65D_V3.2_(NMHZ).65D](/disk_images/OS-65D_V3.2_(NMHZ).65D) | C4P | 5.25" | Straight up C4P version of OS65D v3.2, with the "NMHz" patch that times determines disk timings using the UART, rather than hand-coded delay loops, and therefore does not need special patching 2 MHz or 4 MHz machines. Contributed by Philip Lord. |
+| [OS-65D_V3.3_C4P_Tutorial_Disk_1.65D](/disk_images/OS-65D_V3.3_C4P_Tutorial_Disk_1.65D) | C4P | 5.25" | OS65D v3.3, Tutorial Disk 1. Contains some simple games, loan interest calculator, etc. Designed to be a non-threatening intro to running programs via boot menues in OS65D. Contributed by Philip Lord. |
+| [OS-65D V3.3 C4P Tutorial_Disk 2.65D](/disk_images/OS-65D%20V3.3%20C4P%20Tutorial_Disk%202.65D) | C4P | 5.25" | OS65D v3.3, Tutorial Disk 2, boots directly into the disk BASIC prompt. |
+| [OS-65D_V3.3_C4P_Tutorial_Disk_3.65D](/disk_images/OS-65D_V3.3_C4P_Tutorial_Disk_3.65D) | C4P | 5.25" | OS65D v3.3, Tutorial Disk 3. Contains several pre-allocated "dummy" files for the tutorial on saving and loading files. Contributed by Philip Lord. |
+| [OS-65D_V3.3_C4P_Tutorial_Disk_4.65D](/disk_images/OS-65D_V3.3_C4P_Tutorial_Disk_4.65D) | C4P | 5.25" | OS65D v3.3, Tutorial Disk 4. Contains several pre-allocated dummy program and data files for tutorial on sequential and random data files. Contributed by Philip Lord. |
+| [OS-65D_V3.3_C4P_Tutorial_Disk_5.65D](/disk_images/OS-65D_V3.3_C4P_Tutorial_Disk_5.65D) | C4P | 5.25" | OS65D v3.3, Tutorial Disk 5. Normal OS65D v3.3 boot disk. Contributed by Philip Lord. |
+| [C1P-OS65D_3.3_Tutorial1.65D](/disk_images/C1P-OS65D_3.3_Tutorial1.65D) | C1P | 5.25" | OS65D v3.3, Tutorial Disk 1. Contains some simple games, loan interest calculator, etc. Designed to be a non-threatening intro to running programs via boot menues in OS65D. Constructed from C4P images by Grant (Klyball) |
+| [C1P-OS65D_3.3_Tutorial2.65D](/disk_images/C1P-OS65D_3.3_Tutorial2.65D) | C1P | 5.25" | OS65D v3.3, Tutorial Disk 2, boots directly into the disk BASIC prompt. Constructed from C4P images by Grant (Klyball) |
+| [C1P-OS65D_3.3_Tutorial3.65D](/disk_images/C1P-OS65D_3.3_Tutorial3.65D) | C1P | 5.25" | OS65D v3.3, Tutorial Disk 3. Contains several pre-allocated "dummy" files for the tutorial on saving and loading files. Constructed from C4P images by Grant (Klyball) |
+| [C1P-OS65D_3.3_Tutorial4.65D](/disk_images/C1P-OS65D_3.3_Tutorial4.65D) | C1P | 5.25" | OS65D v3.3, Tutorial Disk 4. Contains several pre-allocated dummy program and data files for tutorial on sequential and random data files. Constructed from C4P images by Grant (Klyball) |
+| [OS65D V3.3 Tutorial 5 (C1P)](/OS65D%20V3.3%20Tutorial%205%20(C1P)) | C1P | 5.25" | OS65D v3.3, Tutorial Disk 5. Normal OS65D v3.3 boot disk. Constructed from C4P images by Grant (Klyball) |
+| [C1P-OS65D_3.1.65D](/disk_images/C1P-OS65D_3.1.65D) | C1P | 5.25" | OS65D v3.1 boot disk. Constructed from C4P images by Grant (Klyball) |
+
+## Other OS disks
+
+| Name | Target | Disk Size | Description |
+|------|--------|-----------|-------------|
+| [HexDOS 4.0 Disk image](/software/hexdos/Hexdos.zip)<br/>[HexDOS 4.0 Manual](/software/hexdos/HexdosManual.pdf) | C1P | 5.25" | HexDOS 4.0. Bootable disk created by forum member Danny. Hexdos is the popular and efficient alternative C1P OS created by Steven Hendrix, who contributed the source for non-commercial use. Source is on [Github.](https://github.com/osiweb/HEXDOS)<br/><br/>Also, check out the HexDOS [newsletter](/software/hexdos/HexdosNews.pdf) |
+
+## Language and development disks
+
+| Name | Target | Disk Size | Description |
+|------|--------|-----------|-------------|
+| [Aardvark Disk Catalog](/disk_images/Aardvark_Disk_Catalog.65D) | C2/4 | 5.25" | Not what you would think. It's a program to catalog files on your floppy disk. Written in BASIC, like many OSI utilities. Thanks to Philip Lord |
+
+## Applications Disks
+
+| Name | Target | Disk Size | Description |
+|------|--------|-----------|-------------|
+| [Aardvark Maxi-Pros](/disk_images/Aardvark_Maxi-Pros.65D) | C4P | 5.25" | Aardvark's line-oriented word processor. Written entirely in BASIC. |
+
+## Games and Recreation disks
+
+| Name | Target | Disk Size | Description |
+|------|--------|-----------|-------------|
+| [Galaxia](/disk_images/Aardvark_Galaxia.65D) | C4P | 5.25" | Inspired by Gaxians, implemented using OSI character graphics. Thanks to Philip Lord. |
+| [Aardvark Games](/disk_images/Aardvark_Games.65D) | C4P | 5.25" | Seawolf, Starfighter, bomber, one-on-one tank, bomber, ten-tank blitz |
+| [Aardvark Time Trek](/disk_images/Aardvark_Timetrek.65D) | C4P | 5.25" | Adaptation of the classic trek game of the 70's. |

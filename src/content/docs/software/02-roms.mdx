@@ -1,0 +1,52 @@
+---
+title: ROM images
+description: ROM images for OSI BASIC, monitors, and more
+---
+
+<style>
+{`
+table td:first-child {
+  width: 25%;
+}
+`}
+</style>
+
+## BASIC ROMs
+
+The OSI 8K version of Microsoft BASIC had a famous bug in the garbage collection routine, which would cause the system to crash when running certain string-intensive programs. Several fixes have been published, generally involving re-burning one of the BASIC ROMs (ROM#3). Here are the ROM images, suitable for burning to 2K EPROMS. They can be concatenated to an 8K EPROM if desired.
+
+Premier Publications offered a series of enhanced BASIC ROMs that significantly extended the functionality of the ROM BASIC. Many thanks to Mike in New Zealand for contributing these! Mike contributed the ROMS and the accompanying information in the table below. Any additional documentation would be much appreciated.
+
+| ROM | Description |
+|-----|-------------|
+| [OSI ROM BASIC](/roms/basic-roms.zip) | 4 EPROM images for 1977 Microsoft 8K OSI BASIC in ROM |
+| [Fixed BASIC3 ROM](/roms/basfix02.zip) | Ed's Replacement ROM3 fixing the garbage collector bug. Read the README.TXT file. Check the [links](/index.html#Links:) section for more of Ed's OSI goodies. |
+| [Premier BASIC 4 ROM (ZIP)](/roms/BASIC4.zip) | BASIC4 by Premier Publications. Replaces OSI ROM. Modified Load / Save routines. Initializes BASIC5 if present. Any further info would be much appreciated. Thanks Mike!!<br/><br/>UPDDATE 12/3/15: Full package with docs submitted by Manuel, thanks! |
+| [Premier BASIC 5 ROM (ZIP)](/roms/BASIC5.zip) | BASIC 5 by Premier Publications. From Mike: "This is installed at $9000-$97FF. Modifies save and load vectors. $9200 cold start $9288 re enter. PRNTUSNG,var / number or PRNTUSNG "###.##",var / number ... I dont remember syntax.". Adds many additional features summarized in the manual. Many thanks, Mike!<br/>UPDDATE 12/3/15: Full package with PDF manual submitted by Manuel, thanks! |
+| [Premier BASIC 6 ROM](/roms/Premier_Basic6_ROM.bin) | BASIC 6 by Premier Publications. Installs at $9800-$9FFF. According to Mike, from the NET, credited to Mutek T. Shaw. Adds:<br/>Repeat, Until, While, Doke, Deek, Curs, Else, Err, Break, Hex, Do, Erl, Brl, Where, View, MC. Any further info would be much appreciated. Thanks to Mike! |
+| [Premier BASIC(X) ROM](/roms/Premier_Basic_X_ROM.bin) | BASIC(X) by Premier Publications. Installs at $6800-$6FFF. From Mike: "Reset, Noise, Env, Chan, Vol, Mode, Reg, Create, Close, Open, Dump, Get, Rspo, Psga, PAR, LFO, IN, OUT, LISP, IF, ELSE, PRNT, XREG, REPEAT, UNTIL, HANG, VI. Command syntax at offset 700 , routine jumps at 781. May have been for Practical Electronics sound card. No further info." Any further info would be much appreciated. |
+| [Premier Toolkit ROM](/roms/Premier_Toolkit_ROM.bin) | BASIC Tool Kit by Premier Publications. Installs at $8000-$87FF. According to Mike: "$8000 start. (&GO$8000 from BASIC5.) Modifies Cont-C and I/O vectors. Relocatable. Useful adddition. Includes: Auto line # (CTRL-T to terminate); Delete line#; Renum start start/increment; Find line# line-line; Replace; Tron / Troff; View; List 1-100/5 list/1 any key for next; Dupl ?; Old ?; MC jump to Cegmon; Syntax errors enable Cegmon editor.; OK replaced by Ready.; No other info." Thanks to mike. Any further info greatly appreciated. |
+| [Premier ENCODER ROM](/roms/ENCODER.zip) | ROM Assembler and Disassembler using the ROM BASIC editor (supplemented by CEGMON, etc.). |
+| [Progressive Computing ROMs](/roms/Progressive_Computing_ROMS_Rev2_Instrustions.pdf) | Installation and manual for Progressive Computing ROM3 and ROM4 replacements. |
+
+
+## Monitor ROMs
+
+Monitor ROMs provided the basic system interface and debugging capabilities for OSI computers. Several enhanced monitor ROMs were developed that added improved editing, debugging, and system features.
+
+| ROM | Description |
+|-----|-------------|
+| [SYNMON1](/roms/synmon1.zip) | An early monitor ROM which contained serial code as well as 540 video code. |
+| [SYN600](/roms/syn600_images.zip) | A later ROM which contained C1P and C2/4/8P video code. No serial code. The C2/4 sections are identical to the SYNMON1 code. ** Thansk to Steve Gray, updated to include a DOS build script, and includes the full 2K ROM images for C1 and C2. ** |
+| [CEGMON (asm, hex, ROM files and docs)](/roms/cegmon-collection.zip)<br/>[CEGMON C1/UK101 version only](/roms/CEGMON.zip) | An improved ROM with editing features and a fancier monitor. Included in the zipfile are instructions on how to [modify](/roms/Howto_CEGMON_C2.txt) your 502 board to use the file, and a review describing its [features](/roms/cegmrev.txt).<br/><br/>UPDATE 12/3/15: PDF manual contributed by Manuel, thanks! |
+| [WEMON](/firmware/wemon/wemon.zip) | This is an improved ROM monitor for the C1P/SBII/UK101 by Watford Electronics, providing full-featured screen editing, alpha-lock on the keyboard, improved machine language monitor, and improved cassette handling with named files, and more. Contributed by Steve Gray (Thanks!) |
+| [BAER ROM](/firmware/Baer_C1P/BAER_ROM.zip) | This is a ROM replacement for the C1P with enhanced editing and BASIC keyboard shortcuts, written by Wolfgang Baer. The manual is in German. Very interesting! Contributed by Steve Gray |
+| [DABUG](/firmware/DABUG/DABUG_III_EP2C_C1P_S2.zip) | This is a C1/Superboard replacement ROM, created by David Anear, contributed by Leslie Ayling. He found it installed in his newly acquired Superboard. Thanks, Leslie! It sure would be great if the author happens to drop by and share his OSI experiences on the Forum, and maybe even some info (or source code?) for the ROM. |
+
+## Third Party ROMs
+
+The BASIC ROMs could be replaced by other third party ROMs to create a dedicated platform.
+
+| ROM | Description |
+|-----|-------------|
+| [Word Wizard 3 ROM](/roms/Word_Wizard_3.bin) | Word Wizard 3 UK101 Word Processor machine code ROM. Contributed by Mike. From Mike: "No documentation available but will provide further info upon investigation of operation at a later date." |

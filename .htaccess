@@ -1,0 +1,24 @@
+# Always use https for secure connections
+# Replace 'www.example.com' with your domain name
+# (as it appears on your SSL certificate)
+RewriteEngine On
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^(.*)$ https://osiweb.org/$1 [R=301,L]
+
+<Files 403.shtml>
+order allow,deny
+allow from all
+</Files>
+
+deny from 43.128.0.0/10
+deny from 101.32.0.0/14
+deny from 129.226.0.0/15
+deny from 150.109.0.0/16
+deny from 119.28.0.0/15
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php74” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php74___lsphp .php .php7 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit

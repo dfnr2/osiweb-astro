@@ -1,0 +1,17 @@
+---
+title: System Peripheral Manuals
+description: Manuals for typical system peripherals
+---
+## Disk Drives
+
+| Manual | Description |
+|--------|-------------|
+| [MPI B51 Drive Manual (Short)](/manuals/MPI_B51-B52_Product_Manual.pdf) | This is the drive used by OSI for all their 5.25" drive models. The short version of the manual has a lot of useful information on maintenance, but does not include complete schematics. |
+| [MPI B51/B52_Product Manual (Long)](/manuals/MPI_B51-B52_Product_Manual_Long.pdf) | This is the drive used by OSI for all their 5.25" drive models. The manual has a lot of useful information on maintenance, as well as complete schematics, theory of operation, etc. |
+
+
+## Terminals and Printers
+| Manual | Description |
+|--------|-------------|
+| [Okidata 3300 Hard Drive Manual](/manuals/Okidata_3300_HD.pdf) | This hard drive was used in OSI hard disk systems. These drives ranged up to 80 MB unformatted. Thanks to Kristoffer! |
+| [Hazeltine 1500 Maintenance manual](/manuals/hazeltine1500_maintenance.pdf) | This is the comprehensive maintenance and service manual for the Halzetine 1500, 1510, and 1520 terminals. Very large file! |

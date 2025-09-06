@@ -1,0 +1,22 @@
+---
+title: BASIC Code
+description: BASIC programs and source code for OSI computers
+---
+
+I have not been very lucky in my attempts to recover code from the few surviving old cassettes and disks I have. Therefore everything in this section has been lifted from the various links. I'd like to comb through the code and write little summaries of the programs and create a little index. If you try some of these, please send me your comments.
+
+By the way, the programs below are in cassette-dump format, meaning that each line ends with a `<CR>` and several nulls. This is reccomended if you plan to encode the files for cassette input, or upload via the serial port, since BASIC needs a few moments to digest each input line. If you wish to remove the nulls (for example, to edit under Unix/Linux or DOS), you can use the 'tr' command, standard on unix/linux, and available for DOS/win. The following removes nulls and CRs:
+
+```
+tr -d '\000\015' < ASM.BAS >tmp
+```
+
+or
+
+```
+for i in *; do tr -d '\000\015' < $i >tmp; mv tmp $i; done
+```
+
+| Program | Description |
+|---------|-------------|
+| [OsiBas.zip](/programs/basic/OsiBas.zip) | A big, unsorted collection of OSI basic and machine-code (OS65V format) programs. I plan to sort throught these, list the good ones individually with some commentary, and add more when I have the time. |

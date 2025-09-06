@@ -1,0 +1,31 @@
+ARGS=-av
+VERBOSE=--progress
+DELETE=
+ACTION=
+KEY="ssh -i ~/web/ec2keys/osiforum.pem"
+EXCLUDE="--exclude-from=.rsyncdnignore"
+USER=dfenyes
+HOST=108.167.172.195
+
+WEBDIR=public_html/
+SRC=$USER@$HOST:$WEBDIR
+
+while getopts dvpn opt
+do
+    case "$opt" in
+        v) VERBOSE="$VERBOSE -v"
+        ;;
+      	p) PROGRESS=--progress
+        ;;
+        d) DELETE=--delete
+        ;;
+        p) PEM="-e \"ssh -i $KEY\""
+        ;;
+        n) ACTION=-n
+        ;;
+    esac
+done
+shift `expr $OPTIND - 1`
+
+#rsync $ARGS $DELETE $ACTION $VERBOSE --exclude $EXCLUDE -e "ssh -i ../ec2keys/osiforum.pem" $SRC .
+rsync $ARGS $DELETE $ACTION $VERBOSE $PROGRESS $EXCLUDE $PEM $SRC/forum/ ./public/forum/
