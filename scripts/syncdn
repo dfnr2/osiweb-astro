@@ -1,4 +1,4 @@
-ARGS=-av
+ARGS="-acv --stats"
 VERBOSE=--progress
 DELETE=
 ACTION=

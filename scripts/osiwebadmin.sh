@@ -413,7 +413,7 @@ if [ "$SYNC_DOWN" = true ]; then
         echo "DRY RUN MODE - no files will be changed"
     fi
 
-    RSYNC_OPTS="-av --progress"
+    RSYNC_OPTS="-acv --progress --stats"
     [ -n "$VERBOSE" ] && RSYNC_OPTS="$RSYNC_OPTS -v"
     [ -n "$DELETE_SYNC" ] && RSYNC_OPTS="$RSYNC_OPTS $DELETE_SYNC"
     [ -n "$DRY_RUN" ] && RSYNC_OPTS="$RSYNC_OPTS $DRY_RUN"
@@ -465,7 +465,7 @@ if [ "$SYNC_UP" = true ]; then
         fi
     fi
 
-    RSYNC_OPTS="-av --progress"
+    RSYNC_OPTS="-acv --progress --stats"
     [ -n "$VERBOSE" ] && RSYNC_OPTS="$RSYNC_OPTS -v"
     [ -n "$DELETE_SYNC" ] && RSYNC_OPTS="$RSYNC_OPTS $DELETE_SYNC"
     [ -n "$DRY_RUN" ] && RSYNC_OPTS="$RSYNC_OPTS $DRY_RUN"

@@ -12,6 +12,10 @@ pnpm-debug.log*
 # Forum cache - truly reconstructable
 forum/cache/production/
 
+# Database ackup files
+backup
+backups
+
 # Sensitive configuration files
 forum/config.php
 
