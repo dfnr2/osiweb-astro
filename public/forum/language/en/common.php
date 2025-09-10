@@ -529,7 +529,7 @@ $lang = array_merge($lang, array(
 	'NO_EMAIL_RESPONSE_CODE'	=> 'Could not get mail server response codes.',
 	'NO_EMAIL_SUBJECT'			=> 'No email subject specified.',
 	'NO_FORUM'					=> 'The forum you selected does not exist.',
-	'NO_FORUMS'					=> 'This board has no forums.',
+	'NO_FORUMS'					=> '<div style="font-size:1.5em; font-weight:bold; text-align:center; margin:20px 0; color:#004080;">Welcome! Please log in to view the forums.<br>You may register if you are not already a member.</div>',
 	'NO_GROUP'					=> 'The requested usergroup does not exist.',
 	'NO_GROUP_MEMBERS'			=> 'This group currently has no members.',
 	'NO_IPS_DEFINED'			=> 'No IP addresses or hostnames defined',
