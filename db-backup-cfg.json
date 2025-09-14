@@ -1,0 +1,9 @@
+{
+  "source": "./backups",
+  "destination": "~/Dropbox/osiweb-backups",
+  "dry_run": false,
+  "keep_all": 1,
+  "keep_daily": 7,
+  "keep_weekly": 30,
+  "verbose": 1
+}

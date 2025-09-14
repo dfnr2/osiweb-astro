@@ -6,6 +6,7 @@ Syncs backup directory to a dedicated location, then applies tiered retention po
 """
 
 import argparse
+import json
 import os
 import re
 import subprocess
@@ -197,6 +198,23 @@ def apply_retention_policy(backup_files, keep_all_days=1, keep_daily_days=7, kee
     return list(keep_files), delete_files
 
 
+def load_config(config_file):
+    """Load configuration from JSON file"""
+    try:
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+        return config
+    except FileNotFoundError:
+        print(f"Error: Config file not found: {config_file}")
+        sys.exit(1)
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON in config file {config_file}: {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error reading config file {config_file}: {e}")
+        sys.exit(1)
+
+
 def parse_args():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(
@@ -207,6 +225,9 @@ Examples:
   # Basic usage with default thresholds (1/7/30 days)
   %(prog)s -s ./backups -d ~/Dropbox/osiweb-backups
   
+  # Using config file
+  %(prog)s -c config.json
+  
   # Dry run to see what would be deleted
   %(prog)s -s ./backups -d ~/Dropbox/osiweb-backups --dry-run
   
@@ -215,6 +236,17 @@ Examples:
   
   # Verbose output
   %(prog)s -s ./backups -d ~/Dropbox/osiweb-backups -vv
+
+Config File Format (JSON):
+  {
+    "source": "./backups",
+    "destination": "~/Dropbox/osiweb-backups", 
+    "dry_run": false,
+    "keep_all": 1,
+    "keep_daily": 7,
+    "keep_weekly": 30,
+    "verbose": 0
+  }
   
 Retention Policy:
   1. Keep ALL files newer than --keep-all days (default: 1 day)
@@ -223,10 +255,13 @@ Retention Policy:
   4. Keep 1 per MONTH for all files older than --keep-weekly days
         """)
     
-    parser.add_argument('-s', '--source', required=True,
+    parser.add_argument('-c', '--config-file', metavar='FILE',
+                       help='JSON config file with all parameters')
+    
+    parser.add_argument('-s', '--source',
                        help='Source backup directory to sync from')
     
-    parser.add_argument('-d', '--destination', required=True,
+    parser.add_argument('-d', '--destination',
                        help='Destination directory for backups')
     
     parser.add_argument('-n', '--dry-run', action='store_true',
@@ -245,6 +280,32 @@ Retention Policy:
                        help='Increase verbosity (-v, -vv, -vvv)')
     
     args = parser.parse_args()
+    
+    # Load config file if provided
+    if args.config_file:
+        config = load_config(args.config_file)
+        
+        # Apply config values, but let command line args override
+        if args.source is None and 'source' in config:
+            args.source = config['source']
+        if args.destination is None and 'destination' in config:
+            args.destination = config['destination']
+        if not args.dry_run and config.get('dry_run', False):
+            args.dry_run = True
+        if args.keep_all == 1 and 'keep_all' in config:  # Only use config if default
+            args.keep_all = config['keep_all']
+        if args.keep_daily == 7 and 'keep_daily' in config:  # Only use config if default
+            args.keep_daily = config['keep_daily']
+        if args.keep_weekly == 30 and 'keep_weekly' in config:  # Only use config if default
+            args.keep_weekly = config['keep_weekly']
+        if args.verbose == 0 and 'verbose' in config:  # Only use config if default
+            args.verbose = config['verbose']
+    
+    # Validate required arguments
+    if not args.source:
+        parser.error("Source directory required (use -s or config file)")
+    if not args.destination:
+        parser.error("Destination directory required (use -d or config file)")
     
     # Validate arguments
     if not os.path.exists(args.source):
