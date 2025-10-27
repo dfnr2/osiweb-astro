@@ -23,9 +23,10 @@ DEFAULT_CONFIG_PATHS=(
 )
 
 # Parse command line options
-VERBOSE=""
+VERBOSE=0
 BACKUP_FILES=false
 BACKUP_DB=false
+BACKUP_DB_PRUNE=false
 RESTORE_FILE=""
 MAINTENANCE_MODE=""
 SYNC_DOWN=false
@@ -44,7 +45,7 @@ usage() {
     echo "Usage: $0 [GLOBAL_OPTIONS] COMMAND [COMMAND_OPTIONS]"
     echo ""
     echo "Global Options:"
-    echo "  -v, --verbose           Enable verbose output"
+    echo "  -v, --verbose           Increase verbosity (can be used multiple times)"
     echo "  -n, --dry-run          Show what would change without doing it"
     echo "  --config FILE           Specify config file path (can be used multiple times)"
     echo "  -h, --help              Show this help"
@@ -52,7 +53,7 @@ usage() {
     echo "Commands:"
     echo "  syncdn [OPTIONS]        Sync files FROM server to local"
     echo "  syncup [OPTIONS]        Sync files FROM local to server"
-    echo "  backup_db               Backup database via SSH"
+    echo "  backup_db [OPTIONS]     Backup database via SSH"
     echo "  backup_files            Backup files (creates .tbz archive)"
     echo "  restore_db FILE         Restore database from backup file"
     echo "  maintenance on|off      Set maintenance mode"
@@ -62,6 +63,9 @@ usage() {
     echo "Sync Command Options (syncdn/syncup):"
     echo "  --delete                Delete files not in source"
     echo ""
+    echo "Backup DB Options:"
+    echo "  --prune                 Prune old backups after successful backup"
+    echo ""
     echo "Prune Backups Options:"
     echo "  --keep-all DAYS         Keep all backups newer than N days (default: 1)"
     echo "  --keep-daily DAYS       Keep 1/day for backups newer than N days (default: 7)"
@@ -70,6 +74,7 @@ usage() {
     echo "Examples:"
     echo "  $0 backup_files                              # Backup files"
     echo "  $0 backup_db                                 # Backup database"
+    echo "  $0 backup_db --prune                         # Backup database and prune old backups"
     echo "  $0 syncdn                                    # Download from server"
     echo "  $0 -n syncup                                 # Preview upload changes"
     echo "  $0 syncup --delete                           # Upload and delete removed files"
@@ -95,8 +100,15 @@ COMMAND_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
         -v|--verbose)
-            VERBOSE="v"
-            echo "Verbose mode enabled"
+            VERBOSE=$((VERBOSE + 1))
+            shift
+            ;;
+        -vv)
+            VERBOSE=$((VERBOSE + 2))
+            shift
+            ;;
+        -vvv)
+            VERBOSE=$((VERBOSE + 3))
             shift
             ;;
         -n|--dry-run)
@@ -162,11 +174,25 @@ case "$COMMAND" in
         ;;
 
     backup_db)
+        # Parse backup_db options
+        set -- "${COMMAND_ARGS[@]}"
+        while [[ $# -gt 0 ]]; do
+            case $1 in
+                --prune)
+                    BACKUP_DB_PRUNE=true
+                    shift
+                    ;;
+                -*)
+                    echo "Error: Unknown option for backup_db: $1"
+                    usage
+                    ;;
+                *)
+                    echo "Error: backup_db does not accept positional arguments"
+                    usage
+                    ;;
+            esac
+        done
         BACKUP_DB=true
-        if [ ${#COMMAND_ARGS[@]} -gt 0 ]; then
-            echo "Error: backup_db does not accept any options"
-            usage
-        fi
         ;;
 
     backup_files)
@@ -244,6 +270,50 @@ case "$COMMAND" in
         ;;
 esac
 
+# Load configuration from JSON file
+load_config() {
+    local config_file="$1"
+
+    if [ ! -f "$config_file" ]; then
+        echo "Error: Config file not found: $config_file"
+        exit 1
+    fi
+
+    # Check if jq is available for JSON parsing
+    if ! command -v jq &> /dev/null; then
+        echo "Error: jq is required for config file parsing but not installed"
+        echo "Install with: brew install jq (macOS) or apt-get install jq (Linux)"
+        exit 1
+    fi
+
+    echo "Loading config from: $config_file"
+
+    # Parse JSON config and set variables if they haven't been set via command line
+    if [ -z "$SYNC_BACKUPS" ]; then
+        SYNC_BACKUPS=$(jq -r '.destination // ""' "$config_file")
+    fi
+
+    # Only override defaults if not set via command line
+    if [ "$KEEP_ALL_DAYS" = "1" ]; then
+        KEEP_ALL_DAYS=$(jq -r '.keep_all // 1' "$config_file")
+    fi
+
+    if [ "$KEEP_DAILY_DAYS" = "7" ]; then
+        KEEP_DAILY_DAYS=$(jq -r '.keep_daily // 7' "$config_file")
+    fi
+
+    if [ "$KEEP_WEEKLY_DAYS" = "30" ]; then
+        KEEP_WEEKLY_DAYS=$(jq -r '.keep_weekly // 30' "$config_file")
+    fi
+
+    if [ "$VERBOSE" -eq 0 ]; then
+        local verbose_level=$(jq -r '.verbose // 0' "$config_file")
+        if [ "$verbose_level" -gt 0 ]; then
+            VERBOSE="$verbose_level"
+        fi
+    fi
+}
+
 # Load config file
 # If --config specified, use those paths in order; otherwise try default paths
 # Stop after the first config file is successfully loaded
@@ -260,6 +330,7 @@ fi
 for config_path in "${CONFIG_SEARCH_PATHS[@]}"; do
     # Expand tilde in path
     expanded_path="${config_path/#\~/$HOME}"
+    [ "$VERBOSE" -gt 1 ] && echo "Trying config file: $expanded_path"
     if [ -f "$expanded_path" ]; then
         load_config "$expanded_path"
         break  # Stop after loading the first found config file
@@ -293,50 +364,6 @@ get_db_credentials() {
     if [ -z "$DB_NAME" ] || [ -z "$DB_USER" ] || [ -z "$DB_PASS" ]; then
         echo "Error: Could not parse database credentials from public/forum/config.php"
         exit 1
-    fi
-}
-
-# Load configuration from JSON file
-load_config() {
-    local config_file="$1"
-
-    if [ ! -f "$config_file" ]; then
-        echo "Error: Config file not found: $config_file"
-        exit 1
-    fi
-
-    # Check if jq is available for JSON parsing
-    if ! command -v jq &> /dev/null; then
-        echo "Error: jq is required for config file parsing but not installed"
-        echo "Install with: brew install jq (macOS) or apt-get install jq (Linux)"
-        exit 1
-    fi
-
-    [ -n "$VERBOSE" ] && echo "Loading config from: $config_file"
-
-    # Parse JSON config and set variables if they haven't been set via command line
-    if [ -z "$SYNC_BACKUPS" ]; then
-        SYNC_BACKUPS=$(jq -r '.destination // ""' "$config_file")
-    fi
-
-    # Only override defaults if not set via command line
-    if [ "$KEEP_ALL_DAYS" = "1" ]; then
-        KEEP_ALL_DAYS=$(jq -r '.keep_all // 1' "$config_file")
-    fi
-
-    if [ "$KEEP_DAILY_DAYS" = "7" ]; then
-        KEEP_DAILY_DAYS=$(jq -r '.keep_daily // 7' "$config_file")
-    fi
-
-    if [ "$KEEP_WEEKLY_DAYS" = "30" ]; then
-        KEEP_WEEKLY_DAYS=$(jq -r '.keep_weekly // 30' "$config_file")
-    fi
-
-    if [ "$VERBOSE" = "" ]; then
-        local verbose_level=$(jq -r '.verbose // 0' "$config_file")
-        if [ "$verbose_level" -gt 0 ]; then
-            VERBOSE="v"
-        fi
     fi
 }
 
@@ -389,7 +416,7 @@ sync_backups_to_destination() {
 
     # Build rsync command
     local rsync_opts="-a --ignore-existing"
-    if [ -n "$VERBOSE" ]; then
+    if [ "$VERBOSE" -gt 0 ]; then
         rsync_opts="$rsync_opts -v --progress"
     fi
 
@@ -402,7 +429,7 @@ sync_backups_to_destination() {
     rsync $rsync_opts "${source_dir}/" "${dest_dir}/"
 
     if [ $? -eq 0 ]; then
-        [ -n "$VERBOSE" ] && echo "✓ Backup sync completed successfully"
+        [ "$VERBOSE" -gt 0 ] && echo "✓ Backup sync completed successfully"
         return 0
     else
         echo "✗ Backup sync failed"
@@ -423,7 +450,7 @@ apply_retention_policy() {
     fi
 
     echo "Applying retention policy to: ${backup_dir}"
-    [ -n "$VERBOSE" ] && echo "Retention: keep-all=${KEEP_ALL_DAYS}d, keep-daily=${KEEP_DAILY_DAYS}d, keep-weekly=${KEEP_WEEKLY_DAYS}d"
+    [ "$VERBOSE" -gt 0 ] && echo "Retention: keep-all=${KEEP_ALL_DAYS}d, keep-daily=${KEEP_DAILY_DAYS}d, keep-weekly=${KEEP_WEEKLY_DAYS}d"
 
     local now_epoch=$(date +%s)
     local keep_all_threshold=$((now_epoch - KEEP_ALL_DAYS * 86400))
@@ -449,7 +476,7 @@ apply_retention_policy() {
 
         local file_epoch=$(parse_backup_date "$filename")
         if [ -z "$file_epoch" ]; then
-            [ -n "$VERBOSE" ] && echo "Warning: Could not parse date from $filename"
+            [ "$VERBOSE" -gt 0 ] && echo "Warning: Could not parse date from $filename"
             continue
         fi
 
@@ -458,7 +485,7 @@ apply_retention_policy() {
         # 1. Keep everything newer than keep_all_threshold
         if [ "$file_epoch" -ge "$keep_all_threshold" ]; then
             keep_files["$filepath"]=1
-            [ -n "$VERBOSE" ] && echo "KEEP (< ${KEEP_ALL_DAYS} days): $filename"
+            [ "$VERBOSE" -gt 0 ] && echo "KEEP (< ${KEEP_ALL_DAYS} days): $filename"
             continue
         fi
 
@@ -486,7 +513,7 @@ apply_retention_policy() {
         return 0
     fi
 
-    [ -n "$VERBOSE" ] && echo "Found $file_count backup files"
+    [ "$VERBOSE" -gt 0 ] && echo "Found $file_count backup files"
 
     # 2. Keep 1 per day for daily retention period
     for day_key in "${!daily_buckets[@]}"; do
@@ -505,7 +532,7 @@ apply_retention_policy() {
             done
             if [ -n "$newest_file" ]; then
                 keep_files["$newest_file"]=1
-                [ -n "$VERBOSE" ] && echo "KEEP (daily): $(basename "$newest_file")"
+                [ "$VERBOSE" -gt 0 ] && echo "KEEP (daily): $(basename "$newest_file")"
             fi
         fi
     done
@@ -527,7 +554,7 @@ apply_retention_policy() {
             done
             if [ -n "$newest_file" ]; then
                 keep_files["$newest_file"]=1
-                [ -n "$VERBOSE" ] && echo "KEEP (weekly): $(basename "$newest_file")"
+                [ "$VERBOSE" -gt 0 ] && echo "KEEP (weekly): $(basename "$newest_file")"
             fi
         fi
     done
@@ -549,7 +576,7 @@ apply_retention_policy() {
             done
             if [ -n "$newest_file" ]; then
                 keep_files["$newest_file"]=1
-                [ -n "$VERBOSE" ] && echo "KEEP (monthly): $(basename "$newest_file")"
+                [ "$VERBOSE" -gt 0 ] && echo "KEEP (monthly): $(basename "$newest_file")"
             fi
         fi
     done
@@ -571,7 +598,7 @@ apply_retention_policy() {
     echo "SUMMARY: Keeping ${#keep_files[@]} files, deleting $delete_count files"
 
     if [ "$delete_count" -gt 0 ]; then
-        if [ -n "$VERBOSE" ] || [ -n "$DRY_RUN" ]; then
+        if [ "$VERBOSE" -gt 0 ] || [ -n "$DRY_RUN" ]; then
             echo ""
             echo "Files to DELETE:"
             for filepath in "${delete_files[@]}"; do
@@ -589,7 +616,7 @@ apply_retention_policy() {
             for filepath in "${delete_files[@]}"; do
                 if rm "$filepath" 2>/dev/null; then
                     deleted=$((deleted + 1))
-                    [ -n "$VERBOSE" ] && echo "Deleted: $(basename "$filepath")"
+                    [ "$VERBOSE" -gt 0 ] && echo "Deleted: $(basename "$filepath")"
                 else
                     echo "Error deleting: $(basename "$filepath")"
                 fi
@@ -597,7 +624,7 @@ apply_retention_policy() {
             echo "✓ Successfully deleted $deleted/$delete_count files"
         fi
     else
-        [ -n "$VERBOSE" ] && echo "No files to delete"
+        [ "$VERBOSE" -gt 0 ] && echo "No files to delete"
     fi
 
     return 0
@@ -610,7 +637,9 @@ if [ "$BACKUP_FILES" = true ]; then
     echo "This may take a while due to the large forum directory..."
 
     # Create tarball with bzip2 compression excluding backups directory and .git
-    tar -cj${VERBOSE}f "${BACKUP_FILE}" \
+    TAR_VERBOSE=""
+    [ "$VERBOSE" -gt 0 ] && TAR_VERBOSE="v"
+    tar -cj${TAR_VERBOSE}f "${BACKUP_FILE}" \
         --exclude='./backups' \
         --exclude='./.git' \
         --exclude='./forum/cache/production' \
@@ -658,6 +687,18 @@ if [ "$BACKUP_DB" = true ]; then
         if [ ! -s "${DB_BACKUP_FILE}" ]; then
             echo "Warning: Database backup file is empty!"
             exit 1
+        fi
+
+        # Run pruning if --prune flag was specified
+        if [ "$BACKUP_DB_PRUNE" = true ]; then
+            echo ""
+            echo "============================================================"
+            echo "PRUNING OLD BACKUPS"
+            echo "============================================================"
+
+            if ! apply_retention_policy "backups"; then
+                echo "Warning: Backup pruning failed, but backup was successful"
+            fi
         fi
     else
         echo "Database backup failed!"
@@ -837,7 +878,7 @@ if [ "$SYNC_DOWN" = true ]; then
     fi
 
     RSYNC_OPTS="-acv --progress --stats"
-    [ -n "$VERBOSE" ] && RSYNC_OPTS="$RSYNC_OPTS -v"
+    [ "$VERBOSE" -gt 0 ] && RSYNC_OPTS="$RSYNC_OPTS -v"
     [ -n "$DELETE_SYNC" ] && RSYNC_OPTS="$RSYNC_OPTS $DELETE_SYNC"
     [ -n "$DRY_RUN" ] && RSYNC_OPTS="$RSYNC_OPTS $DRY_RUN"
 
@@ -889,7 +930,7 @@ if [ "$SYNC_UP" = true ]; then
     fi
 
     RSYNC_OPTS="-acv --progress --stats"
-    [ -n "$VERBOSE" ] && RSYNC_OPTS="$RSYNC_OPTS -v"
+    [ "$VERBOSE" -gt 0 ] && RSYNC_OPTS="$RSYNC_OPTS -v"
     [ -n "$DELETE_SYNC" ] && RSYNC_OPTS="$RSYNC_OPTS $DELETE_SYNC"
     [ -n "$DRY_RUN" ] && RSYNC_OPTS="$RSYNC_OPTS $DRY_RUN"
 
