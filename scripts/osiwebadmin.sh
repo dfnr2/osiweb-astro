@@ -4,7 +4,7 @@
 # Manages backups, syncing, database operations, and maintenance for osiweb.org
 # Version 2.0
 
-VERSION="2.0"
+VERSION="2.1"
 
 # Require bash 4.0 or higher for associative arrays
 if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
@@ -39,6 +39,8 @@ KEEP_ALL_DAYS=1
 KEEP_DAILY_DAYS=7
 KEEP_WEEKLY_DAYS=30
 CONFIG_FILES=()
+SET_PASSWORD_USER=""
+PASSWORD_STDIN=false
 
 usage() {
     echo "OSIWeb Administration Tool v${VERSION}"
@@ -59,6 +61,7 @@ usage() {
     echo "  maintenance on|off      Set maintenance mode"
     echo "  sync_backups DIR        Sync backups to destination directory"
     echo "  prune_backups [OPTIONS] Apply retention policy to delete old backups"
+    echo "  set_password USER       Set password for a forum user"
     echo ""
     echo "Sync Command Options (syncdn/syncup):"
     echo "  --delete                Delete files not in source"
@@ -70,6 +73,9 @@ usage() {
     echo "  --keep-all DAYS         Keep all backups newer than N days (default: 1)"
     echo "  --keep-daily DAYS       Keep 1/day for backups newer than N days (default: 7)"
     echo "  --keep-weekly DAYS      Keep 1/week for backups newer than N days (default: 30)"
+    echo ""
+    echo "Set Password Options:"
+    echo "  --stdin                 Read password from STDIN (single line)"
     echo ""
     echo "Examples:"
     echo "  $0 backup_files                              # Backup files"
@@ -83,6 +89,8 @@ usage() {
     echo "  $0 -v backup_db                              # Backup DB with verbose output"
     echo "  $0 sync_backups ~/Dropbox/osiweb-backups     # Sync backups to destination"
     echo "  $0 -n prune_backups --keep-daily 14          # Preview prune with custom retention"
+    echo "  $0 set_password johndoe                      # Set password for user 'johndoe'"
+    echo "  echo 'newpass' | $0 set_password johndoe --stdin  # Set password non-interactively"
     echo ""
     echo "UTF8MB4 Conversion Workflow:"
     echo "  $0 maintenance on                            # Enable maintenance mode"
@@ -264,6 +272,36 @@ case "$COMMAND" in
         PRUNE_BACKUPS=true
         ;;
 
+    set_password)
+        # Parse set_password options and arguments
+        set -- "${COMMAND_ARGS[@]}"
+        while [[ $# -gt 0 ]]; do
+            case $1 in
+                --stdin)
+                    PASSWORD_STDIN=true
+                    shift
+                    ;;
+                -*)
+                    echo "Error: Unknown option for set_password: $1"
+                    usage
+                    ;;
+                *)
+                    if [ -z "$SET_PASSWORD_USER" ]; then
+                        SET_PASSWORD_USER="$1"
+                    else
+                        echo "Error: set_password accepts only one username"
+                        usage
+                    fi
+                    shift
+                    ;;
+            esac
+        done
+        if [ -z "$SET_PASSWORD_USER" ]; then
+            echo "Error: set_password requires a username"
+            usage
+        fi
+        ;;
+
     *)
         echo "Error: Unknown command: $COMMAND"
         usage
@@ -338,7 +376,7 @@ for config_path in "${CONFIG_SEARCH_PATHS[@]}"; do
 done
 
 # If no operation specified, show usage
-if [ "$BACKUP_FILES" = false ] && [ "$BACKUP_DB" = false ] && [ -z "$RESTORE_FILE" ] && [ -z "$MAINTENANCE_MODE" ] && [ "$SYNC_DOWN" = false ] && [ "$SYNC_UP" = false ] && [ -z "$SYNC_BACKUPS" ] && [ "$PRUNE_BACKUPS" = false ]; then
+if [ "$BACKUP_FILES" = false ] && [ "$BACKUP_DB" = false ] && [ -z "$RESTORE_FILE" ] && [ -z "$MAINTENANCE_MODE" ] && [ "$SYNC_DOWN" = false ] && [ "$SYNC_UP" = false ] && [ -z "$SYNC_BACKUPS" ] && [ "$PRUNE_BACKUPS" = false ] && [ -z "$SET_PASSWORD_USER" ]; then
     echo "Error: Must specify an operation"
     usage
 fi
@@ -974,6 +1012,117 @@ if [ "$PRUNE_BACKUPS" = true ]; then
     if ! apply_retention_policy "$PRUNE_DIR"; then
         echo "Backup pruning failed!"
         exit 1
+    fi
+fi
+
+# Handle set_password
+if [ -n "$SET_PASSWORD_USER" ]; then
+    # Get database credentials
+    get_db_credentials
+
+    SSH_KEY="~/.ssh/id-hostgator-dfenyes"
+    SSH_USER="dfenyes"
+    SSH_HOST="108.167.172.195"
+
+    # Expand the tilde in SSH_KEY path
+    SSH_KEY="${SSH_KEY/#\~/$HOME}"
+
+    # Find the script directory and project root
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+    ARGON2_SCRIPT="$SCRIPT_DIR/phpbb_argon2.py"
+
+    if [ ! -f "$ARGON2_SCRIPT" ]; then
+        echo "Error: phpbb_argon2.py not found at: $ARGON2_SCRIPT"
+        exit 1
+    fi
+
+    if [ ! -f "$PROJECT_ROOT/pyproject.toml" ]; then
+        echo "Error: pyproject.toml not found at: $PROJECT_ROOT"
+        exit 1
+    fi
+
+    # Check if uv is available, install if needed
+    if ! command -v uv &> /dev/null; then
+        echo "uv not found, installing..."
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        # Add to PATH for this session
+        export PATH="$HOME/.local/bin:$PATH"
+        if ! command -v uv &> /dev/null; then
+            echo "Error: Failed to install uv"
+            exit 1
+        fi
+        echo "✓ uv installed successfully"
+    fi
+
+    echo "Setting password for forum user: $SET_PASSWORD_USER"
+
+    # Get the password
+    if [ "$PASSWORD_STDIN" = true ]; then
+        PASSWORD=$(head -n 1)
+    else
+        # Use getpass-style prompt (no echo)
+        read -s -p "New password: " PASSWORD
+        echo ""
+        read -s -p "Confirm password: " PASSWORD_CONFIRM
+        echo ""
+
+        if [ "$PASSWORD" != "$PASSWORD_CONFIRM" ]; then
+            echo "Error: Passwords do not match"
+            exit 1
+        fi
+    fi
+
+    if [ -z "$PASSWORD" ]; then
+        echo "Error: Password cannot be empty"
+        exit 1
+    fi
+
+    # Generate the Argon2 hash using the Python script via uv
+    [ "$VERBOSE" -gt 0 ] && echo "Generating Argon2 hash..."
+    PASSWORD_HASH=$(echo "$PASSWORD" | uv run --project "$PROJECT_ROOT" python "$ARGON2_SCRIPT" --stdin 2>/dev/null)
+
+    if [ $? -ne 0 ] || [ -z "$PASSWORD_HASH" ]; then
+        echo "Error: Failed to generate password hash"
+        exit 1
+    fi
+
+    [ "$VERBOSE" -gt 0 ] && echo "Hash generated: ${PASSWORD_HASH:0:30}..."
+
+    # First verify the user exists
+    [ "$VERBOSE" -gt 0 ] && echo "Verifying user exists..."
+    USER_EXISTS=$(ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
+        "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} -sN -e \"SELECT COUNT(*) FROM phpbb_users WHERE username='${SET_PASSWORD_USER}'\"")
+
+    if [ "$USER_EXISTS" != "1" ]; then
+        if [ "$USER_EXISTS" = "0" ]; then
+            echo "Error: User '$SET_PASSWORD_USER' not found in phpbb_users"
+        else
+            echo "Error: Multiple users found with username '$SET_PASSWORD_USER' (found: $USER_EXISTS)"
+        fi
+        exit 1
+    fi
+
+    # Update the password in the database
+    # The hash contains special characters, so we need to escape it properly for MySQL
+    # Using a heredoc to avoid shell escaping issues
+    if [ -n "$DRY_RUN" ]; then
+        echo "DRY RUN - would update password for user: $SET_PASSWORD_USER"
+        echo "Hash: ${PASSWORD_HASH:0:50}..."
+    else
+        [ "$VERBOSE" -gt 0 ] && echo "Updating password in database..."
+
+        # Use parameterized approach via heredoc to handle special chars in hash
+        ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" <<EOF
+mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} -e "UPDATE phpbb_users SET user_password='${PASSWORD_HASH}' WHERE username='${SET_PASSWORD_USER}'"
+EOF
+
+        if [ $? -eq 0 ]; then
+            echo "✓ Password updated successfully for user: $SET_PASSWORD_USER"
+        else
+            echo "✗ Failed to update password"
+            exit 1
+        fi
     fi
 fi
 
