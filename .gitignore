@@ -53,3 +53,6 @@ Thumbs.db
 
 # PHP temporary files
 *.phpupgrader.*
+
+# Forum-attachment review staging (rebuilt from db backups; ~1GB)
+staging-forum-files/
