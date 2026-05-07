@@ -51,13 +51,14 @@ DEFAULT_CONFIG_PATHS = [
 class Config:
     """Configuration with defaults."""
 
-    # SSH settings
-    ssh_key: Path = field(default_factory=lambda: Path.home() / ".ssh" / "id-hostgator-dfenyes")
-    ssh_user: str = "dfenyes"
-    ssh_host: str = "108.167.172.195"
+    # SSH settings (required in config file)
+    ssh_key: str = ""
+    ssh_user: str = ""
+    ssh_host: str = ""
     webdir: str = "public_html/"
 
-    # Backup sync destination
+    # Backup source and sync destination
+    source: str = "backups"
     destination: str = ""
 
     # Retention policy defaults
@@ -84,6 +85,16 @@ def load_config(config_paths: list[Path] | None = None) -> Config:
                 data = json.load(f)
 
             # Map JSON keys to config attributes
+            if "ssh_key" in data:
+                config.ssh_key = data["ssh_key"]
+            if "ssh_user" in data:
+                config.ssh_user = data["ssh_user"]
+            if "ssh_host" in data:
+                config.ssh_host = data["ssh_host"]
+            if "webdir" in data:
+                config.webdir = data["webdir"]
+            if "source" in data:
+                config.source = data["source"]
             if "destination" in data:
                 config.destination = data["destination"]
             if "keep_all" in data:
@@ -97,6 +108,27 @@ def load_config(config_paths: list[Path] | None = None) -> Config:
             break
 
     return config
+
+
+def validate_ssh_config(config: Config) -> None:
+    """Validate that required SSH settings are present."""
+    missing = []
+    if not config.ssh_key:
+        missing.append("ssh_key")
+    if not config.ssh_user:
+        missing.append("ssh_user")
+    if not config.ssh_host:
+        missing.append("ssh_host")
+
+    if missing:
+        error(f"Missing required config settings: {', '.join(missing)}")
+        error("Please add these to osiwebadmin.json")
+        raise typer.Exit(1)
+
+
+def get_ssh_key_path(config: Config) -> Path:
+    """Get expanded SSH key path."""
+    return Path(config.ssh_key).expanduser()
 
 
 def get_db_credentials() -> tuple[str, str, str]:
@@ -154,8 +186,9 @@ def run_cmd(
     *,
     check: bool = True,
     capture: bool = False,
-    input_data: str | None = None,
+    input_data: str | bytes | None = None,
     verbose: int = 0,
+    binary: bool = False,
 ) -> subprocess.CompletedProcess:
     """Run a shell command with consistent error handling."""
     if verbose > 1:
@@ -165,7 +198,7 @@ def run_cmd(
             cmd,
             check=check,
             capture_output=capture,
-            text=True,
+            text=not binary,
             input=input_data,
         )
     except subprocess.CalledProcessError as e:
@@ -184,24 +217,37 @@ def ssh_run(
     *,
     capture: bool = True,
     check: bool = True,
+    binary: bool = False,
+    input_data: str | bytes | None = None,
 ) -> subprocess.CompletedProcess:
     """Execute a command on remote server via SSH."""
+    validate_ssh_config(config)
+    ssh_key_path = get_ssh_key_path(config)
     cmd = [
         "ssh",
         "-i",
-        str(config.ssh_key),
+        str(ssh_key_path),
         f"{config.ssh_user}@{config.ssh_host}",
         remote_cmd,
     ]
-    return run_cmd(cmd, capture=capture, check=check, verbose=config.verbose)
+    return run_cmd(
+        cmd,
+        capture=capture,
+        check=check,
+        verbose=config.verbose,
+        binary=binary,
+        input_data=input_data,
+    )
 
 
 def ensure_ssh_key_loaded(config: Config) -> None:
     """Add SSH key to agent if not already loaded."""
-    key_name = config.ssh_key.name
+    validate_ssh_config(config)
+    ssh_key_path = get_ssh_key_path(config)
+    key_name = ssh_key_path.name
     result = run_cmd(["ssh-add", "-l"], check=False, capture=True)
     if key_name not in result.stdout:
-        run_cmd(["ssh-add", str(config.ssh_key)], check=False, verbose=config.verbose)
+        run_cmd(["ssh-add", str(ssh_key_path)], check=False, verbose=config.verbose)
 
 
 def confirm(prompt: str, required_response: str = "yes") -> bool:
@@ -270,7 +316,7 @@ def get_config(ctx: typer.Context) -> Config:
 # =============================================================================
 
 
-@app.command()
+@app.command(name="backup_db")
 def backup_db(
     ctx: typer.Context,
     prune: Annotated[
@@ -284,7 +330,7 @@ def backup_db(
     db_name, db_user, db_pass = get_db_credentials()
 
     # Create backup directory
-    backup_dir = Path("backups")
+    backup_dir = Path(config.source)
     backup_dir.mkdir(exist_ok=True)
 
     # Generate filename
@@ -299,14 +345,26 @@ def backup_db(
         info("DRY RUN - no backup will be created")
         return
 
-    # SSH to server, run mysqldump, pipe through bzip2
-    with console.status("[bold blue]Creating database backup...") as status:
-        status.update("Running mysqldump and compressing...")
-        remote_cmd = f"mysqldump -u {db_user} -p'{db_pass}' {db_name} | bzip2"
-        result = ssh_run(config, remote_cmd, capture=True)
-
-        # Write to file
-        backup_file.write_bytes(result.stdout.encode("latin-1") if isinstance(result.stdout, str) else result.stdout)
+    # SSH to server, run mysqldump, pipe through bzip2, stream to file
+    # Streaming (not capture=True) avoids buffering the whole dump in RAM
+    validate_ssh_config(config)
+    ssh_key_path = get_ssh_key_path(config)
+    remote_cmd = f"mysqldump -u {db_user} -p'{db_pass}' {db_name} | bzip2"
+    ssh_cmd = [
+        "ssh",
+        "-i",
+        str(ssh_key_path),
+        f"{config.ssh_user}@{config.ssh_host}",
+        remote_cmd,
+    ]
+    with console.status("[bold blue]Creating database backup..."):
+        try:
+            with backup_file.open("wb") as f:
+                subprocess.run(ssh_cmd, stdout=f, check=True)
+        except subprocess.CalledProcessError:
+            error("Database backup failed!")
+            error("Check your SSH connection and database credentials.")
+            raise typer.Exit(1)
 
     # Verify backup isn't empty
     if backup_file.stat().st_size == 0:
@@ -334,13 +392,13 @@ def backup_db(
         )
 
 
-@app.command()
+@app.command(name="backup_files")
 def backup_files(ctx: typer.Context) -> None:
     """Backup files (creates .tbz archive)."""
     config = get_config(ctx)
 
     # Create backup directory
-    backup_dir = Path("backups")
+    backup_dir = Path(config.source)
     backup_dir.mkdir(exist_ok=True)
 
     # Generate filename
@@ -377,7 +435,7 @@ def backup_files(ctx: typer.Context) -> None:
     console.print(f"Size: {size_str}")
 
 
-@app.command()
+@app.command(name="restore_db")
 def restore_db(
     ctx: typer.Context,
     file: Annotated[Path, typer.Argument(help="Backup file to restore")],
@@ -421,11 +479,13 @@ def restore_db(
         decompress_result = run_cmd(decompress_cmd, capture=True, verbose=config.verbose)
 
         # Pipe to remote mysql
+        validate_ssh_config(config)
+        ssh_key_path = get_ssh_key_path(config)
         remote_cmd = f"mysql -u {db_user} -p'{db_pass}' {db_name}"
         ssh_cmd = [
             "ssh",
             "-i",
-            str(config.ssh_key),
+            str(ssh_key_path),
             f"{config.ssh_user}@{config.ssh_host}",
             remote_cmd,
         ]
@@ -476,11 +536,12 @@ def syncdn(
     if exclude_file.exists():
         rsync_opts.extend(["--exclude-from", str(exclude_file)])
 
+    ssh_key_path = get_ssh_key_path(config)
     cmd = [
         "rsync",
         *rsync_opts,
         "-e",
-        f"ssh -i {config.ssh_key}",
+        f"ssh -i {ssh_key_path}",
         src,
         dest,
     ]
@@ -528,11 +589,12 @@ def syncup(
     if exclude_file.exists():
         rsync_opts.extend(["--exclude-from", str(exclude_file)])
 
+    ssh_key_path = get_ssh_key_path(config)
     cmd = [
         "rsync",
         *rsync_opts,
         "-e",
-        f"ssh -i {config.ssh_key}",
+        f"ssh -i {ssh_key_path}",
         src,
         dest,
     ]
@@ -614,16 +676,26 @@ UPDATE phpbb_config SET config_value='Forum temporarily offline for maintenance.
             warning(f"Unknown maintenance mode status: {status_value}")
 
 
-@app.command()
+@app.command(name="sync_backups")
 def sync_backups(
     ctx: typer.Context,
-    destination: Annotated[Path, typer.Argument(help="Destination directory")],
+    destination: Annotated[
+        Optional[Path], typer.Argument(help="Destination directory (defaults to config value)")
+    ] = None,
 ) -> None:
     """Sync backups to destination directory."""
     config = get_config(ctx)
 
-    source_dir = Path("backups")
-    dest_dir = destination.expanduser()
+    source_dir = Path(config.source)
+
+    # Use CLI argument if provided, otherwise fall back to config
+    if destination:
+        dest_dir = destination.expanduser()
+    elif config.destination:
+        dest_dir = Path(config.destination).expanduser()
+    else:
+        error("No destination specified. Provide a destination argument or set 'destination' in config.")
+        raise typer.Exit(1)
 
     console.print(f"Syncing backups to: [bold]{dest_dir}[/bold]")
 
@@ -649,7 +721,7 @@ def sync_backups(
     success("Backup sync completed successfully")
 
 
-@app.command()
+@app.command(name="prune_backups")
 def prune_backups(
     ctx: typer.Context,
     keep_all: Annotated[
@@ -665,7 +737,7 @@ def prune_backups(
     """Apply retention policy to delete old backups."""
     config = get_config(ctx)
 
-    backup_dir = Path("backups")
+    backup_dir = Path(config.source)
 
     console.rule("[bold]PRUNING OLD BACKUPS[/bold]")
 
@@ -679,7 +751,7 @@ def prune_backups(
     )
 
 
-@app.command()
+@app.command(name="set_password")
 def set_password(
     ctx: typer.Context,
     username: Annotated[str, typer.Argument(help="Forum username")],
@@ -728,13 +800,16 @@ def set_password(
     # Get database credentials
     db_name, db_user, db_pass = get_db_credentials()
 
-    # Verify user exists
+    # Verify user exists.
+    # SQL is sent via mysql's stdin (not -e) so '$' chars in values are not
+    # expanded by the remote shell, which would otherwise corrupt Argon2 hashes.
     if config.verbose > 0:
         info("Verifying user exists...")
 
-    query = f"SELECT COUNT(*) FROM phpbb_users WHERE username='{username}'"
-    remote_cmd = f"mysql -u {db_user} -p'{db_pass}' {db_name} -sN -e \"{query}\""
-    result = ssh_run(config, remote_cmd, capture=True)
+    escaped_user = username.replace("'", "''")
+    select_sql = f"SELECT COUNT(*) FROM phpbb_users WHERE username='{escaped_user}'"
+    remote_cmd = f"mysql -u {db_user} -p'{db_pass}' {db_name} -sN"
+    result = ssh_run(config, remote_cmd, capture=True, input_data=select_sql)
     user_count = result.stdout.strip()
 
     if user_count == "0":
@@ -753,11 +828,13 @@ def set_password(
     if config.verbose > 0:
         info("Updating password in database...")
 
-    # Escape single quotes in hash for SQL
     escaped_hash = password_hash.replace("'", "''")
-    query = f"UPDATE phpbb_users SET user_password='{escaped_hash}' WHERE username='{username}'"
-    remote_cmd = f"mysql -u {db_user} -p'{db_pass}' {db_name} -e \"{query}\""
-    ssh_run(config, remote_cmd)
+    update_sql = (
+        f"UPDATE phpbb_users SET user_password='{escaped_hash}' "
+        f"WHERE username='{escaped_user}'"
+    )
+    remote_cmd = f"mysql -u {db_user} -p'{db_pass}' {db_name}"
+    ssh_run(config, remote_cmd, input_data=update_sql)
 
     success(f"Password updated successfully for user: {username}")
 

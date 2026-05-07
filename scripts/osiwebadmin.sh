@@ -34,6 +34,7 @@ SYNC_UP=false
 DELETE_SYNC=""
 DRY_RUN=""
 SYNC_BACKUPS=""
+SYNC_BACKUPS_REQUESTED=false
 PRUNE_BACKUPS=false
 KEEP_ALL_DAYS=1
 KEEP_DAILY_DAYS=7
@@ -232,11 +233,16 @@ case "$COMMAND" in
         ;;
 
     sync_backups)
-        if [ ${#COMMAND_ARGS[@]} -ne 1 ]; then
-            echo "Error: sync_backups requires exactly one argument (destination directory)"
+        if [ ${#COMMAND_ARGS[@]} -gt 1 ]; then
+            echo "Error: sync_backups accepts at most one argument (destination directory)"
             usage
         fi
-        SYNC_BACKUPS="${COMMAND_ARGS[0]}"
+        if [ ${#COMMAND_ARGS[@]} -eq 1 ]; then
+            SYNC_BACKUPS="${COMMAND_ARGS[0]}"
+        fi
+        # Empty SYNC_BACKUPS will be filled from config.destination in load_config,
+        # or fail later if no destination is configured
+        SYNC_BACKUPS_REQUESTED=true
         ;;
 
     prune_backups)
@@ -308,6 +314,13 @@ case "$COMMAND" in
         ;;
 esac
 
+# SSH/Server settings (loaded from config file)
+SSH_KEY=""
+SSH_USER=""
+SSH_HOST=""
+WEBDIR="public_html/"
+BACKUP_SOURCE="backups"
+
 # Load configuration from JSON file
 load_config() {
     local config_file="$1"
@@ -324,10 +337,21 @@ load_config() {
         exit 1
     fi
 
-    echo "Loading config from: $config_file"
+    [ "$VERBOSE" -gt 0 ] && echo "Loading config from: $config_file"
 
-    # Parse JSON config and set variables if they haven't been set via command line
-    if [ -z "$SYNC_BACKUPS" ]; then
+    # Load SSH settings (required)
+    SSH_KEY=$(jq -r '.ssh_key // ""' "$config_file")
+    SSH_USER=$(jq -r '.ssh_user // ""' "$config_file")
+    SSH_HOST=$(jq -r '.ssh_host // ""' "$config_file")
+
+    # Load optional settings with defaults
+    WEBDIR=$(jq -r '.webdir // "public_html/"' "$config_file")
+    BACKUP_SOURCE=$(jq -r '.source // "backups"' "$config_file")
+
+    # Only fall back to config.destination when sync_backups was explicitly invoked,
+    # otherwise the destination presence in config would silently trigger a sync
+    # after every other command.
+    if [ -z "$SYNC_BACKUPS" ] && [ "$SYNC_BACKUPS_REQUESTED" = true ]; then
         SYNC_BACKUPS=$(jq -r '.destination // ""' "$config_file")
     fi
 
@@ -349,6 +373,38 @@ load_config() {
         if [ "$verbose_level" -gt 0 ]; then
             VERBOSE="$verbose_level"
         fi
+    fi
+}
+
+# Validate that required SSH settings are present
+validate_ssh_config() {
+    local missing=""
+    if [ -z "$SSH_KEY" ]; then
+        missing="$missing ssh_key"
+    fi
+    if [ -z "$SSH_USER" ]; then
+        missing="$missing ssh_user"
+    fi
+    if [ -z "$SSH_HOST" ]; then
+        missing="$missing ssh_host"
+    fi
+
+    if [ -n "$missing" ]; then
+        echo "Error: Missing required config settings:$missing"
+        echo "Please add these to osiwebadmin.json"
+        exit 1
+    fi
+
+    # Expand tilde in SSH_KEY path
+    SSH_KEY="${SSH_KEY/#\~/$HOME}"
+}
+
+# Ensure SSH key is loaded in agent
+ensure_ssh_key_loaded() {
+    validate_ssh_config
+    local key_name=$(basename "$SSH_KEY")
+    if ! ssh-add -l 2>/dev/null | grep -q "$key_name"; then
+        ssh-add "$SSH_KEY" 2>/dev/null
     fi
 }
 
@@ -376,13 +432,19 @@ for config_path in "${CONFIG_SEARCH_PATHS[@]}"; do
 done
 
 # If no operation specified, show usage
-if [ "$BACKUP_FILES" = false ] && [ "$BACKUP_DB" = false ] && [ -z "$RESTORE_FILE" ] && [ -z "$MAINTENANCE_MODE" ] && [ "$SYNC_DOWN" = false ] && [ "$SYNC_UP" = false ] && [ -z "$SYNC_BACKUPS" ] && [ "$PRUNE_BACKUPS" = false ] && [ -z "$SET_PASSWORD_USER" ]; then
+if [ "$BACKUP_FILES" = false ] && [ "$BACKUP_DB" = false ] && [ -z "$RESTORE_FILE" ] && [ -z "$MAINTENANCE_MODE" ] && [ "$SYNC_DOWN" = false ] && [ "$SYNC_UP" = false ] && [ "$SYNC_BACKUPS_REQUESTED" = false ] && [ "$PRUNE_BACKUPS" = false ] && [ -z "$SET_PASSWORD_USER" ]; then
     echo "Error: Must specify an operation"
     usage
 fi
 
+# sync_backups requires a destination from CLI arg or config.destination
+if [ "$SYNC_BACKUPS_REQUESTED" = true ] && [ -z "$SYNC_BACKUPS" ]; then
+    echo "Error: No destination specified. Provide a destination argument or set 'destination' in config."
+    exit 1
+fi
+
 # Create backup directory if it doesn't exist
-mkdir -p backups
+mkdir -p "$BACKUP_SOURCE"
 
 # Generate timestamp for backup filenames
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
@@ -436,7 +498,7 @@ parse_backup_date() {
 
 # Sync backups to destination directory using rsync
 sync_backups_to_destination() {
-    local source_dir="backups"
+    local source_dir="$BACKUP_SOURCE"
     local dest_dir="$SYNC_BACKUPS"
 
     # Expand tilde in destination path
@@ -510,7 +572,7 @@ apply_retention_policy() {
         local filename=$(basename "$filepath")
 
         # Skip non-backup files
-        [[ "$filename" == *.sql* ]] || [[ "$filename" == *.bz2 ]] || [[ "$filename" == *.gz ]] || continue
+        [[ "$filename" == *.sql* ]] || [[ "$filename" == *.bz2 ]] || [[ "$filename" == *.gz ]] || [[ "$filename" == *.tbz ]] || continue
 
         local file_epoch=$(parse_backup_date "$filename")
         if [ -z "$file_epoch" ]; then
@@ -624,7 +686,7 @@ apply_retention_policy() {
     for filepath in "$backup_dir"/*; do
         [ -f "$filepath" ] || continue
         local filename=$(basename "$filepath")
-        [[ "$filename" == *.sql* ]] || [[ "$filename" == *.bz2 ]] || [[ "$filename" == *.gz ]] || continue
+        [[ "$filename" == *.sql* ]] || [[ "$filename" == *.bz2 ]] || [[ "$filename" == *.gz ]] || [[ "$filename" == *.tbz ]] || continue
 
         if [ -z "${keep_files[$filepath]}" ]; then
             delete_files+=("$filepath")
@@ -670,27 +732,31 @@ apply_retention_policy() {
 
 # Backup files
 if [ "$BACKUP_FILES" = true ]; then
-    BACKUP_FILE="backups/osiweb-files-${TIMESTAMP}.tbz"
+    BACKUP_FILE="${BACKUP_SOURCE}/osiweb-files-${TIMESTAMP}.tbz"
     echo "Creating file backup: ${BACKUP_FILE}"
     echo "This may take a while due to the large forum directory..."
 
-    # Create tarball with bzip2 compression excluding backups directory and .git
-    TAR_VERBOSE=""
-    [ "$VERBOSE" -gt 0 ] && TAR_VERBOSE="v"
-    tar -cj${TAR_VERBOSE}f "${BACKUP_FILE}" \
-        --exclude='./backups' \
-        --exclude='./.git' \
-        --exclude='./forum/cache/production' \
-        .
-
-    if [ $? -eq 0 ]; then
-        SIZE=$(ls -lh "${BACKUP_FILE}" | awk '{print $5}')
-        echo "File backup completed successfully!"
-        echo "File: ${BACKUP_FILE}"
-        echo "Size: ${SIZE}"
+    if [ -n "$DRY_RUN" ]; then
+        echo "DRY RUN - no backup will be created"
     else
-        echo "File backup failed!"
-        exit 1
+        # Create tarball with bzip2 compression excluding backups directory and .git
+        TAR_VERBOSE=""
+        [ "$VERBOSE" -gt 0 ] && TAR_VERBOSE="v"
+        tar -cj${TAR_VERBOSE}f "${BACKUP_FILE}" \
+            --exclude='./backups' \
+            --exclude='./.git' \
+            --exclude='./forum/cache/production' \
+            .
+
+        if [ $? -eq 0 ]; then
+            SIZE=$(ls -lh "${BACKUP_FILE}" | awk '{print $5}')
+            echo "File backup completed successfully!"
+            echo "File: ${BACKUP_FILE}"
+            echo "Size: ${SIZE}"
+        else
+            echo "File backup failed!"
+            exit 1
+        fi
     fi
 fi
 
@@ -698,50 +764,49 @@ fi
 if [ "$BACKUP_DB" = true ]; then
     # Get database credentials
     get_db_credentials
+    validate_ssh_config
 
-    DB_BACKUP_FILE="backups/osiweb-db-${TIMESTAMP}.sql.bz2"
-    SSH_KEY="~/.ssh/id-hostgator-dfenyes"
-    SSH_USER="dfenyes"
-    SSH_HOST="108.167.172.195"
+    DB_BACKUP_FILE="${BACKUP_SOURCE}/osiweb-db-${TIMESTAMP}.sql.bz2"
 
     echo "Creating database backup: ${DB_BACKUP_FILE}"
     echo "Connecting to ${SSH_HOST}..."
     echo "Database: ${DB_NAME}"
 
-    # Expand the tilde in SSH_KEY path
-    SSH_KEY="${SSH_KEY/#\~/$HOME}"
+    if [ -n "$DRY_RUN" ]; then
+        echo "DRY RUN - no backup will be created"
+    else
+        # SSH to server, run mysqldump, and pipe back compressed with bzip2
+        ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
+            "mysqldump -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} | bzip2" > "${DB_BACKUP_FILE}"
 
-    # SSH to server, run mysqldump, and pipe back compressed with bzip2
-    ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
-        "mysqldump -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} | bzip2" > "${DB_BACKUP_FILE}"
+        if [ $? -eq 0 ]; then
+            SIZE=$(ls -lh "${DB_BACKUP_FILE}" | awk '{print $5}')
+            echo "Database backup completed successfully!"
+            echo "File: ${DB_BACKUP_FILE}"
+            echo "Size: ${SIZE}"
 
-    if [ $? -eq 0 ]; then
-        SIZE=$(ls -lh "${DB_BACKUP_FILE}" | awk '{print $5}')
-        echo "Database backup completed successfully!"
-        echo "File: ${DB_BACKUP_FILE}"
-        echo "Size: ${SIZE}"
+            # Verify the backup isn't empty
+            if [ ! -s "${DB_BACKUP_FILE}" ]; then
+                echo "Warning: Database backup file is empty!"
+                exit 1
+            fi
 
-        # Verify the backup isn't empty
-        if [ ! -s "${DB_BACKUP_FILE}" ]; then
-            echo "Warning: Database backup file is empty!"
+            # Run pruning if --prune flag was specified
+            if [ "$BACKUP_DB_PRUNE" = true ]; then
+                echo ""
+                echo "============================================================"
+                echo "PRUNING OLD BACKUPS"
+                echo "============================================================"
+
+                if ! apply_retention_policy "$BACKUP_SOURCE"; then
+                    echo "Warning: Backup pruning failed, but backup was successful"
+                fi
+            fi
+        else
+            echo "Database backup failed!"
+            echo "Check your SSH connection and database credentials."
             exit 1
         fi
-
-        # Run pruning if --prune flag was specified
-        if [ "$BACKUP_DB_PRUNE" = true ]; then
-            echo ""
-            echo "============================================================"
-            echo "PRUNING OLD BACKUPS"
-            echo "============================================================"
-
-            if ! apply_retention_policy "backups"; then
-                echo "Warning: Backup pruning failed, but backup was successful"
-            fi
-        fi
-    else
-        echo "Database backup failed!"
-        echo "Check your SSH connection and database credentials."
-        exit 1
     fi
 fi
 
@@ -749,52 +814,56 @@ fi
 if [ -n "$MAINTENANCE_MODE" ]; then
     # Get database credentials
     get_db_credentials
-
-    SSH_KEY="~/.ssh/id-hostgator-dfenyes"
-    SSH_USER="dfenyes"
-    SSH_HOST="108.167.172.195"
-
-    # Expand the tilde in SSH_KEY path
-    SSH_KEY="${SSH_KEY/#\~/$HOME}"
+    validate_ssh_config
 
     if [ "$MAINTENANCE_MODE" = "on" ]; then
         echo "Enabling maintenance mode on forum..."
-        # Use single quotes for SQL to avoid escaping issues
-        ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" <<EOF
+
+        if [ -n "$DRY_RUN" ]; then
+            echo "DRY RUN - maintenance mode will not be changed"
+        else
+            # Use single quotes for SQL to avoid escaping issues
+            ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" <<EOF
 mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} <<'SQL'
 UPDATE phpbb_config SET config_value='1' WHERE config_name='board_disable';
 UPDATE phpbb_config SET config_value='Forum temporarily offline for maintenance. We will be back shortly!' WHERE config_name='board_disable_msg';
 SQL
 EOF
 
-        if [ $? -eq 0 ]; then
-            echo "✓ Maintenance mode ENABLED"
-            echo "  Regular users will see: 'Forum temporarily offline for maintenance'"
-            echo "  Admins can still log in"
-        else
-            echo "✗ Failed to enable maintenance mode"
-            exit 1
+            if [ $? -eq 0 ]; then
+                echo "✓ Maintenance mode ENABLED"
+                echo "  Regular users will see: 'Forum temporarily offline for maintenance'"
+                echo "  Admins can still log in"
+            else
+                echo "✗ Failed to enable maintenance mode"
+                exit 1
+            fi
         fi
 
     elif [ "$MAINTENANCE_MODE" = "off" ]; then
         echo "Disabling maintenance mode on forum..."
-        ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" <<EOF
+
+        if [ -n "$DRY_RUN" ]; then
+            echo "DRY RUN - maintenance mode will not be changed"
+        else
+            ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" <<EOF
 mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} <<'SQL'
 UPDATE phpbb_config SET config_value='0' WHERE config_name='board_disable';
 SQL
 EOF
 
-        if [ $? -eq 0 ]; then
-            echo "✓ Maintenance mode DISABLED"
-            echo "  Forum is now accessible to all users"
-        else
-            echo "✗ Failed to disable maintenance mode"
-            exit 1
+            if [ $? -eq 0 ]; then
+                echo "✓ Maintenance mode DISABLED"
+                echo "  Forum is now accessible to all users"
+            else
+                echo "✗ Failed to disable maintenance mode"
+                exit 1
+            fi
         fi
 
     elif [ "$MAINTENANCE_MODE" = "status" ]; then
         echo "Checking maintenance mode status..."
-        STATUS=$(ssh -i "${SSH_KEY}" "${SSH_USER}@${HOST_IP}" \
+        STATUS=$(ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
             "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} -sN -e \"SELECT config_value FROM phpbb_config WHERE config_name='board_disable'\"")
 
         if [ $? -eq 0 ]; then
@@ -804,7 +873,7 @@ EOF
                 echo "  Only administrators can log in"
 
                 # Also get the maintenance message
-                MESSAGE=$(ssh -i "${SSH_KEY}" "${SSH_USER}@${HOST_IP}" \
+                MESSAGE=$(ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
                     "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} -sN -e \"SELECT config_value FROM phpbb_config WHERE config_name='board_disable_msg'\"")
                 if [ -n "$MESSAGE" ]; then
                     echo "  Message shown to users: $MESSAGE"
@@ -835,77 +904,65 @@ if [ -n "$RESTORE_FILE" ]; then
 
     # Get database credentials
     get_db_credentials
-
-    SSH_KEY="~/.ssh/id-hostgator-dfenyes"
-    SSH_USER="dfenyes"
-    SSH_HOST="108.167.172.195"
-
-    # Expand the tilde in SSH_KEY path
-    SSH_KEY="${SSH_KEY/#\~/$HOME}"
+    validate_ssh_config
 
     echo "WARNING: This will REPLACE the entire database!"
     echo "Database: ${DB_NAME} on ${SSH_HOST}"
     echo "Restore file: ${RESTORE_FILE}"
     echo ""
-    read -p "Are you sure you want to restore? Type 'yes' to continue: " CONFIRM
 
-    if [ "$CONFIRM" != "yes" ]; then
-        echo "Restore cancelled"
-        exit 1
-    fi
-
-    echo "Restoring database from ${RESTORE_FILE}..."
-
-    # Detect if file is compressed
-    if [[ "$RESTORE_FILE" == *.bz2 ]]; then
-        echo "Detected bzip2 compressed file, decompressing..."
-        bunzip2 -c "$RESTORE_FILE" | ssh -i "${SSH_KEY}" "${SSH_USER}@${HOST_IP}" \
-            "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME}"
-    elif [[ "$RESTORE_FILE" == *.gz ]]; then
-        echo "Detected gzip compressed file, decompressing..."
-        gunzip -c "$RESTORE_FILE" | ssh -i "${SSH_KEY}" "${SSH_USER}@${HOST_IP}" \
-            "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME}"
+    if [ -n "$DRY_RUN" ]; then
+        echo "DRY RUN - database will not be restored"
     else
-        echo "Restoring uncompressed SQL file..."
-        cat "$RESTORE_FILE" | ssh -i "${SSH_KEY}" "${SSH_USER}@${HOST_IP}" \
-            "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME}"
-    fi
+        read -p "Are you sure you want to restore? Type 'yes' to continue: " CONFIRM
 
-    if [ $? -eq 0 ]; then
-        echo "✓ Database restored successfully!"
-        echo ""
-        echo "IMPORTANT: Clear the forum cache:"
-        echo "  1. Via Admin Panel: ACP → General → Purge Cache"
-        echo "  2. Or delete: public/forum/cache/production/*"
-        echo ""
-        if [[ "$RESTORE_FILE" == *utf8mb4* ]]; then
-            echo "Note: You restored a UTF8MB4 converted database."
-            echo "Your forum now supports full Unicode including emojis! 🎉"
+        if [ "$CONFIRM" != "yes" ]; then
+            echo "Restore cancelled"
+            exit 1
         fi
-    else
-        echo "✗ Database restore failed!"
-        echo "Check your SSH connection and MySQL credentials"
-        exit 1
+
+        echo "Restoring database from ${RESTORE_FILE}..."
+
+        # Detect if file is compressed
+        if [[ "$RESTORE_FILE" == *.bz2 ]]; then
+            echo "Detected bzip2 compressed file, decompressing..."
+            bunzip2 -c "$RESTORE_FILE" | ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
+                "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME}"
+        elif [[ "$RESTORE_FILE" == *.gz ]]; then
+            echo "Detected gzip compressed file, decompressing..."
+            gunzip -c "$RESTORE_FILE" | ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
+                "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME}"
+        else
+            echo "Restoring uncompressed SQL file..."
+            cat "$RESTORE_FILE" | ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
+                "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME}"
+        fi
+
+        if [ $? -eq 0 ]; then
+            echo "✓ Database restored successfully!"
+            echo ""
+            echo "IMPORTANT: Clear the forum cache:"
+            echo "  1. Via Admin Panel: ACP → General → Purge Cache"
+            echo "  2. Or delete: public/forum/cache/production/*"
+            echo ""
+            if [[ "$RESTORE_FILE" == *utf8mb4* ]]; then
+                echo "Note: You restored a UTF8MB4 converted database."
+                echo "Your forum now supports full Unicode including emojis! 🎉"
+            fi
+        else
+            echo "✗ Database restore failed!"
+            echo "Check your SSH connection and MySQL credentials"
+            exit 1
+        fi
     fi
 fi
 
 # Handle syncdn (download from server)
 if [ "$SYNC_DOWN" = true ]; then
-    SSH_KEY="~/.ssh/id-hostgator-dfenyes"
-    SSH_USER="dfenyes"
-    SSH_HOST="108.167.172.195"
+    ensure_ssh_key_loaded
 
-    WEBDIR="public_html/"
     SRC="$SSH_USER@$SSH_HOST:$WEBDIR"
     EXCLUDE="--exclude-from=.rsyncdnignore"
-
-    # Expand the tilde in SSH_KEY path
-    SSH_KEY="${SSH_KEY/#\~/$HOME}"
-
-    # Check if SSH key is in agent, add if not
-    if ! ssh-add -l | grep -q "id-hostgator-dfenyes"; then
-        ssh-add "$SSH_KEY" 2>/dev/null
-    fi
 
     echo "Syncing FROM server to local..."
     echo "Source: $SRC"
@@ -932,21 +989,10 @@ fi
 
 # Handle syncup (upload to server)
 if [ "$SYNC_UP" = true ]; then
-    SSH_KEY="~/.ssh/id-hostgator-dfenyes"
-    SSH_USER="dfenyes"
-    SSH_HOST="108.167.172.195"
+    ensure_ssh_key_loaded
 
-    WEBDIR="public_html/"
     DEST="$SSH_USER@$SSH_HOST:$WEBDIR"
     EXCLUDE="--exclude-from=.rsyncupignore"
-
-    # Expand the tilde in SSH_KEY path
-    SSH_KEY="${SSH_KEY/#\~/$HOME}"
-
-    # Check if SSH key is in agent, add if not
-    if ! ssh-add -l | grep -q "id-hostgator-dfenyes"; then
-        ssh-add "$SSH_KEY" 2>/dev/null
-    fi
 
     echo "Syncing FROM local to server..."
     echo "Source: ./dist/"
@@ -1003,7 +1049,7 @@ if [ "$PRUNE_BACKUPS" = true ]; then
     echo "============================================================"
 
     # Determine which directory to prune
-    PRUNE_DIR="backups"
+    PRUNE_DIR="$BACKUP_SOURCE"
     if [ -n "$SYNC_BACKUPS" ]; then
         # If we synced, prune the destination
         PRUNE_DIR="$SYNC_BACKUPS"
@@ -1019,13 +1065,7 @@ fi
 if [ -n "$SET_PASSWORD_USER" ]; then
     # Get database credentials
     get_db_credentials
-
-    SSH_KEY="~/.ssh/id-hostgator-dfenyes"
-    SSH_USER="dfenyes"
-    SSH_HOST="108.167.172.195"
-
-    # Expand the tilde in SSH_KEY path
-    SSH_KEY="${SSH_KEY/#\~/$HOME}"
+    validate_ssh_config
 
     # Find the script directory and project root
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -1089,10 +1129,17 @@ if [ -n "$SET_PASSWORD_USER" ]; then
 
     [ "$VERBOSE" -gt 0 ] && echo "Hash generated: ${PASSWORD_HASH:0:30}..."
 
+    # SQL is sent to mysql via stdin (not -e) so '$' chars in values are not
+    # expanded by the remote shell, which would otherwise corrupt Argon2 hashes.
+    # Escape single quotes in values for SQL string literals.
+    ESCAPED_USER="${SET_PASSWORD_USER//\'/\'\'}"
+    ESCAPED_HASH="${PASSWORD_HASH//\'/\'\'}"
+
     # First verify the user exists
     [ "$VERBOSE" -gt 0 ] && echo "Verifying user exists..."
-    USER_EXISTS=$(ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
-        "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} -sN -e \"SELECT COUNT(*) FROM phpbb_users WHERE username='${SET_PASSWORD_USER}'\"")
+    USER_EXISTS=$(printf "SELECT COUNT(*) FROM phpbb_users WHERE username='%s'\n" "$ESCAPED_USER" | \
+        ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
+        "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} -sN")
 
     if [ "$USER_EXISTS" != "1" ]; then
         if [ "$USER_EXISTS" = "0" ]; then
@@ -1104,18 +1151,16 @@ if [ -n "$SET_PASSWORD_USER" ]; then
     fi
 
     # Update the password in the database
-    # The hash contains special characters, so we need to escape it properly for MySQL
-    # Using a heredoc to avoid shell escaping issues
     if [ -n "$DRY_RUN" ]; then
         echo "DRY RUN - would update password for user: $SET_PASSWORD_USER"
         echo "Hash: ${PASSWORD_HASH:0:50}..."
     else
         [ "$VERBOSE" -gt 0 ] && echo "Updating password in database..."
 
-        # Use parameterized approach via heredoc to handle special chars in hash
-        ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" <<EOF
-mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} -e "UPDATE phpbb_users SET user_password='${PASSWORD_HASH}' WHERE username='${SET_PASSWORD_USER}'"
-EOF
+        printf "UPDATE phpbb_users SET user_password='%s' WHERE username='%s'\n" \
+            "$ESCAPED_HASH" "$ESCAPED_USER" | \
+            ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
+            "mysql -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME}"
 
         if [ $? -eq 0 ]; then
             echo "✓ Password updated successfully for user: $SET_PASSWORD_USER"

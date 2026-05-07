@@ -1,4 +1,8 @@
 {
+  "ssh_key": "~/.ssh/id-hostgator-dfenyes",
+  "ssh_user": "dfenyes",
+  "ssh_host": "108.167.172.195",
+  "webdir": "public_html/",
   "source": "./backups",
   "destination": "~/Dropbox/osiweb-backups",
   "dry_run": false,
