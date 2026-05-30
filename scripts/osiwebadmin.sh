@@ -4,7 +4,7 @@
 # Manages backups, syncing, database operations, and maintenance for osiweb.org
 # Version 2.0
 
-VERSION="2.1"
+VERSION="2.2"
 
 # Require bash 4.0 or higher for associative arrays
 if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
@@ -31,6 +31,7 @@ RESTORE_FILE=""
 MAINTENANCE_MODE=""
 SYNC_DOWN=false
 SYNC_UP=false
+DEPLOY=false
 DELETE_SYNC=""
 DRY_RUN=""
 SYNC_BACKUPS=""
@@ -56,6 +57,7 @@ usage() {
     echo "Commands:"
     echo "  syncdn [OPTIONS]        Sync files FROM server to local"
     echo "  syncup [OPTIONS]        Sync files FROM local to server"
+    echo "  deploy [OPTIONS]        Build the site and upload it to the server"
     echo "  backup_db [OPTIONS]     Backup database via SSH"
     echo "  backup_files            Backup files (creates .tbz archive)"
     echo "  restore_db FILE         Restore database from backup file"
@@ -64,7 +66,7 @@ usage() {
     echo "  prune_backups [OPTIONS] Apply retention policy to delete old backups"
     echo "  set_password USER       Set password for a forum user"
     echo ""
-    echo "Sync Command Options (syncdn/syncup):"
+    echo "Sync Command Options (syncdn/syncup/deploy):"
     echo "  --delete                Delete files not in source"
     echo ""
     echo "Backup DB Options:"
@@ -85,6 +87,8 @@ usage() {
     echo "  $0 syncdn                                    # Download from server"
     echo "  $0 -n syncup                                 # Preview upload changes"
     echo "  $0 syncup --delete                           # Upload and delete removed files"
+    echo "  $0 deploy                                    # Build the site and upload to server"
+    echo "  $0 -n deploy                                 # Build, then preview upload changes"
     echo "  $0 maintenance on                            # Enable maintenance mode"
     echo "  $0 restore_db backup.sql                     # Restore database"
     echo "  $0 -v backup_db                              # Backup DB with verbose output"
@@ -154,7 +158,7 @@ fi
 
 # Parse command-specific options based on command
 case "$COMMAND" in
-    syncdn|syncup)
+    syncdn|syncup|deploy)
         # Parse sync options
         set -- "${COMMAND_ARGS[@]}"
         while [[ $# -gt 0 ]]; do
@@ -177,6 +181,8 @@ case "$COMMAND" in
         # Set the appropriate flag
         if [ "$COMMAND" = "syncdn" ]; then
             SYNC_DOWN=true
+        elif [ "$COMMAND" = "deploy" ]; then
+            DEPLOY=true
         else
             SYNC_UP=true
         fi
@@ -432,7 +438,7 @@ for config_path in "${CONFIG_SEARCH_PATHS[@]}"; do
 done
 
 # If no operation specified, show usage
-if [ "$BACKUP_FILES" = false ] && [ "$BACKUP_DB" = false ] && [ -z "$RESTORE_FILE" ] && [ -z "$MAINTENANCE_MODE" ] && [ "$SYNC_DOWN" = false ] && [ "$SYNC_UP" = false ] && [ "$SYNC_BACKUPS_REQUESTED" = false ] && [ "$PRUNE_BACKUPS" = false ] && [ -z "$SET_PASSWORD_USER" ]; then
+if [ "$BACKUP_FILES" = false ] && [ "$BACKUP_DB" = false ] && [ -z "$RESTORE_FILE" ] && [ -z "$MAINTENANCE_MODE" ] && [ "$SYNC_DOWN" = false ] && [ "$SYNC_UP" = false ] && [ "$DEPLOY" = false ] && [ "$SYNC_BACKUPS_REQUESTED" = false ] && [ "$PRUNE_BACKUPS" = false ] && [ -z "$SET_PASSWORD_USER" ]; then
     echo "Error: Must specify an operation"
     usage
 fi
@@ -985,6 +991,26 @@ if [ "$SYNC_DOWN" = true ]; then
         echo "✗ Sync from server failed!"
         exit 1
     fi
+fi
+
+# Handle deploy (build the site, then upload to server)
+# Source of truth is the repo: build ./dist/ from the repo, then fall through
+# to the syncup handler below to push it. Does NOT pull from the server (syncdn).
+if [ "$DEPLOY" = true ]; then
+    echo "Building site (npm run build)..."
+    if [ -n "$DRY_RUN" ]; then
+        echo "DRY RUN MODE - build still runs (local only, produces ./dist/)"
+    fi
+
+    npm run build
+    if [ $? -ne 0 ]; then
+        echo "✗ Build failed!"
+        exit 1
+    fi
+    echo "✓ Build completed successfully!"
+
+    # Hand off to the syncup handler below to perform the upload
+    SYNC_UP=true
 fi
 
 # Handle syncup (upload to server)

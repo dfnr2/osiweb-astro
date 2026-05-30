@@ -22,7 +22,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-VERSION = "2.1"
+VERSION = "2.2"
 
 # Rich console for output
 console = Console()
@@ -550,16 +550,8 @@ def syncdn(
     success("Sync from server completed successfully!")
 
 
-@app.command()
-def syncup(
-    ctx: typer.Context,
-    delete: Annotated[
-        bool, typer.Option("--delete", help="Delete files not in source")
-    ] = False,
-) -> None:
-    """Sync files FROM local to server."""
-    config = get_config(ctx)
-
+def _syncup(config: Config, delete: bool) -> None:
+    """Sync ./dist/ to the server. Shared by the `syncup` and `deploy` commands."""
     ensure_ssh_key_loaded(config)
 
     src = "./dist/"
@@ -601,6 +593,40 @@ def syncup(
 
     run_cmd(cmd, verbose=config.verbose)
     success("Sync to server completed successfully!")
+
+
+def _build(config: Config) -> None:
+    """Build the static site into ./dist/ via `npm run build`. Aborts on failure."""
+    console.print("Building site (npm run build)...")
+    if config.dry_run:
+        info("DRY RUN MODE - build still runs (local only, produces ./dist/)")
+    run_cmd(["npm", "run", "build"], verbose=config.verbose)
+    success("Build completed successfully!")
+
+
+@app.command()
+def syncup(
+    ctx: typer.Context,
+    delete: Annotated[
+        bool, typer.Option("--delete", help="Delete files not in source")
+    ] = False,
+) -> None:
+    """Sync files FROM local to server."""
+    config = get_config(ctx)
+    _syncup(config, delete)
+
+
+@app.command()
+def deploy(
+    ctx: typer.Context,
+    delete: Annotated[
+        bool, typer.Option("--delete", help="Delete files on server not present in dist")
+    ] = False,
+) -> None:
+    """Build the site and upload it to the server (npm run build, then syncup)."""
+    config = get_config(ctx)
+    _build(config)
+    _syncup(config, delete)
 
 
 @app.command()
