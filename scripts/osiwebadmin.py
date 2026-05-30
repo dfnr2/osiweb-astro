@@ -22,7 +22,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-VERSION = "2.2"
+VERSION = "2.3"
 
 # Rich console for output
 console = Console()
@@ -629,6 +629,18 @@ def deploy(
     _syncup(config, delete)
 
 
+def _purge_forum_cache(config: Config) -> None:
+    """Purge phpBB's cache so direct DB config changes take effect immediately.
+
+    phpBB caches non-dynamic config (e.g. board_disable); without purging, a
+    direct UPDATE to phpbb_config has no effect on the running forum.
+    """
+    console.print("Purging forum cache...")
+    remote_cmd = f"cd {config.webdir}forum && php bin/phpbbcli.php cache:purge"
+    ssh_run(config, remote_cmd)
+    success("Forum cache purged")
+
+
 @app.command()
 def maintenance(
     ctx: typer.Context,
@@ -657,6 +669,7 @@ UPDATE phpbb_config SET config_value='Forum temporarily offline for maintenance.
 """
         remote_cmd = f"mysql -u {db_user} -p'{db_pass}' {db_name} -e \"{query}\""
         ssh_run(config, remote_cmd)
+        _purge_forum_cache(config)
 
         success("Maintenance mode ENABLED")
         console.print("  Regular users will see: 'Forum temporarily offline for maintenance'")
@@ -672,6 +685,7 @@ UPDATE phpbb_config SET config_value='Forum temporarily offline for maintenance.
         query = "UPDATE phpbb_config SET config_value='0' WHERE config_name='board_disable';"
         remote_cmd = f"mysql -u {db_user} -p'{db_pass}' {db_name} -e \"{query}\""
         ssh_run(config, remote_cmd)
+        _purge_forum_cache(config)
 
         success("Maintenance mode DISABLED")
         console.print("  Forum is now accessible to all users")
@@ -700,6 +714,23 @@ UPDATE phpbb_config SET config_value='Forum temporarily offline for maintenance.
             console.print("  Forum is accessible to all users")
         else:
             warning(f"Unknown maintenance mode status: {status_value}")
+
+
+@app.command()
+def ssh(
+    ctx: typer.Context,
+) -> None:
+    """Open an interactive SSH shell on the server."""
+    config = get_config(ctx)
+    ensure_ssh_key_loaded(config)
+    ssh_key_path = get_ssh_key_path(config)
+    target = f"{config.ssh_user}@{config.ssh_host}"
+    console.print(f"Connecting to {target}...")
+    if config.dry_run:
+        info(f"DRY RUN - would run: ssh -i {ssh_key_path} {target}")
+        return
+    # Replace this process with an interactive ssh session
+    os.execvp("ssh", ["ssh", "-i", str(ssh_key_path), target])
 
 
 @app.command(name="sync_backups")

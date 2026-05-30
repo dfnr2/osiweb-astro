@@ -4,7 +4,7 @@
 # Manages backups, syncing, database operations, and maintenance for osiweb.org
 # Version 2.0
 
-VERSION="2.2"
+VERSION="2.3"
 
 # Require bash 4.0 or higher for associative arrays
 if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
@@ -32,6 +32,7 @@ MAINTENANCE_MODE=""
 SYNC_DOWN=false
 SYNC_UP=false
 DEPLOY=false
+SSH_SHELL=false
 DELETE_SYNC=""
 DRY_RUN=""
 SYNC_BACKUPS=""
@@ -58,6 +59,7 @@ usage() {
     echo "  syncdn [OPTIONS]        Sync files FROM server to local"
     echo "  syncup [OPTIONS]        Sync files FROM local to server"
     echo "  deploy [OPTIONS]        Build the site and upload it to the server"
+    echo "  ssh                     Open an interactive SSH shell on the server"
     echo "  backup_db [OPTIONS]     Backup database via SSH"
     echo "  backup_files            Backup files (creates .tbz archive)"
     echo "  restore_db FILE         Restore database from backup file"
@@ -89,6 +91,7 @@ usage() {
     echo "  $0 syncup --delete                           # Upload and delete removed files"
     echo "  $0 deploy                                    # Build the site and upload to server"
     echo "  $0 -n deploy                                 # Build, then preview upload changes"
+    echo "  $0 ssh                                       # Open an interactive SSH shell"
     echo "  $0 maintenance on                            # Enable maintenance mode"
     echo "  $0 restore_db backup.sql                     # Restore database"
     echo "  $0 -v backup_db                              # Backup DB with verbose output"
@@ -186,6 +189,14 @@ case "$COMMAND" in
         else
             SYNC_UP=true
         fi
+        ;;
+
+    ssh)
+        if [ ${#COMMAND_ARGS[@]} -gt 0 ]; then
+            echo "Error: ssh does not accept any options"
+            usage
+        fi
+        SSH_SHELL=true
         ;;
 
     backup_db)
@@ -438,7 +449,7 @@ for config_path in "${CONFIG_SEARCH_PATHS[@]}"; do
 done
 
 # If no operation specified, show usage
-if [ "$BACKUP_FILES" = false ] && [ "$BACKUP_DB" = false ] && [ -z "$RESTORE_FILE" ] && [ -z "$MAINTENANCE_MODE" ] && [ "$SYNC_DOWN" = false ] && [ "$SYNC_UP" = false ] && [ "$DEPLOY" = false ] && [ "$SYNC_BACKUPS_REQUESTED" = false ] && [ "$PRUNE_BACKUPS" = false ] && [ -z "$SET_PASSWORD_USER" ]; then
+if [ "$BACKUP_FILES" = false ] && [ "$BACKUP_DB" = false ] && [ -z "$RESTORE_FILE" ] && [ -z "$MAINTENANCE_MODE" ] && [ "$SYNC_DOWN" = false ] && [ "$SYNC_UP" = false ] && [ "$DEPLOY" = false ] && [ "$SSH_SHELL" = false ] && [ "$SYNC_BACKUPS_REQUESTED" = false ] && [ "$PRUNE_BACKUPS" = false ] && [ -z "$SET_PASSWORD_USER" ]; then
     echo "Error: Must specify an operation"
     usage
 fi
@@ -816,6 +827,30 @@ if [ "$BACKUP_DB" = true ]; then
     fi
 fi
 
+# Purge phpBB's cache so direct DB config changes (e.g. board_disable) take effect.
+# phpBB caches non-dynamic config; without purging, a direct UPDATE to phpbb_config
+# has no effect on the running forum.
+purge_forum_cache() {
+    echo "Purging forum cache..."
+    if ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" "cd ${WEBDIR}forum && php bin/phpbbcli.php cache:purge"; then
+        echo "✓ Forum cache purged"
+    else
+        echo "✗ Failed to purge forum cache"
+        exit 1
+    fi
+}
+
+# Handle interactive SSH shell
+if [ "$SSH_SHELL" = true ]; then
+    ensure_ssh_key_loaded
+    echo "Connecting to ${SSH_USER}@${SSH_HOST}..."
+    if [ -n "$DRY_RUN" ]; then
+        echo "DRY RUN - would run: ssh -i ${SSH_KEY} ${SSH_USER}@${SSH_HOST}"
+    else
+        exec ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}"
+    fi
+fi
+
 # Handle maintenance mode
 if [ -n "$MAINTENANCE_MODE" ]; then
     # Get database credentials
@@ -840,6 +875,7 @@ EOF
                 echo "✓ Maintenance mode ENABLED"
                 echo "  Regular users will see: 'Forum temporarily offline for maintenance'"
                 echo "  Admins can still log in"
+                purge_forum_cache
             else
                 echo "✗ Failed to enable maintenance mode"
                 exit 1
@@ -861,6 +897,7 @@ EOF
             if [ $? -eq 0 ]; then
                 echo "✓ Maintenance mode DISABLED"
                 echo "  Forum is now accessible to all users"
+                purge_forum_cache
             else
                 echo "✗ Failed to disable maintenance mode"
                 exit 1
