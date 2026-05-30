@@ -54,5 +54,9 @@ Thumbs.db
 # PHP temporary files
 *.phpupgrader.*
 
+# Python bytecode cache
+__pycache__/
+*.pyc
+
 # Forum-attachment review staging (rebuilt from db backups; ~1GB)
 staging-forum-files/

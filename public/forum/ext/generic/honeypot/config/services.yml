@@ -1,0 +1,17 @@
+services:
+    generic.honeypot.listener:
+        class: generic\honeypot\event\listener
+        arguments:
+            - '@request'
+            - '@config'
+            - '@template'
+        tags:
+            - { name: event.listener }
+
+    generic.honeypot.acp.main_module:
+        class: generic\honeypot\acp\main_module
+        arguments:
+            - '@config'
+            - '@request'
+            - '@template'
+            - '@language'

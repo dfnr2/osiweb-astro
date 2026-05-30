@@ -1,0 +1,16 @@
+{
+    "name": "generic/honeypot",
+    "type": "phpbb-extension",
+    "description": "ACP-configurable honeypot anti-spam for registration forms",
+    "version": "1.0.0",
+    "license": "GPL-2.0-only",
+    "require": {
+        "php": ">=7.2"
+    },
+    "extra": {
+        "display-name": "Registration Honeypot",
+        "soft-require": {
+            "phpbb/phpbb": ">=3.2.0"
+        }
+    }
+}

@@ -1,0 +1,46 @@
+<!-- INCLUDE overall_header.html -->
+
+<h1>{L_ACP_HONEYPOT_TITLE}</h1>
+
+<form id="honeypot_settings" method="post" action="{U_ACTION}">
+
+<fieldset>
+    <legend>{L_ACP_HONEYPOT_SETTINGS}</legend>
+
+    <dl>
+        <dt><label for="honeypot_enabled">{L_ACP_HONEYPOT_ENABLED}:</label><br /><span>{L_ACP_HONEYPOT_ENABLED_EXPLAIN}</span></dt>
+        <dd><label><input type="radio" name="honeypot_enabled" value="1"<!-- IF HONEYPOT_ENABLED --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+            <label><input type="radio" name="honeypot_enabled" value="0"<!-- IF not HONEYPOT_ENABLED --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+    </dl>
+
+    <dl>
+        <dt><label for="honeypot_field_name">{L_ACP_HONEYPOT_FIELD_NAME}:</label><br /><span>{L_ACP_HONEYPOT_FIELD_NAME_EXPLAIN}</span></dt>
+        <dd><input type="text" id="honeypot_field_name" name="honeypot_field_name" value="{HONEYPOT_FIELD_NAME}" size="40" /></dd>
+    </dl>
+
+    <dl>
+        <dt><label for="honeypot_question">{L_ACP_HONEYPOT_QUESTION}:</label><br /><span>{L_ACP_HONEYPOT_QUESTION_EXPLAIN}</span></dt>
+        <dd><input type="text" id="honeypot_question" name="honeypot_question" value="{HONEYPOT_QUESTION}" size="60" /></dd>
+    </dl>
+
+    <dl>
+        <dt><label for="honeypot_explanation">{L_ACP_HONEYPOT_EXPLANATION}:</label><br /><span>{L_ACP_HONEYPOT_EXPLANATION_EXPLAIN}</span></dt>
+        <dd><textarea id="honeypot_explanation" name="honeypot_explanation" rows="4" cols="60">{HONEYPOT_EXPLANATION}</textarea></dd>
+    </dl>
+
+    <dl>
+        <dt><label for="honeypot_error_message">{L_ACP_HONEYPOT_ERROR_MESSAGE}:</label><br /><span>{L_ACP_HONEYPOT_ERROR_MESSAGE_EXPLAIN}</span></dt>
+        <dd><input type="text" id="honeypot_error_message" name="honeypot_error_message" value="{HONEYPOT_ERROR_MESSAGE}" size="60" /></dd>
+    </dl>
+
+</fieldset>
+
+<fieldset class="submit-buttons">
+    <input type="hidden" name="form_token" value="{S_FORM_TOKEN}" />
+    <input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
+    <input type="reset" value="{L_RESET}" class="button2" />
+</fieldset>
+
+</form>
+
+<!-- INCLUDE overall_footer.html -->
