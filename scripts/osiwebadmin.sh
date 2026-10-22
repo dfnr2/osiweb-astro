@@ -756,13 +756,20 @@ if [ "$BACKUP_FILES" = true ]; then
     if [ -n "$DRY_RUN" ]; then
         echo "DRY RUN - no backup will be created"
     else
-        # Create tarball with bzip2 compression excluding backups directory and .git
+        # Create tarball with bzip2 compression excluding backups directory, .git,
+        # and reproducible build output/dependencies (dist/ alone duplicates the
+        # entire public/ tree, several GB of attachments)
         TAR_VERBOSE=""
         [ "$VERBOSE" -gt 0 ] && TAR_VERBOSE="v"
         tar -cj${TAR_VERBOSE}f "${BACKUP_FILE}" \
             --exclude='./backups' \
             --exclude='./.git' \
-            --exclude='./forum/cache/production' \
+            --exclude='./dist' \
+            --exclude='./.astro' \
+            --exclude='./node_modules' \
+            --exclude='./phpBB3' \
+            --exclude='./staging-forum-files' \
+            --exclude='./public/forum/cache/production' \
             .
 
         if [ $? -eq 0 ]; then

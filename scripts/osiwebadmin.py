@@ -420,7 +420,14 @@ def backup_files(ctx: typer.Context) -> None:
         str(backup_file),
         "--exclude=./backups",
         "--exclude=./.git",
-        "--exclude=./forum/cache/production",
+        # Build output and dependencies are reproducible; dist/ alone
+        # duplicates the entire public/ tree (several GB of attachments)
+        "--exclude=./dist",
+        "--exclude=./.astro",
+        "--exclude=./node_modules",
+        "--exclude=./phpBB3",
+        "--exclude=./staging-forum-files",
+        "--exclude=./public/forum/cache/production",
         ".",
     ]
 
