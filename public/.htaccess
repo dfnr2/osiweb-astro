@@ -1,0 +1,86 @@
+# osiweb.org origin rules. Apache 2.4 (cPanel/HostGator), fronted by Cloudflare.
+#
+# Lives in public/ so the Astro build ships it to public_html/.htaccess.
+# The forum subtree has phpBB's own .htaccess; InheritDownBefore below makes
+# it apply the rewrite rules here before its own.
+#
+# There is deliberately no PHP handler block in this file. The vhost inherits
+# the system default PHP (ea-php83). A cPanel "AddHandler ... ea-php74" block,
+# as the old copy had, would silently pin the site to an unpatched PHP.
+
+RewriteEngine On
+RewriteOptions InheritDownBefore
+
+# Canonical URL is https://osiweb.org/...
+# Cloudflare passes plain-http visitors through to the origin as plain http
+# (HTTPS unset, X-Forwarded-Proto: http) and https visitors as https, so this
+# fires only for the former and cannot loop. The X-Forwarded-Proto guard keeps
+# it loop-free even if Cloudflare's SSL mode were ever set to Flexible.
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+RewriteRule ^ https://osiweb.org%{REQUEST_URI} [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^www\.osiweb\.org$ [NC]
+RewriteRule ^ https://osiweb.org%{REQUEST_URI} [R=301,L]
+
+# Accept connections only from Cloudflare or from this server itself (cPanel
+# AutoSSL checks, local smoke tests). The origin is otherwise reachable
+# directly at its public IP, which bypasses Cloudflare's bot filtering.
+#
+# HostGator runs mod_remoteip, which rewrites REMOTE_ADDR to the real visitor
+# address taken from Cloudflare's X-Forwarded-For header. A plain "Require ip"
+# would therefore see visitor addresses and block everyone. The allowlist
+# tests the underlying connection peer, CONN_REMOTE_ADDR, instead; the
+# visitor-address denies further down still see the real visitor.
+#
+# Cloudflare ranges from https://www.cloudflare.com/ips-v4 and
+# https://www.cloudflare.com/ips-v6, fetched 2026-10-22. Re-check them
+# occasionally; a stale list would 403 visitors arriving via a new edge range.
+<RequireAll>
+  <RequireAny>
+    # this server: loopback, the osiweb.org vhost IP, the account's main IP
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '127.0.0.1/32'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '::1/128'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '10.57.22.165/32'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '10.57.31.245/32'"
+    # Cloudflare IPv4
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '173.245.48.0/20'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '103.21.244.0/22'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '103.22.200.0/22'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '103.31.4.0/22'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '141.101.64.0/18'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '108.162.192.0/18'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '190.93.240.0/20'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '188.114.96.0/20'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '197.234.240.0/22'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '198.41.128.0/17'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '162.158.0.0/15'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '104.16.0.0/13'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '104.24.0.0/14'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '172.64.0.0/13'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '131.0.72.0/22'"
+    # Cloudflare IPv6
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '2400:cb00::/32'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '2606:4700::/32'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '2803:f800::/32'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '2405:b500::/32'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '2405:8100::/32'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '2a06:98c0::/29'"
+    Require expr "%{CONN_REMOTE_ADDR} -ipmatch '2c0f:f248::/32'"
+  </RequireAny>
+
+  # Visitor-address blocks carried over from the previous .htaccess
+  # (Tencent Cloud ranges). These match the real visitor address. Blocking in
+  # Cloudflare's WAF is cheaper, since it never reaches the origin at all.
+  Require not ip 43.128.0.0/10
+  Require not ip 101.32.0.0/14
+  Require not ip 129.226.0.0/15
+  Require not ip 150.109.0.0/16
+  Require not ip 119.28.0.0/15
+</RequireAll>
+
+# Domain-validation challenges (cPanel AutoSSL / Let's Encrypt) must answer
+# regardless of where the request comes from.
+<If "%{REQUEST_URI} =~ m#^/\.well-known/#">
+  Require all granted
+</If>
