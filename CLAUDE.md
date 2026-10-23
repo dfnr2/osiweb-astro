@@ -45,7 +45,7 @@ Ensure proper permissions for phpBB:
 - Directories: 755
 - Files: 644
 - Config files: 640
-- Cache/store directories: 777 (or owned by web server user)
+- Cache/store/files directories: 755 (PHP runs as the account user under LSAPI, so world-write is never needed)
 
 ## Database Configuration
 

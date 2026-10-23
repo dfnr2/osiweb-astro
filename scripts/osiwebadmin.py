@@ -349,7 +349,9 @@ def backup_db(
     # Streaming (not capture=True) avoids buffering the whole dump in RAM
     validate_ssh_config(config)
     ssh_key_path = get_ssh_key_path(config)
-    remote_cmd = f"mysqldump -u {db_user} -p'{db_pass}' {db_name} | bzip2"
+    # --no-tablespaces: the account lacks the PROCESS privilege, so without
+    # it mysqldump emits an "Access denied ... PROCESS" warning on every run
+    remote_cmd = f"mysqldump --no-tablespaces -u {db_user} -p'{db_pass}' {db_name} | bzip2"
     ssh_cmd = [
         "ssh",
         "-i",

@@ -801,7 +801,7 @@ if [ "$BACKUP_DB" = true ]; then
     else
         # SSH to server, run mysqldump, and pipe back compressed with bzip2
         ssh -i "${SSH_KEY}" "${SSH_USER}@${SSH_HOST}" \
-            "mysqldump -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} | bzip2" > "${DB_BACKUP_FILE}"
+            "mysqldump --no-tablespaces -u ${DB_USER} -p'${DB_PASS}' ${DB_NAME} | bzip2" > "${DB_BACKUP_FILE}"
 
         if [ $? -eq 0 ]; then
             SIZE=$(ls -lh "${DB_BACKUP_FILE}" | awk '{print $5}')
